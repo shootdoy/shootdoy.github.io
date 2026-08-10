@@ -3,49 +3,433 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>shootdoy lab</title>
-<meta name="description" content="개인 프로젝트 모음">
+<title>shootdoy lab — 포켓몬 태그스타 데이터 분석 기록</title>
+<meta name="description" content="포켓몬 태그스타의 데미지 공식을 실제 플레이 화면으로 검증한 기록. 태그 도감 번호 체계, 로테이션 규칙, 핵심 태그 20장 선정 근거를 정리했습니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://shootdoy.github.io/">
 
 <!-- Google AdSense — 사이트 소유권 확인용. 반드시 head 안에 둘 것 -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1384191135178594"
      crossorigin="anonymous"></script>
 
 <style>
-:root{color-scheme:dark}
+:root{
+  color-scheme:dark;
+  --bg:#120B2E; --ink:#F2ECFF; --dim:#A392D6; --faint:#6B5AA0;
+  --rim:#3A2775; --cyan:#38E1FF; --star:#FFD34A; --ok:#7DF3C0;
+}
 *{box-sizing:border-box}
-body{margin:0;padding:0;min-height:100vh;
+html{scroll-behavior:smooth}
+body{margin:0;padding:0;
   font-family:'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;
-  background:radial-gradient(1200px 700px at 50% -10%,#2A1A63,#120B2E 60%,#0B0718);
-  color:#F2ECFF;display:grid;place-items:center}
-main{width:100%;max-width:560px;padding:40px 20px}
-h1{margin:0 0 6px;font-size:26px;letter-spacing:-.01em}
-.sub{margin:0 0 28px;font-size:13px;color:#A392D6}
-a.card{display:flex;align-items:center;justify-content:space-between;gap:14px;
-  padding:18px 20px;margin-bottom:12px;border-radius:16px;text-decoration:none;
-  background:rgba(30,19,73,.6);border:1px solid #4A2F9C;color:#F2ECFF;
-  transition:transform .14s ease,border-color .14s ease}
-a.card:hover{transform:translateY(-2px);border-color:#38E1FF}
-a.card b{display:block;font-size:16px;margin-bottom:3px}
-a.card span{font-size:12px;color:#A392D6}
-a.card i{font-style:normal;color:#38E1FF;font-size:20px;flex:none}
-footer{margin-top:26px;font-size:11px;color:#6B5AA0;line-height:1.7}
+  background:radial-gradient(1200px 700px at 50% -10%,#2A1A63,#120B2E 60%,#0B0718) no-repeat,#0B0718;
+  color:var(--ink);line-height:1.75;font-size:15px;
+  -webkit-text-size-adjust:100%}
+.wrap{width:100%;max-width:760px;margin:0 auto;padding:36px 20px 72px}
+
+header h1{margin:0 0 8px;font-size:27px;letter-spacing:-.02em;line-height:1.3}
+header .sub{margin:0 0 6px;font-size:14px;color:var(--dim)}
+header .meta{margin:0;font-size:12px;color:var(--faint)}
+
+nav.toc{margin:26px 0 34px;padding:16px 18px;border:1px solid var(--rim);border-radius:14px;
+  background:rgba(30,19,73,.45)}
+nav.toc b{display:block;font-size:12px;color:var(--dim);margin-bottom:8px;letter-spacing:.04em}
+nav.toc ol{margin:0;padding-left:20px}
+nav.toc li{margin:3px 0}
+nav.toc a{color:var(--cyan);text-decoration:none}
+nav.toc a:hover{text-decoration:underline}
+
+a.app{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:18px 20px;margin:0 0 30px;border-radius:16px;text-decoration:none;
+  background:linear-gradient(120deg,rgba(74,47,156,.55),rgba(30,19,73,.6));
+  border:1px solid #4A2F9C;color:var(--ink);transition:transform .14s,border-color .14s}
+a.app:hover{transform:translateY(-2px);border-color:var(--cyan)}
+a.app b{display:block;font-size:17px;margin-bottom:3px}
+a.app em{font-style:normal;font-size:12.5px;color:var(--dim)}
+a.app i{font-style:normal;color:var(--cyan);font-size:22px;flex:none}
+
+section{margin:0 0 40px;scroll-margin-top:16px}
+h2{margin:34px 0 12px;font-size:20px;letter-spacing:-.01em;
+  padding-bottom:8px;border-bottom:1px solid var(--rim)}
+h3{margin:24px 0 8px;font-size:15.5px;color:var(--cyan)}
+p{margin:0 0 13px}
+ul,ol{margin:0 0 13px;padding-left:22px}
+li{margin:5px 0}
+strong{color:#fff}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;
+  background:rgba(255,255,255,.07);padding:1px 5px;border-radius:5px;color:#CDBFFF}
+
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 15px}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:460px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid rgba(255,255,255,.09)}
+th{color:var(--dim);font-weight:600;font-size:12px;white-space:nowrap;
+  border-bottom:1px solid var(--rim)}
+td.n{text-align:right;font-family:ui-monospace,monospace;white-space:nowrap}
+tr.hi td{background:rgba(125,243,192,.09)}
+
+.note{padding:14px 16px;border-radius:12px;border:1px solid var(--rim);
+  background:rgba(30,19,73,.45);font-size:13.5px;margin:0 0 15px}
+.note.warn{border-color:#7A4A2F;background:rgba(90,45,20,.28)}
+.note b{color:var(--star)}
+
+.kv{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 15px;padding:0;list-style:none}
+.kv li{padding:5px 11px;border:1px solid var(--rim);border-radius:999px;
+  font-size:12.5px;color:var(--dim);margin:0}
+.kv li b{color:var(--ink)}
+
+footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--rim);
+  font-size:11.5px;color:var(--faint);line-height:1.8}
+footer a{color:var(--faint)}
 </style>
 </head>
 <body>
-<main>
+<div class="wrap">
+
+<header>
   <h1>shootdoy lab</h1>
-  <p class="sub">개인 프로젝트 모음</p>
+  <p class="sub">아케이드 게임 <strong>포켓몬 태그스타</strong>를 직접 플레이하며 측정하고 계산한 기록입니다.</p>
+  <p class="meta">개인 팬 제작 · 비공식 · 최종 수정 2026-08-09</p>
+</header>
 
-  <a class="card" href="./stardust-lab/">
-    <span><b>스타더스트 랩</b><span>포켓몬 태그스타 보스 공략 · 3턴 로테이션 추천</span></span>
-    <i>→</i>
-  </a>
+<a class="app" href="./stardust-lab/">
+  <span>
+    <b>스타더스트 랩 열기</b>
+    <em>보유한 태그를 등록하면 보스별 3턴 로테이션을 짜 주는 도구</em>
+  </span>
+  <i>→</i>
+</a>
 
-  <footer>
-    비공식 팬 제작 도구입니다. 포켓몬 관련 상표와 이미지의 권리는 각 권리자에게 있습니다.
-  </footer>
-</main>
+<nav class="toc">
+  <b>이 페이지의 내용</b>
+  <ol>
+    <li><a href="#tool">도구가 하는 일</a></li>
+    <li><a href="#rule">배틀 규칙 정리</a></li>
+    <li><a href="#damage">데미지 공식 검증 — 실측 6건</a></li>
+    <li><a href="#crit">급소 배율 추정</a></li>
+    <li><a href="#best">핵심 태그 20장을 고른 방법</a></li>
+    <li><a href="#dex">도감 번호 체계 — 등급순이 아니었다</a></li>
+    <li><a href="#data">데이터 검산과 수정 이력</a></li>
+    <li><a href="#log">개발 기록</a></li>
+  </ol>
+</nav>
+
+<!-- ─────────────────────────────────────── -->
+<section id="tool">
+<h2>도구가 하는 일</h2>
+
+<p>태그스타는 실물 태그를 기계에 올려 배틀하는 아케이드 게임입니다. 보스마다 타입 상성이
+다르고, 한 배틀에서 <strong>3턴</strong>을 어떤 순서로 쓰느냐에 따라 결과가 크게 갈립니다.
+그런데 조합을 고를 때 고려할 게 생각보다 많습니다.</p>
+
+<ul>
+  <li>직전 턴에 쓴 태그는 다음 턴에 못 씁니다 — 1턴에 쓴 태그는 3턴에 다시 쓸 수 있습니다</li>
+  <li>메가진화 · Z기술 · 다이맥스는 각각 <strong>배틀당 한 번</strong>, 팀 전체 기준입니다</li>
+  <li>슬롯이 3칸이라 재사용 조합이면 예비 태그로 빈칸을 채워야 합니다</li>
+  <li>예비 태그는 보스보다 빠른 것으로 골라야 합니다</li>
+</ul>
+
+<p>이걸 매번 손으로 따지기 번거로워서 만든 도구입니다. 가진 태그를 켜두면 보스별로 3턴 조합을
+<strong>완전탐색</strong>해서 알려줍니다. 탐욕 알고리즘이 아니라 전부 훑기 때문에, 태그를
+56장 전부 가진 상태에서도 전 보스 계산이 수십 밀리초에 끝납니다.</p>
+
+<h3>두 가지 모드</h3>
+<p><strong>밸런스</strong>가 기본값입니다. 화력만 보면 약점을 크게 찔리는 태그도 서슴없이
+추천하게 되는데, 실제로 그러다 한 대에 기절한 적이 있습니다. 가이오가(물)를 상대로
+거대코뿌리(땅·바위)를 2턴에 넣었다가 <strong>×4</strong>를 맞았습니다.</p>
+
+<div class="tw"><table>
+<tr><th>모드</th><th>같은 보스에서의 추천</th></tr>
+<tr><td>최대 화력</td><td>제크로무 → <strong>거대코뿌리</strong> → 제크로무 &nbsp; <em>2턴에 ×4를 맞음</em></td></tr>
+<tr class="hi"><td>밸런스</td><td>제크로무 → 피카츄 → 리피아 &nbsp; <em>거대코뿌리를 아예 안 씀</em></td></tr>
+</table></div>
+
+<p>밸런스 모드는 예상 피해에 <strong>받는 피해 가중치</strong>를 곱해 저울질합니다. 화력을 조금
+포기하는 대신 덜 맞는 조합을 고릅니다.</p>
+</section>
+
+<!-- ─────────────────────────────────────── -->
+<section id="rule">
+<h2>배틀 규칙 정리</h2>
+
+<p>플레이하면서 확인한 규칙들입니다. 공식 문서가 아니라 실제 화면에서 관찰한 내용입니다.</p>
+
+<div class="tw"><table>
+<tr><th>항목</th><th>내용</th></tr>
+<tr><td>탈진</td><td>직전 턴에 쓴 태그는 다음 턴에 사용 불가. 1턴 태그는 3턴에 재사용 가능</td></tr>
+<tr><td>기믹 1회</td><td>메가진화 · Z기술 · 다이맥스는 각각 배틀당 한 번, 팀 전체 기준</td></tr>
+<tr><td>메가진화</td><td>기술이 아니라 카드 단위 변신. 에너지(스탯)가 오르고 폼에 따라 타입도 바뀜</td></tr>
+<tr><td>다이맥스</td><td>룰렛으로 레벨을 뽑아 <strong>에너지에 배율을 곱함</strong>. 2회 공격이 아님</td></tr>
+<tr><td>Z기술</td><td>룰렛이 아니라 플레이어의 기술 입력을 기계가 판정. 매판 값이 다름</td></tr>
+<tr><td>예비 슬롯</td><td>슬롯 3칸을 채우는 예비 태그는 보스보다 빠른 것으로 골라야 함</td></tr>
+<tr><td>같은 태그 중복</td><td>같은 태그를 3장 올려 로테이션을 짜는 것도 가능</td></tr>
+</table></div>
+
+<h3>다이맥스는 덧셈이 아니라 곱셈</h3>
+<p>처음에는 다이맥스가 스탯에 일정 값을 더하는 줄 알았는데, 실측해보니 <strong>배율</strong>이었습니다.
+레벨 5는 약 1.104배, 레벨 10은 약 1.154배입니다. 네 건의 관측이 모두 이 값으로 설명됩니다.</p>
+
+<div class="tw"><table>
+<tr><th>태그</th><th>레벨</th><th class="n">변화</th><th class="n">배율</th></tr>
+<tr><td>마기라스</td><td>5</td><td class="n">144 → 159</td><td class="n">1.104</td></tr>
+<tr><td>메타그로스</td><td>10</td><td class="n">144 → 166</td><td class="n">1.153</td></tr>
+<tr><td>짜랑고우거</td><td>10</td><td class="n">158 → 182</td><td class="n">1.152</td></tr>
+<tr><td>플라이곤</td><td>10</td><td class="n">114 → 132</td><td class="n">1.158</td></tr>
+</table></div>
+</section>
+
+<!-- ─────────────────────────────────────── -->
+<section id="damage">
+<h2>데미지 공식 검증 — 실측 6건</h2>
+
+<p>게임은 데미지를 숫자로 보여주지 않습니다. 공식 데미지 식도 공개되어 있지 않고요.
+그래서 <strong>플레이 화면을 찍어 HP 게이지를 픽셀 단위로 재는</strong> 방식으로 검증했습니다.</p>
+
+<h3>화면 읽는 법</h3>
+<p>HP 표시가 두 종류인데, <strong>색 규칙이 서로 반대</strong>라 헷갈리기 쉽습니다.</p>
+
+<div class="tw"><table>
+<tr><th>표시</th><th>남은 HP</th><th>잃은 부분</th></tr>
+<tr><td>막대(바)</td><td>노랑 — HP가 낮아지면 분홍으로 변함</td><td>검정</td></tr>
+<tr><td>고리(링)</td><td>검정</td><td>노랑</td></tr>
+</table></div>
+
+<p>측정은 두 가지 방법으로 하고 서로 대조했습니다. 막대는 <strong>구간 길이</strong>와
+<strong>픽셀 면적</strong>을, 고리는 노란 픽셀로 <strong>원을 최소자승 피팅</strong>한 뒤
+0.5도 간격으로 호 길이를 쟀습니다. 두 값이 5%p 넘게 벌어지면 그 표본은 버렸습니다.</p>
+
+<div class="note warn">
+<b>반사광 주의.</b> 아케이드 화면을 폰으로 찍으면 조명이 게이지 위를 지나갑니다.
+눈으로는 명백히 100%인 고리를 알고리즘이 91%로 세는 일이 있었습니다.
+한 표본은 두 방식의 차이가 14%p까지 벌어져 폐기했습니다.
+</div>
+
+<h3>표본</h3>
+
+<div class="tw"><table>
+<tr><th>공격 → 대상</th><th>기술</th><th class="n">위력</th><th class="n">방어</th><th class="n">배율</th><th>조건</th><th class="n">깎인 비율</th></tr>
+<tr><td>글레이시아 → 거대코뿌리</td><td>눈보라 (특수)</td><td class="n">110</td><td class="n">53</td><td class="n">×2</td><td>룰렛 미상</td><td class="n">66.0%</td></tr>
+<tr><td>거대코뿌리 → 레시라무</td><td>지진 (물리)</td><td class="n">100</td><td class="n">111</td><td class="n">×2</td><td>룰렛 20</td><td class="n">38.5%</td></tr>
+<tr><td>레시라무 → 거대코뿌리</td><td>크로스플레임 (특수)</td><td class="n">100</td><td class="n">53</td><td class="n">×0.5</td><td>룰렛 미상</td><td class="n">21.0%</td></tr>
+<tr><td>거대코뿌리 → 글레이시아</td><td>라이징랜드오버 (Z)</td><td class="n">180</td><td class="n">108</td><td class="n">×1</td><td>판정 60 · 급소</td><td class="n">91.2%</td></tr>
+<tr><td>뮤 → 짜랑고우거</td><td>사이코키네시스 (특수)</td><td class="n">90</td><td class="n">126</td><td class="n">×2</td><td>룰렛 20 · 급소</td><td class="n">47.0%</td></tr>
+<tr class="hi"><td>뮤츠 → 짜랑고우거</td><td>사이코브레이크 (특수)</td><td class="n">100</td><td class="n">126</td><td class="n">×2</td><td>룰렛 45</td><td class="n">43.7%</td></tr>
+</table></div>
+
+<p>맨 아래 뮤츠 건이 가장 값진 표본입니다. <strong>룰렛 값을 알고 급소도 아닌 유일한 표본</strong>이라
+조건이 깨끗합니다. 상대가 공격한 건은 룰렛 값이 화면에 안 나와서 기대값으로 둘 수밖에 없었습니다.</p>
+
+<h3>다섯 가지 모델 비교</h3>
+
+<p>실측 비율을 각 모델의 예측값으로 나누면 비례상수가 나옵니다. 모델이 맞다면 이 상수가
+표본마다 일정해야 합니다. 흩어짐이 작을수록 좋은 모델입니다.</p>
+
+<div class="tw"><table>
+<tr><th>모델</th><th class="n">최악 흩어짐</th></tr>
+<tr class="hi"><td><code>위력 × (공격+보너스) ÷ 방어 × 타입배율</code></td><td class="n">13%</td></tr>
+<tr><td><code>위력 × (공격+보너스) × 타입배율 ÷ (방어+100)</code></td><td class="n">21%</td></tr>
+<tr><td><code>(공격+보너스) ÷ 방어 × 타입배율</code> — 위력 무시</td><td class="n">30%</td></tr>
+<tr><td><code>(공격+보너스) × 타입배율 − 방어</code> — 뺄셈</td><td class="n">51%</td></tr>
+<tr><td><code>위력 × ((공격+보너스) × 타입배율 − 방어)</code></td><td class="n">54%</td></tr>
+</table></div>
+
+<p>나눗셈 형태가 가장 잘 버팁니다. 커뮤니티에서 자주 언급되는 <strong>뺄셈 모델은 51% 이상으로
+크게 밀립니다.</strong> 비급소 표본의 비례상수는 0.180 · 0.244 · 0.198 · 0.203으로 모여 있습니다.</p>
+
+<p><strong>타입 배율 처리도 맞는 것으로 보입니다.</strong> 표본의 배율이 ×0.5부터 ×2까지 흩어져
+있는데도 상수가 유지됩니다. 특히 불꽃이 바위에 반감되는 ×0.5짜리가 다른 건들과 같은 대역에
+들어온 게 근거입니다. 검증 범위는 위력 90~180 · 방어 53~126 · 보너스 +10~+60입니다.</p>
+
+<div class="note">
+<b>표본이 적을 때의 함정.</b> 표본이 3건이던 시점에는 「뺄셈×위력」 모델이 흩어짐 9%로
+1위였습니다. 그런데 4건이 되자 45%로 무너졌습니다. 데이터 3건에 모델 5개와 급소라는
+미지수까지 있으면 자유도가 데이터보다 많아서 무엇이든 맞출 수 있습니다.
+<strong>표본이 모델 수보다 적으면 순위를 믿으면 안 됩니다.</strong>
+</div>
+</section>
+
+<!-- ─────────────────────────────────────── -->
+<section id="crit">
+<h2>급소 배율 추정</h2>
+
+<p>「급소!」가 뜨면 피해가 확 커집니다. 배율이 얼마인지는 공개되어 있지 않은데,
+비급소 표본의 평균 비례상수 <strong>0.206</strong>에 급소 표본을 맞춰 역산해봤습니다.</p>
+
+<div class="tw"><table>
+<tr><th>급소 표본</th><th class="n">비례상수</th><th class="n">함의하는 배율</th></tr>
+<tr><td>거대코뿌리 → 글레이시아 (Z기술 · ×1)</td><td class="n">0.343</td><td class="n">1.66</td></tr>
+<tr><td>뮤 → 짜랑고우거 (특수기 · ×2)</td><td class="n">0.395</td><td class="n">1.92</td></tr>
+</table></div>
+
+<p>가장 깨끗한 근거는 <strong>짜랑고우거를 때린 두 건의 직접 비교</strong>입니다. 뮤와 뮤츠는
+같은 대상을, 같은 타입 배율(에스퍼 ×2)로, 같은 특수기로 때렸습니다. 공식의 다른 항이 전부
+상쇄되므로 두 비례상수의 비율이 곧 급소 배율에 가깝습니다.</p>
+
+<ul class="kv">
+  <li>뮤(급소) <b>0.395</b></li>
+  <li>÷</li>
+  <li>뮤츠(비급소) <b>0.203</b></li>
+  <li>=</li>
+  <li><b>1.95</b></li>
+</ul>
+
+<p>세 갈래 추정이 <strong>1.66 · 1.92 · 1.95</strong>로 모입니다. 본가 포켓몬 시리즈의 급소 배율이
+세대에 따라 1.5 또는 2.0인 것과도 대체로 들어맞습니다. <strong>2.0에 가까울 가능성이 높습니다.</strong></p>
+
+<p>다만 표본이 2건뿐이고 측정 오차 ±4%p가 그대로 실리므로 확정은 아닙니다. 급소는 플레이어가
+통제할 수 없는 요소라 추천 로직에는 반영하지 않았습니다. <strong>실측 데이터를 해석할 때만</strong>
+이 값으로 나눠서 봅니다. 실제로 이걸 빠뜨렸다가 멀쩡한 표본을 이상치로 오인한 적이 있습니다.</p>
+</section>
+
+<!-- ─────────────────────────────────────── -->
+<section id="best">
+<h2>핵심 태그 20장을 고른 방법</h2>
+
+<p>태그를 전부 모으기는 어려우니, <strong>어떤 20장을 우선 확보하면 좋은지</strong>를 계산했습니다.
+기준은 35개 보스 × 2모드 = 70가지 상황이고, 매번 화력 증가분이 가장 큰 태그를 하나씩
+고르는 탐욕 선택으로 뽑았습니다.</p>
+
+<div class="tw"><table>
+<tr><th>보스군</th><th class="n">20장으로 커버되는 화력</th></tr>
+<tr><td>1탄 ★6</td><td class="n">99.58%</td></tr>
+<tr><td>2탄 ★6</td><td class="n">99.25%</td></tr>
+<tr><td>2탄 ★5</td><td class="n">100.02%</td></tr>
+<tr class="hi"><td><strong>합계</strong></td><td class="n"><strong>99.74%</strong></td></tr>
+</table></div>
+
+<h3>보존율이 100%를 넘는 이유</h3>
+<p>오타가 아닙니다. 밸런스 모드는 <strong>피해 × 받는 피해 가중치</strong>를 최대화하기 때문에,
+순수 피해 합계는 보유 장수에 단조증가하지 않습니다. 태그가 많아지면 화력을 조금 깎고
+생존을 사는 선택이 나올 수 있어서 그렇습니다. 이 지표는 소수점 이하를 신뢰하면 안 됩니다.</p>
+
+<h3>25장에서 20장으로 줄인 이유</h3>
+<p>처음에는 50보스 기준 25장이었는데, 실제로는 1탄 ★5 보스를 잡지 않게 되면서 기준을
+35보스로 좁혔습니다. 그랬더니 다섯 장이 떨어져 나갔는데, 확인해보니 <strong>25번째 칸은
+애초에 의미가 없었습니다.</strong> 24장만 써도 보존율이 100.00%였습니다.</p>
+
+<h3>지연 탐욕은 쓸 수 없다</h3>
+<p>보유한 태그 중에서 최적 20장을 다시 뽑는 기능도 넣었는데, 계산량이 문제였습니다.
+탐색이 보유 장수의 세제곱이라 후보 56장이면 노트북에서도 14초가 걸립니다.</p>
+
+<p>흔히 쓰는 최적화 기법인 <strong>지연 탐욕(lazy greedy)</strong>을 적용해봤더니 30배 빨라졌지만
+결과가 7% 나빠졌습니다. 이 기법은 「한계이득이 갈수록 줄어든다」는 성질에 기대는데,
+탈진과 기믹 1회 제약 때문에 그 성질이 성립하지 않습니다. 결국 <strong>단독 기여도로 후보를
+26장까지 좁힌 뒤 정확 탐색</strong>하는 2단계 방식으로 바꿨습니다.</p>
+
+<div class="tw"><table>
+<tr><th>방식</th><th class="n">시간</th><th class="n">품질</th></tr>
+<tr><td>단독 기여도 순위만</td><td class="n">0.02초</td><td class="n">94.9%</td></tr>
+<tr class="hi"><td>후보 26장 추림 + 정확 탐색</td><td class="n">4.2초</td><td class="n">98.9%</td></tr>
+<tr><td>1패스 후진 제거</td><td class="n">15.3초</td><td class="n">99.8%</td></tr>
+<tr><td>정확 탐욕</td><td class="n">14.6초</td><td class="n">100%</td></tr>
+</table></div>
+</section>
+
+<!-- ─────────────────────────────────────── -->
+<section id="dex">
+<h2>도감 번호 체계 — 등급순이 아니었다</h2>
+
+<p>태그를 보관 케이스에 정리하면서 번호를 붙였는데, 처음에는 공식 태그리스트 포스터의
+배열 순서가 곧 번호인 줄 알았습니다. 포스터가 ★6 → ★5 → ★4 → ★3 → ★2 순으로 배열되어
+있어서 그렇게 넣었는데, <strong>실물 케이스 라벨을 확인해보니 틀렸습니다.</strong></p>
+
+<p>번호 1~25까지는 포스터와 같습니다. ★6이 1~10, ★5가 11~25입니다.
+그런데 <strong>26번부터는 진화 계열 순</strong>이라 등급이 뒤섞입니다.</p>
+
+<div class="tw"><table>
+<tr><th class="n">번호</th><th>이름</th><th class="n">등급</th></tr>
+<tr><td class="n">32</td><td>모부기</td><td class="n">★2</td></tr>
+<tr><td class="n">33</td><td>수풀부기</td><td class="n">★3</td></tr>
+<tr class="hi"><td class="n">34</td><td>토대부기</td><td class="n">★4</td></tr>
+<tr><td class="n">38</td><td>팽도리</td><td class="n">★2</td></tr>
+<tr><td class="n">39</td><td>팽태자</td><td class="n">★3</td></tr>
+<tr class="hi"><td class="n">40</td><td>엠페르트</td><td class="n">★4</td></tr>
+</table></div>
+
+<p>진화 단계가 올라가면 등급도 올라가니, 같은 계열을 묶어 놓으면 자연히 ★2 → ★3 → ★4가
+반복되는 모양이 됩니다. 1탄에서도 같은 규칙이 확인됐습니다 —
+53 야돈 → 54 야도란, 55 머드나기 → 56 만마드 같은 식입니다.</p>
+
+<p>탄별 구성은 <strong>70종 + 레귤러 3종 = 73종</strong>입니다. 레귤러 태그는 번호가 없고
+1탄과 2탄에 공통으로 들어갑니다.</p>
+
+<div class="note warn">
+<b>흐린 사진에서 이름을 넘겨짚지 말 것.</b> 처음 판독할 때 56번을 「머드나기」로,
+68번을 「야도란」으로 잘못 읽어 번호가 한 칸씩 밀린 적이 있습니다.
+실제로는 55 머드나기 · 56 만마드 · 68 옥우지였습니다.
+사진을 회전해 글자를 세워서 봐야 합니다.
+</div>
+</section>
+
+<!-- ─────────────────────────────────────── -->
+<section id="data">
+<h2>데이터 검산과 수정 이력</h2>
+
+<p>태그 데이터는 공식 사이트, 라인업 포스터, 카드 뒷면에서 직접 옮긴 값입니다. 추정치는
+쓰지 않았습니다. 옮겨 적다 실수하는 걸 잡으려고 검산 규칙을 하나 두고 있습니다.</p>
+
+<p><strong>에너지 ≈ 6스탯 합계 ÷ 5.</strong> 56장 전부를 확인해보니 편차가 최대 1.00이었습니다.
+새로 넣은 데이터가 이 범위를 벗어나면 옮겨 적기를 잘못한 것으로 봅니다.</p>
+
+<h3>고친 것들</h3>
+<ul>
+  <li><strong>자시안 — 강철 → 페어리·강철.</strong> 팬페이지 표기가 틀렸고 포스터로 확인했습니다.
+      드래곤과 독이 ×0이 되고 격투가 ×2에서 ×1로 바뀌어서 공략이 크게 달라졌습니다</li>
+  <li><strong>케르디오 공격 91 → 71.</strong> 카드 뒷면 실측</li>
+  <li><strong>제크로무의 바위 약점.</strong> 팬페이지 표기 오류이고 실제로는 ×1입니다</li>
+  <li><strong>다이너클 물리 → 특수.</strong> 다이맥스·Z기술은 원래 기술의 물리·특수를 그대로
+      따릅니다. 원래 기술이 특수인 기합구슬이라 특수가 맞습니다. 이 한 줄을 고치자
+      전체 추천 100가지 중 19가지가 바뀌었습니다</li>
+</ul>
+
+<h3>되돌린 것</h3>
+<p>Z기술의 찬스 보너스를 실측 한 판의 값인 60으로 바꿨다가 되돌렸습니다.
+Z기술은 <strong>플레이어의 기술 입력을 기계가 판정</strong>하는 방식이라 매판 값이 다릅니다.
+기본값 70은 여러 판의 평균이고, 한 판의 관측치를 고정값으로 오해한 것이 실수였습니다.
+이 한 줄로 100가지 중 화력값 97가지가 흔들렸습니다.</p>
+</section>
+
+<!-- ─────────────────────────────────────── -->
+<section id="log">
+<h2>개발 기록</h2>
+
+<p>단일 HTML 파일 하나로 되어 있습니다. 이미지도 전부 파일 안에 들어 있어서 외부 요청이
+거의 없습니다. 대신 파일 크기 상한이 있어서 태그 아트를 재압축해가며 관리하고 있습니다.</p>
+
+<div class="tw"><table>
+<tr><th>버전</th><th>내용</th></tr>
+<tr><td>v1.31</td><td>저장된 수집 기록에서 무효 키 정리 · 「수집 기준 추천-20」</td></tr>
+<tr><td>v1.30</td><td>기본 모드를 밸런스로 변경 (약점 ×4로 기절한 사례 반영)</td></tr>
+<tr><td>v1.29</td><td>보유한 태그 중에서 최적 20장 재계산</td></tr>
+<tr><td>v1.27</td><td>수집 목록을 번호 오름차순 단일 목록으로 재구성</td></tr>
+<tr><td>v1.23</td><td>도감 번호 1탄·2탄 70종 확정</td></tr>
+<tr><td>v1.21</td><td>수집 탭 신설 — ★2~★6 전체 도감</td></tr>
+<tr><td>v1.20</td><td>BEST-25 → BEST-20 (35보스 기준으로 변경)</td></tr>
+<tr><td>v1.19</td><td>다이맥스·Z기술의 물리·특수 분류 규칙 정정</td></tr>
+</table></div>
+
+<h3>성능에서 배운 것</h3>
+<p>이미지를 base64로 DOM에 직접 넣었더니 같은 데이터가 수백 번 복제되면서 DOM이 935KB까지
+부풀었습니다. 시작할 때 스타일시트에 한 번만 심고 요소는 클래스로 참조하도록 바꾸니
+컬렉션 화면 DOM이 270KB에서 13KB로, 렌더링이 337ms에서 177ms로 줄었습니다.</p>
+
+<h3>편집하다 두 번 코드를 날렸다</h3>
+<p>둘 다 원인이 같습니다. 함수를 통째로 교체하면서 범위를 잘못 잡아 근처의 다른 함수까지
+지웠습니다. <strong>문법 검사는 둘 다 통과했습니다.</strong> 정의가 없는 건 문법 오류가 아니라
+실행해야 터지기 때문입니다. 그래서 지금은 검증 스크립트를 세 개 두고 편집할 때마다
+순서대로 돌립니다 — 호출되지만 정의되지 않은 이름 찾기, 가짜 DOM에 올려 모든 버튼 눌러보기,
+기준 컬렉션으로 전 보스 추천을 돌려 규칙 위반 세기.</p>
+</section>
+
+<footer>
+  <p>이 사이트는 <strong>비공식 팬 제작</strong> 도구이며 개인이 취미로 만들었습니다.
+  포켓몬 및 태그스타 관련 상표, 캐릭터, 이미지의 권리는 각 권리자에게 있습니다.
+  게임 회사와 아무런 제휴 관계가 없습니다.</p>
+  <p>여기 적힌 수치와 공식은 <strong>직접 플레이하며 측정한 추정</strong>입니다.
+  게임의 실제 내부 계산과 다를 수 있습니다.</p>
+  <p>© 2026 shootdoy</p>
+</footer>
+
+</div>
 </body>
 </html>
