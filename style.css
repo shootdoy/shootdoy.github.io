@@ -1,0 +1,25 @@
+/* 정적 페이지 공통 스타일 — 앱과 같은 색조, 외부 자원 없음 (애드센스 심사용) */
+:root{--void:#120B2E;--panel:#1E1349;--rim:#4A2F9C;--star:#FFC831;--cyan:#38E1FF;--ink:#F2ECFF;--dim:#A392D6}
+*{box-sizing:border-box}
+body{margin:0;background:var(--void);color:var(--ink);line-height:1.75;
+  font-family:'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;font-size:16px}
+.wrap{max-width:720px;margin:0 auto;padding:22px 16px 60px}
+header{border-bottom:1px solid var(--rim);padding-bottom:14px;margin-bottom:26px}
+header a.home{color:var(--star);text-decoration:none;font-weight:700;font-size:15px}
+nav{margin-top:10px;display:flex;gap:14px;flex-wrap:wrap;font-size:14px}
+nav a{color:var(--dim);text-decoration:none}
+nav a:hover,nav a[aria-current]{color:var(--ink)}
+h1{font-size:24px;margin:0 0 6px}
+h2{font-size:18px;margin:30px 0 10px;color:var(--star)}
+h3{font-size:16px;margin:20px 0 6px}
+p,li{color:#E4DCFF}
+.lead{color:var(--dim);margin:0 0 24px}
+ul{padding-left:20px}
+li{margin:5px 0}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14.5px}
+th,td{border:1px solid var(--rim);padding:7px 9px;text-align:left}
+th{background:var(--panel);color:var(--star)}
+.box{background:var(--panel);border:1px solid var(--rim);border-radius:12px;padding:14px 16px;margin:18px 0}
+a{color:var(--cyan)}
+footer{margin-top:44px;border-top:1px solid var(--rim);padding-top:16px;font-size:13px;color:var(--dim)}
+code{background:rgba(0,0,0,.3);padding:1px 5px;border-radius:4px;font-size:13.5px}
