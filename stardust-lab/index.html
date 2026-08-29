@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.86.0">
+<meta name="version" content="3.87.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -1515,6 +1515,10 @@ footer .fver{margin:15px 0 0}
       <button id="srR" aria-pressed="false">레귤러</button>
     </div>
     <div class="boss-grid" id="bossGrid"></div>
+    
+
+
+    <p class="tab-note"><a id="bossGuide" href="#" target="_blank" rel="noopener"></a></p>
   </section>
 
 
@@ -2583,12 +2587,23 @@ const TAGSET=new Set(TAGART);
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
 const RANK_N=10;          
-const VERSION='3.86.0';
+const VERSION='3.87.0';
 const BUILT='2026-08-29';
 
 
 const AK={}, TK={}, GK={}, SK={};
 const artURL=k=>'art/'+encodeURIComponent(k)+'.webp?v='+MEDIAV;
+
+
+
+
+
+const bossFile=b=>{
+  const dup=BOSSES.filter(x=>x.n===b.n).length>1;
+  const base=dup ? b.n+'-'+(b.s==='공통'?'공통':b.s+'탄')+'-'+(b.r==='R'?'레귤러':b.r+'성') : b.n;
+  return base.replace(/\s+/g,'-');
+};
+const bossURL=b=>'https://shootdoy.github.io/boss/'+encodeURIComponent(bossFile(b))+'.html';
 
 
 
@@ -3841,6 +3856,14 @@ function setBoss(id){
 
   hAutoStart();
   save(); return true;
+}
+
+function renderBossGuide(){
+  const a=document.getElementById('bossGuide'); if(!a) return;
+  const b=BOSSES.find(x=>x.id===bossId);
+  if(!b){ a.hidden=true; return; }
+  a.hidden=false; a.href=bossURL(b);
+  a.textContent=b.n+' 공략 글 보기 ↗';
 }
 function renderBosses(){
   
@@ -6172,7 +6195,7 @@ function renderChance(){
 
 
 function renderAll(){
-  renderTagClass();renderFoeSets();renderBosses();renderFoes();renderReadout();renderRotation();renderSupport();renderRank();renderRoster();renderDex();renderMyQR();renderTidSet();renderBackend();renderChance();renderDmax();renderMega();renderGuide();renderDetail();renderDock();renderHCur();
+  renderTagClass();renderFoeSets();renderBosses();renderBossGuide();renderFoes();renderReadout();renderRotation();renderSupport();renderRank();renderRoster();renderDex();renderMyQR();renderTidSet();renderBackend();renderChance();renderDmax();renderMega();renderGuide();renderDetail();renderDock();renderHCur();
   
 
   const bh=document.getElementById('b23ct');
