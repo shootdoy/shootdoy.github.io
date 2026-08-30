@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.87.0">
+<meta name="version" content="3.93.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -112,6 +112,9 @@ body{padding-top:env(safe-area-inset-top,0px)}
 .dock::before{content:'';position:absolute;left:0;right:0;bottom:0;height:44px;pointer-events:none;
   background:linear-gradient(180deg,rgba(23,83,31,0) 0,#17531F 38%,#123F18 100%)}
 .dock[hidden]{display:none}
+
+
+.dock button[hidden]{display:none}
 .dock button{position:relative;justify-self:center;width:100%;max-width:55px;aspect-ratio:1;
   margin-bottom:-2px;display:flex;align-items:flex-end;justify-content:center;padding:0 0 4%;   
   border:0;background:transparent;cursor:pointer;
@@ -155,6 +158,39 @@ body{padding-top:env(safe-area-inset-top,0px)}
              linear-gradient(rgba(20,16,24,0) 0 42.7%,#141018 45.3% 54.7%,#fff 57.3% 100%),
              conic-gradient(#141018 0 36deg,#F3C41C 39deg 88deg,#F3C41C 272deg 321deg,
                             #141018 324deg 360deg)}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.dock button[data-tab="battle"]::before{
+  background:radial-gradient(circle at 33% 25%,rgba(255,255,255,.15),rgba(255,255,255,0) 32%),
+             linear-gradient(rgba(20,16,24,0) 0 42.7%,#141018 45.3% 54.7%,#fff 57.3% 100%),
+             conic-gradient(#2C6BD6 0 24.5deg,#fff 26deg 28.5deg,#D6402F 31.5deg 51.5deg,
+                            #fff 54.5deg 57deg,#2C6BD6 58.5deg 301.5deg,#fff 303deg 305.5deg,
+                            #D6402F 308.5deg 328.5deg,#fff 331.5deg 334deg,#2C6BD6 335.5deg 360deg)}
 
 
 
@@ -399,10 +435,19 @@ section:first-child{margin-top:0}
 
 
 
-[data-d="0"] .fl-s,[data-d="1"] .fl-s{display:none}
+
+
+[data-d="0"] .fl-s,[data-d="1"] .fl-s,
+[data-d="0"] .fl-wx,[data-d="1"] .fl-wx{display:none}
 
 
 .boss-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:9px}
+
+
+
+.bgh{grid-column:1/-1;font-weight:900;font-size:13px;letter-spacing:-.02em;
+  margin:2px 0 -2px;display:flex;gap:6px;align-items:baseline}
+.bgh b{color:var(--dim);font-family:var(--mono);font-size:11px;font-weight:400}
 
 
 
@@ -432,6 +477,10 @@ section:first-child{margin-top:0}
 
 .fl-art.ph i{border:1px dashed rgba(255,255,255,.3);
   background:repeating-linear-gradient(135deg,rgba(74,47,156,.45) 0 7px,rgba(30,19,73,.45) 7px 14px)}
+
+
+
+.fl-cell:not(.pf) .fl-art.ph i{width:100%;height:auto;aspect-ratio:192/108}
 .fl-cell.foe.empty{opacity:.8}
 .fl-cell.foe.empty:active .fl-art.ph i{border-color:rgba(255,255,255,.6);
   background:rgba(255,255,255,.07)}
@@ -490,6 +539,54 @@ section:first-child{margin-top:0}
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.fl-grid{column-gap:0;row-gap:9px}
+.fl-cell:not(.foe){margin:0 3px}
+
+.fl-cell.foe{border-radius:0;border-left:0;border-right:0;border-style:solid;
+  background:linear-gradient(180deg,rgba(23,83,31,.30),rgba(8,20,12,.55))}
+.fl-cell.foe:first-child{border-radius:12px 0 0 12px}
+.fl-cell.foe:nth-child(3){border-radius:0 12px 12px 0}
+.fl-cell.foe:not(:first-child){border-left:1px solid rgba(255,255,255,.16)}
+
+
+
+.fl-cell.foe.set .fl-n{padding:2px 8px;border-radius:999px;background:rgba(6,10,20,.72);
+  box-shadow:0 1px 0 rgba(0,0,0,.35);max-width:100%}
+
+.fl-cell.foe.mid{border-top-color:rgba(255,196,0,.55);
+  box-shadow:inset 0 0 0 1px rgba(255,196,0,.28)}
+
+
+
+.fl-cell:not(.foe){border-color:rgba(255,196,0,.40);border-radius:14px}
+.fl-cell:not(.foe).mid{border-color:rgba(255,196,0,.75);
+  box-shadow:0 0 10px rgba(255,196,0,.18)}
+
+
+
+.fl-wk{margin-top:1px;gap:2px}
+.fl-wk b{font-weight:800;font-size:8.5px;line-height:1;letter-spacing:.04em;color:var(--ink-dim)}
+
+.fl-wk .wk{display:inline-flex;align-items:center;gap:1px;border-radius:6px}
+.fl-wk .x4{box-shadow:0 0 0 1.5px var(--bad)}
+.fl-wx{font-family:var(--mono);font-size:9px;font-weight:700;line-height:1;color:var(--ink-dim)}
+.fl-wk .x4 .fl-wx{color:var(--bad)}
+
+
 .mplans{display:flex;flex-direction:column;gap:8px;margin-top:12px}
 .mplans-l{display:block;margin-bottom:7px;font-family:var(--mono);font-size:10px;
   letter-spacing:.1em;color:var(--ink-dim)}
@@ -529,10 +626,54 @@ section:first-child{margin-top:0}
 
 .fl-link{display:flex;flex-direction:column;align-items:center;gap:2px;padding:2px 0;
   font-weight:800;font-size:10px;line-height:1;color:var(--ink-dim)}
-.fl-link::before,.fl-link::after{content:'';width:2px;flex:1;min-height:8px;border-radius:1px;
+.fl-link::before,.fl-link::after{content:'';width:2px;flex:1;min-height:15px;border-radius:1px;
   background:rgba(255,255,255,.16)}
+
+
+
+
+.fl-link::before{flex:none;min-height:0}
+
+
+
+
+
+.fl-link::after{min-height:42px}
 .fl-link.mid{color:var(--star)}
 .fl-link.mid::before,.fl-link.mid::after{background:rgba(255,196,0,.45)}
+
+
+
+
+
+
+
+
+
+.fl-link.toB{color:var(--star);background-repeat:no-repeat;background-size:50% 2px;
+  background-image:linear-gradient(rgba(255,196,0,.45),rgba(255,196,0,.45))}
+.fl-link.toB::before,.fl-link.toB::after{background:rgba(255,196,0,.45)}
+
+
+
+
+
+.fl-link.toB.jl::before,.fl-link.toB.jr::before{background:transparent;flex:1;min-height:0}
+.fl-link.toB.jl::after,.fl-link.toB.jr::after{flex:none;min-height:0;height:21px}
+
+
+
+
+
+
+
+.fl-link.toB{background-position-y:calc(100% - 22px)}
+.fl-link.toB.jl{background-position-x:right}   
+.fl-link.toB.jr{background-position-x:left}    
+
+.fl-link.mid.ml.mr{background-size:100% 2px;background-position-x:center}
+.fl-link.mid.ml{background-position-x:left}
+.fl-link.mid.mr{background-position-x:right}
 .fl-h{display:flex;align-items:baseline;gap:8px;margin:0 0 10px;font-weight:800;font-size:13px;line-height:1;color:var(--ink)}
 .fl-h span{font-weight:600;font-size:10.5px;line-height:1;color:var(--ink-dim)}
 
@@ -987,7 +1128,9 @@ summary::-webkit-details-marker{display:none}
 summary .band{width:5px;height:17px;border-radius:3px;flex:none}
 summary .ct{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--ink-dim)}
 #rankBox{background:linear-gradient(180deg,rgba(42,26,99,.9),rgba(30,19,73,.9));border-radius:18px;margin:0}
-#rankBox summary{font-family:var(--display);font-weight:400;font-size:17px;color:#fff}
+
+
+#rankBox summary,#guideBox summary{font-family:var(--display);font-weight:400;font-size:17px;color:#fff}
 
 .dlv{margin:14px 0 2px;padding:11px 12px;border-radius:12px;
   background:rgba(255,61,139,.07);border:1px solid rgba(255,61,139,.28)}
@@ -1406,6 +1549,10 @@ summary:focus-visible{outline:2.5px solid var(--cyan);outline-offset:-3px}
   font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-dim);
   background:rgba(30,19,73,.6);border:1px solid var(--rim)}
 .ver:focus-visible{outline:2.5px solid var(--cyan);outline-offset:2px}
+
+
+a.ver{text-decoration:none;color:var(--ink-dim);cursor:pointer}
+a.ver:hover,a.ver:focus-visible{color:var(--ink);border-color:var(--cyan)}
 .adbox{margin:18px 0 4px}
 .adbox ins{display:block;background:transparent;max-height:300px;overflow:hidden}
 
@@ -1509,7 +1656,8 @@ footer .fver{margin:15px 0 0}
       <button id="sw1" class="s1" aria-pressed="false">1탄</button>
       <button id="sw2" class="s2" aria-pressed="true">2탄</button>
     </div>
-    <div class="setsw" role="group" aria-label="등급 전환">
+    
+    <div class="setsw" role="group" aria-label="등급 전환" id="bossRankSw">
       <button id="sr6" aria-pressed="true">★6</button>
       <button id="sr5" aria-pressed="false">★5</button>
       <button id="srR" aria-pressed="false">레귤러</button>
@@ -1517,8 +1665,6 @@ footer .fver{margin:15px 0 0}
     <div class="boss-grid" id="bossGrid"></div>
     
 
-
-    <p class="tab-note"><a id="bossGuide" href="#" target="_blank" rel="noopener"></a></p>
   </section>
 
 
@@ -1544,7 +1690,9 @@ footer .fver{margin:15px 0 0}
       <button data-lv="2">상세</button>
     </div>
     <div class="card" id="foeBox" hidden>
-      <div class="fl-h">상대 파티<span>가운데가 보스 · 위 상대 ▼ 아래 낼 태그</span></div>
+      
+
+      <div class="fl-h">상대 파티<span>가운데가 보스 · 아래 낼 태그 ▲ 위 상대</span></div>
       <div class="fl-grid" id="foeLanes"></div>
       
 
@@ -1625,11 +1773,27 @@ footer .fver{margin:15px 0 0}
       <div class="rank" id="rank" style="padding:0 13px 15px"></div>
     </details>
   </section>
+
+
+  
+
+
+
+
+
+
+  <section id="sGuide">
+    <details id="guideBox" open>
+      <summary><span class="band" style="background:var(--cyan)"></span>보스 공략</summary>
+      <p class="tab-note" style="padding:0 15px 14px">
+        <a id="bossGuide" href="#" target="_blank" rel="noopener"></a></p>
+    </details>
+  </section>
 </div>
 
 
 <div id="viewChance" hidden>
-  <section>
+  <section id="sFoeSets">
     
 
 
@@ -1647,7 +1811,7 @@ footer .fver{margin:15px 0 0}
       <p class="tab-note" id="foeSetsNote"></p>
     </div>
   </section>
-  <section>
+  <section id="sChance">
     <div class="sec-head"><h2>룰렛 보정</h2>
       <span class="hint">기믹별 룰렛값 · 공격력에 가산 <b class="ct" id="vXct"></b></span></div>
     <div class="card">
@@ -1717,7 +1881,7 @@ footer .fver{margin:15px 0 0}
         못 본 칸은 비워 두면 «?» 로 남습니다. 기록을 지우려면 <b>기록</b> 탭 맨 아래에서 지웁니다.</p>
     </div>
   </section>
-  <section>
+  <section id="sTidSet">
     <div class="sec-head"><h2>트레이너 ID</h2>
       <span class="hint">ID 5칸 · 플레이 화면에서 골라 씁니다</span></div>
     <div class="card">
@@ -1810,7 +1974,7 @@ footer .fver{margin:15px 0 0}
 
 
 
-  <section>
+  <section id="sHRange">
     
 
 
@@ -1832,7 +1996,7 @@ footer .fver{margin:15px 0 0}
     </div>
   </section>
 
-  <section>
+  <section id="sHStat">
     
 
 
@@ -1843,7 +2007,7 @@ footer .fver{margin:15px 0 0}
     </div>
   </section>
 
-  <section>
+  <section id="sHList">
     <div class="sec-head"><h2>기록 목록</h2><span class="hint" id="hCt"></span></div>
     <div class="card">
       <div class="hact">
@@ -1871,7 +2035,7 @@ footer .fver{margin:15px 0 0}
 
 
 <div id="viewCollection" hidden>
-  <section>
+  <section id="sCol">
     <div class="sec-head"><h2>컬렉션</h2><span class="hint" id="ownHint"></span>
     </div>
     <div class="setsw" role="group" aria-label="컬렉션 화면 선택">
@@ -1897,7 +2061,7 @@ footer .fver{margin:15px 0 0}
         <button class="mini" id="dexBestClr" hidden>추천 지우기</button>
       </div>
       <p class="hint" id="dexBestMsg" style="padding:0 0 10px"></p>
-      <div class="bulk" style="padding:0 0 12px">
+      <div class="bulk" id="sColBulkB" style="padding:0 0 12px">
         <button class="mini" id="preset16">1탄 ★6</button>
         <button class="mini" id="preset26">2탄 ★6</button>
         <button class="mini" id="resetOwn">전부 켜기</button>
@@ -1910,7 +2074,7 @@ footer .fver{margin:15px 0 0}
       
 
       <div id="dexProg" class="dexprog" role="list" aria-label="성급별 수집 진행률"></div>
-      <div class="bulk" style="padding:0 0 12px">
+      <div class="bulk" id="sColBulkD" style="padding:0 0 12px">
         <button class="mini" id="dexFromOwn">전투 보유 가져오기</button>
         <button class="mini" id="dexAll">전부 켜기</button>
         <button class="mini" id="dexClear">전부 끄기</button>
@@ -1944,7 +2108,10 @@ footer .fver{margin:15px 0 0}
   </p>
   
 
-  <p class="fver"><span class="ver" id="ver"></span></p>
+  
+
+
+  <p class="fver"><a class="ver" id="ver" href="release.html"></a></p>
 </footer>
 </div>
 
@@ -1954,7 +2121,7 @@ footer .fver{margin:15px 0 0}
 </div>
 
 
-<nav class="dock" id="dock" aria-label="섹션 바로가기">
+<nav class="dock" id="dock" data-view="battle" aria-label="섹션 바로가기">
   <button data-go="sTID"><span>ID</span></button>
   <button data-go="sBoss"><span>보스</span></button>
   <button data-go="sSup"><span>서포트</span></button>
@@ -1965,6 +2132,102 @@ footer .fver{margin:15px 0 0}
 
 
   <button data-go="sPlayRecBot"><span>겟타임</span></button>
+</nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="dock" id="dockC" data-view="collection:battle" hidden aria-label="컬렉션 바로가기">
+  
+
+
+
+
+
+
+  <button data-go="sCol"><span>컬렉션</span></button>
+  <button data-go="grp6"><span>슈퍼스타</span></button>
+  <button data-go="grp5"><span>스타</span></button>
+  <button data-go="grpR"><span>레귤러</span></button>
+  
+
+
+
+
+
+  <button data-tab="battle" data-anchor="sTID"
+          aria-label="배틀로 겟! 탭 · 트레이너 ID"><span>배틀로겟</span></button>
+</nav>
+
+
+
+
+<nav class="dock" id="dockCD" data-view="collection:dex" hidden aria-label="수집태그 바로가기">
+  <button data-go="sCol"><span>컬렉션</span></button>
+  <button data-go="dexProg"><span>진행률</span></button>
+  
+
+
+
+
+
+  <button data-tab="battle" data-anchor="sTID"
+          aria-label="배틀로 겟! 탭 · 트레이너 ID"><span>배틀로겟</span></button>
+</nav>
+
+
+
+
+
+
+
+
+
+
+<nav class="dock" id="dockH" data-view="hist" hidden aria-label="기록 바로가기">
+  <button data-range="3h" data-anchor="sHStat"
+          aria-label="최근 3시간만 보기"><span>최근3시간</span></button>
+  <button data-range="today" data-anchor="sHStat"
+          aria-label="오늘의 태그스타만 보기"><span>오늘의태스</span></button>
+  <button data-go="sHList"><span>기록 목록</span></button>
+  
+
+
+
+
+
+  <button data-tab="battle" data-anchor="sTID"
+          aria-label="배틀로 겟! 탭 · 트레이너 ID"><span>배틀로겟</span></button>
+</nav>
+
+
+
+
+
+<nav class="dock" id="dockX" data-view="chance" hidden aria-label="설정 바로가기">
+  <button data-go="sFoeSets"><span>탄</span></button>
+  <button data-go="sChance"><span>룰렛</span></button>
+  <button data-go="sTidSet"><span>ID</span></button>
+  <button data-go="sPriv"><span>안내</span></button>
+  
+
+
+
+
+
+  <button data-tab="battle" data-anchor="sTID"
+          aria-label="배틀로 겟! 탭 · 트레이너 ID"><span>배틀로겟</span></button>
 </nav>
 
 
@@ -2587,8 +2850,8 @@ const TAGSET=new Set(TAGART);
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
 const RANK_N=10;          
-const VERSION='3.87.0';
-const BUILT='2026-08-29';
+const VERSION='3.93.0';
+const BUILT='2026-08-30';
 
 
 const AK={}, TK={}, GK={}, SK={};
@@ -3046,7 +3309,10 @@ const survives3=(c,boss)=>survivesN(c,boss,3);
 
 const MODES={
   '지역'  :{n:'지역배틀',        hp:1,    note:'상대 3장 중 <b>보스 1장</b>만 잡으면 승리. 아래 <b>상대 파티</b>에 서브 2장을 넣으면 생존 판정에 반영됩니다.'},
-  '다맥'  :{n:'다이맥스 포켓몬', hp:1,    note:'보스 1마리만 나오는 모드. <b>실측 표본이 없어</b> 카드 스탯 그대로 계산합니다. 지역배틀이어도, 보스만 노린 계산을 보려면 이 모드로 두세요.'},
+  
+
+
+  '다맥'  :{n:'다이맥스 포켓몬', hp:1,    note:'보스 1마리만 나오는 모드. <b>실측 표본이 없어</b> 카드 스탯 그대로 계산합니다.'},
   '스페셜':{n:'스페셜태그배틀',  hp:1.15, note:'2인 협동. 보스 실제 HP는 카드의 <b>약 ×2</b>인데, 파트너가 절반쯤 맡는다고 보고 <b>내 몫 ×1.15</b>로 계산합니다. 파트너가 약하면 이보다 오래 걸립니다.'}
 };
 let mode='지역';
@@ -3252,6 +3518,10 @@ function verdictTag(p,isB,f){
   if(isB){
     if(p.sv===1) return `<b class="fl-b warn" title="3대를 버티는 태그가 없어 «2대까지 버팀» 으로 낮춰 골랐습니다">2대만 버팀</b>`;
     if(p.sv>=2)  return `<b class="fl-b bad" title="이 보스의 공격을 2대도 못 버팁니다 — 첫 턴에 쓰러질 수 있어 화력만 참고하세요">못 버팀</b>`;
+    
+
+
+    if(isB==='aim') return `<b class="fl-b boss" title="이 자리의 상대를 아직 모릅니다 — 보스에 화력을 보탭니다">보스 화력</b>`;
     return `<b class="fl-b boss" title="보스 공격 3대를 버티는 태그 중 화력 최대">쓸 수 있는 최대</b>`;
   }
   const doubt = outFit(f,p.move);
@@ -3316,14 +3586,36 @@ function topInset(){
     return sat+bz+16;
   }catch(e){ return 24 }
 }
+
+
+
+const goTarget=id=>{ const n=document.getElementById(id);
+  return n && !n.closest('[hidden]') ? n : null };
 function goSection(id){
-  const t=document.getElementById(id); if(!t)return;
+  const t=goTarget(id);
+  if(!t)return;
   const y=t.getBoundingClientRect().top+window.scrollY-topInset();
   const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   window.scrollTo({top:Math.max(0,y),behavior:reduce?'auto':'smooth'});
 }
+
+
+
+
+
+
+const dockKey=()=> view==='collection' ? 'collection:'+colTab : view;
 function renderDock(){
-  const d=document.getElementById('dock'); if(d) d.hidden = view!=='battle';
+  const k=dockKey();
+  document.querySelectorAll('.dock').forEach(d=>{
+    d.hidden = d.dataset.view!==k;
+    if(d.hidden) return;
+    
+
+
+
+    d.querySelectorAll('button[data-go]').forEach(b=>{ b.hidden = !goTarget(b.dataset.go) });
+  });
 }
 
 
@@ -3459,19 +3751,35 @@ function assignPlans(cols, foeOf, boss){
   const bi=cols.indexOf('B');
   
 
-  const build = gimOK=> cols.map(at=>{ const f=foeOf(at); if(!f) return null;
+
+
+
+  const target = at => foeOf(at) || boss;   
+  const aimB   = at => at==='B' || !foeOf(at);
+  
+
+  const build = gimOK=> cols.map(at=>{ const f=target(at);
+    
+
     const waiters = cols.map(foeOf).filter(x=>x && x!==f);
-    return foeCands(f,boss,at==='B',waiters,gimOK).slice(0,16); });
+    return foeCands(f,boss,aimB(at),waiters,gimOK).slice(0,16); });
   const key=sel=>{
-    let tier=0, inc=0, dmg=0, sp=0, bsv=0;
+    let tier=0, inc=0, dmg=0, sp=0, bsv=0, bdmg=0;
     cols.forEach((at,i)=>{ const r=sel[i]; if(!r) return;
       sp+=r.splash||0;                       
-      if(at==='B'){ dmg=r.dmg; bsv=r.sv; } else { tier+=r.tier; inc+=r.inc; } });
+      
+
+
+      if(aimB(at)){ dmg+=r.dmg; bsv+=r.sv; if(at==='B') bdmg=r.dmg; }
+      else { tier+=r.tier; inc+=r.inc; } });
     
 
 
 
-    return [bsv,tier,-dmg,-sp,inc];
+
+
+
+    return [bsv,tier,-dmg,-bdmg,-sp,inc];
   };
   const better=(a,b)=>{ for(let i=0;i<a.length;i++){ if(a[i]!==b[i]) return a[i]<b[i]; } return false; };
   const n=cols.length;
@@ -3598,13 +3906,23 @@ function renderFoes(){
   
   const cols=[0,'B',1];
   const foeOf=at=> at==='B' ? boss : (foes[at]&&SUBBY.get(foes[at]));
+  
+
+  const target = at => foeOf(at) || boss;
+  const aimB   = at => at==='B' || !foeOf(at);
 
   
 
 
 
   const isPort=c=> !!(c && tagArt(c) && '432'.includes(c.r));
-  const rowP = [0,1].some(at=> foes[at]==null || isPort(SUBBY.get(foes[at])));
+  
+
+
+
+
+
+  const rowP = [0,1].some(at=> foes[at]!=null && isPort(SUBBY.get(foes[at])));
 
   
 
@@ -3619,18 +3937,38 @@ function renderFoes(){
     const pt = has && '432'.includes(c.r) ? ' p' : '';
     return `<span class="fl-art${pt}"><i style="background:${bg}"></i></span>`;
   };
+  
+
+
+
+
+
+
+
+
+
+
+  const weakOf=c=>Object.keys(TYPEICON).filter(t=>eff(t,c.t)>=2)
+                   .sort((a,b)=>eff(b,c.t)-eff(a,c.t));
+  const weakRow=c=>{ const w=weakOf(c); if(!w.length) return '';
+    return `<span class="fl-wk fl-tp"><b>약점</b>`
+      + w.map(t=>{ const m=eff(t,c.t);
+          return `<span class="wk${m>=4?' x4':''}" title="${t} ×${m}">${tp(t)}`
+               + `<b class="fl-wx">×${m}</b></span>`; }).join('')
+      + `</span>`; };
+
   const foeCell=(at)=>{
     const isB=at==='B', f=foeOf(at);
     if(isB) return `<div class="fl-cell foe mid set${rowP?' pf':''} ${artCls(boss)}">`
       +`<span class="fl-role">보스</span>${art(boss)}`
       +`<span class="fl-n wt fl-tp">${boss.t.map(tp).join('')}<span class="nm">${boss.n}</span></span>`
-      +`<span class="fl-meta">★${boss.r}</span>`
+      +`<span class="fl-meta">★${boss.r}</span>${weakRow(boss)}`
       +`<span class="fl-s one">HP ${boss.hp}·속도 ${boss.sp}</span></div>`;
     return `<div class="fl-cell foe${f?' set':' empty'}${rowP?' pf':''} ${f?artCls(f):''}" data-at="${at}" role="button" tabindex="0"`
       +`${f?'':' aria-label="서브 '+(at===0?1:2)+' 선택"'}>`
       +`<span class="fl-role">서브 ${at===0?1:2}</span>${art(f,true)}`
       +(f?`<span class="fl-x" data-clr="${at}">✕</span><span class="fl-n wt fl-tp">${f.t.map(tp).join('')}<span class="nm">${f.n}</span></span>`
-          +`<span class="fl-meta">${rlab(f.r)}</span>`
+          +`<span class="fl-meta">${rlab(f.r)}</span>${weakRow(f)}`
           +`<span class="fl-s one">HP ${f.hp}·속도 ${f.sp}</span>`
          :`<span class="fl-r">서브 선택</span>`)+`</div>`;
   };
@@ -3642,15 +3980,14 @@ function renderFoes(){
 
   
   const meCell=(at)=>{
-    const isB=at==='B', f=foeOf(at);
+    const isB=at==='B', f=target(at), kind=isB?true:(aimB(at)?'aim':false);
     
 
     const head='';
-    if(!f) return `<div class="fl-cell empty${isB?' mid':''}">${head}${art(null)}<span class="fl-r">—</span></div>`;
     const p=plan(at);
     if(!p) return `<div class="fl-cell empty${isB?' mid':''}">${head}${art(null)}<span class="fl-r">보유 태그 없음</span></div>`;
     const sp = p.spd>0?`선공 +${p.spd}`: p.spd===0?'동속':`후공 ${p.spd}`;
-    const tag = verdictTag(p,isB,f);
+    const tag = verdictTag(p,kind,f);
     
 
 
@@ -3670,14 +4007,13 @@ function renderFoes(){
 
 
   const planSlot=(at)=>{
-    const isB=at==='B', f=foeOf(at);
+    const isB=at==='B', f=target(at), kind=isB?true:(aimB(at)?'aim':false);
     
     const lab = isB?'보스':'서브 '+(at===0?1:2);
     const shell=(inner)=>`<div class="slot mslot${isB?' mid':''}">
       <div class="head"><span class="thumb rthumb"><span class="turn${isB?'':' sp'}">${lab}</span>
         <span class="qm">?</span></span>
       <span class="who"><span class="n">${inner}</span></span></div></div>`;
-    if(!f) return shell('상대를 입력하면 내야할 태그를 추천합니다');
     const p=plan(at);
     if(!p) return shell('보유 태그 없음');
     const c=p.c, art=tagArt(c);
@@ -3685,7 +4021,7 @@ function renderFoes(){
     const tb = art ? `linear-gradient(to top,rgba(8,5,22,.55),rgba(8,5,22,.05)),var(--art) center/cover`
                    : `linear-gradient(135deg,${c1},${c2})`;
     const sp = p.spd>0?'선공':p.spd===0?'동속':'후공';
-    const tag = verdictTag(p,isB,f);
+    const tag = verdictTag(p,kind,f);
     
     const gimx = p.move&&p.move.tagx ? gm(p.move.tagx)
       : (c.g?`<i class="gi mgi ${GK[c.g]}" title="${c.g} 보유 · 이 매치에서는 안 씀"></i>`:'');
@@ -3726,7 +4062,22 @@ function renderFoes(){
   wrap.className='fl-grid';
   
   wrap.innerHTML = cols.map(foeCell).join('')
-    + cols.map(at=>`<div class="fl-link${at==='B'?' mid':''}">▼</div>`).join('')
+    
+
+
+
+
+
+
+
+    + cols.map(at=>{
+        if(at==='B'){ const l=aimB(0), r=aimB(1);
+          return `<div class="fl-link mid${l||r?' toB':''}${l?' ml':''}${r?' mr':''}">▲</div>`; }
+        
+
+
+        return `<div class="fl-link${aimB(at)?' toB '+(at===0?'jl':'jr'):''}">${aimB(at)?'':'▲'}</div>`;
+      }).join('')
     + cols.map(meCell).join('');
   
   document.getElementById('foePlans').innerHTML =
@@ -3835,7 +4186,7 @@ function renderFoes(){
 
     ? `서브 ${k}장 반영. 아래 칸은 <b>바로 위 상대가 활성일 때 낼 태그</b>입니다 — 서브는 «선공 + 원턴킬»이면 `
       +`그 턴 피해가 0 이고 그 장은 배틀에서 빠집니다.`
-    : '위 서브 칸을 눌러 상대를 넣으면 아래에 대응 태그가 나옵니다. 비워두면 <b>보스 한 장</b>만 때린다고 봅니다.')
+    : '서브를 모르는 칸은 <b>보스에 화력을 모읍니다</b> — 위 서브 칸을 눌러 상대를 넣으면 그 칸만 대응 태그로 바뀝니다.')
     + svNote;
 }
 
@@ -3860,7 +4211,11 @@ function setBoss(id){
 
 function renderBossGuide(){
   const a=document.getElementById('bossGuide'); if(!a) return;
+  const sec=document.getElementById('sGuide');
   const b=BOSSES.find(x=>x.id===bossId);
+  
+
+  if(sec) sec.hidden = !b;
   if(!b){ a.hidden=true; return; }
   a.hidden=false; a.href=bossURL(b);
   a.textContent=b.n+' 공략 글 보기 ↗';
@@ -3873,17 +4228,57 @@ function renderBosses(){
   const onSets=['1','2'].filter(k=>foeSets[k]);
   if(!foeSets[setView]) setView=onSets[0];
   
+  
+
+
+
+
+
+
+  const spc = mode==='스페셜';
+  if(spc && bossRank!=='6') bossRank='6';
   const isR = bossRank==='R';
-  const sw=document.getElementById('bossSetSw'); if(sw) sw.hidden = isR || onSets.length<2;
+  
+
+
+
+
+
+
+  
+
+
+
+  const dmax = mode==='다맥';
+  const sw=document.getElementById('bossSetSw'); if(sw) sw.hidden = dmax || isR || onSets.length<2;
+  const rw=document.getElementById('bossRankSw'); if(rw) rw.hidden = dmax || spc;
   const g=document.getElementById('bossGrid');g.innerHTML='';
-  const list=BOSSES.filter(b=>isR ? b.r==='R' : (b.s===setView&&b.r===bossRank));
-  list.forEach(b=>{
+  const list = dmax
+    ? BOSSES.filter(b=> b.g==='다이맥스' && b.r!=='R' && foeSets[b.s])
+    : BOSSES.filter(b=>isR ? b.r==='R' : (b.s===setView&&b.r===bossRank));
+  
+
+
+  if((dmax||spc) && list.length && !list.some(b=>b.id===bossId)){
+    const f=list[0]; bossRank=f.r; if(f.s!=='공통') setView=f.s; setBoss(f.id);
+  }
+  
+
+
+
+
+  const groups = dmax ? ['6','5'].map(r=>[r, list.filter(b=>b.r===r)]).filter(x=>x[1].length)
+                      : [[null, list]];
+  groups.forEach(([r, rows])=>{
+    if(r){ const h=el(`<div class="bgh" style="color:${RARITY[r].color}">${RARITY[r].label}
+      <b>${rows.length}</b></div>`); g.appendChild(h); }
+  rows.forEach(b=>{
     const n=el(bossTag(b,b.id===bossId));
     
 
     n.addEventListener('click',()=>{ if(!setBoss(b.id)) hAutoAgain(); renderAll(); goSection('sSup') });
     g.appendChild(n);
-  });
+  }); });
   document.getElementById('sw1').setAttribute('aria-pressed',setView==='1');
   document.getElementById('sw2').setAttribute('aria-pressed',setView==='2');
   document.querySelectorAll('.modesw button').forEach(b=>
@@ -3892,9 +4287,11 @@ function renderBosses(){
   if(mn) mn.innerHTML=MODES[mode].note;
   ['6','5','R'].forEach(r=>document.getElementById('sr'+r).setAttribute('aria-pressed',bossRank===r));
   const lab = isR ? '레귤러' : `${setView}탄 ★${bossRank}`;
-  document.getElementById('bossHint').textContent = list.length
-    ? `${lab} · ${list[0].code} ~ ${list[list.length-1].code}`
-    : `${lab} 데이터 없음`;
+  document.getElementById('bossHint').textContent = dmax
+    ? `다이맥스 기술이 있는 ★6·★5 ${list.length}마리`
+    : spc ? `${setView}탄 ★6 ${list.length}마리 · 이 모드는 ★6 만 나옵니다`
+    : list.length ? `${lab} · ${list[0].code} ~ ${list[list.length-1].code}`
+                  : `${lab} 데이터 없음`;
 }
 
 
@@ -4576,7 +4973,11 @@ function renderRoster(){
   classRanks().forEach(k=>{
     const list=inSet.filter(p=>p.r===k); if(!list.length)return;
     const on=list.filter(p=>owned.has(p.id)).length;
-    const d=el(`<details open>
+    
+
+
+
+    const d=el(`<details open id="grp${k}">
       <summary><span class="band" style="background:${RARITY[k].color}"></span>${RARITY[k].label}
         ${list[0].s==='공통'?'<span class="badge b-set">탄 공통</span>':''}
         <span class="ct">${on} / ${list.length}</span></summary>
@@ -4863,8 +5264,18 @@ document.addEventListener('visibilitychange',()=>{
 
 try{ if(typeof window!=='undefined'&&window.addEventListener) window.addEventListener('pagehide',saveFlush); }catch(e){}
 
+
+
+
+
 document.querySelectorAll('.dock button').forEach(b=>
-  b.addEventListener('click',()=>goSection(b.dataset.go)));
+  b.addEventListener('click',()=>{
+    
+
+    if(b.dataset.range){ setHRange(b.dataset.range); goSection(b.dataset.anchor); return }
+    if(!b.dataset.tab){ goSection(b.dataset.go); return }
+    setView2(b.dataset.tab); goSection(b.dataset.anchor);
+  }));
 document.querySelectorAll('[data-dlv]').forEach(b=>
   b.addEventListener('click',()=>{dmaxLv=Number(b.dataset.dlv); save(); renderAll()}));
 document.querySelectorAll('[data-mg]').forEach(b=>
@@ -5209,10 +5620,19 @@ function hInRange(e){
 function hRows(){ const out=[]; hist.forEach((e,i)=>{ if(hInRange(e)) out.push([i,e]) }); return out; }
 const hRangeSw=document.getElementById('hRangeSw');
 function renderHRange(){ [...hRangeSw.children].forEach(b=>
-  b.setAttribute('aria-pressed', String(b.dataset.t===hRange))); }
+  b.setAttribute('aria-pressed', String(b.dataset.t===hRange)));
+  
+
+
+  document.querySelectorAll('.dock button[data-range]').forEach(b=>
+    b.setAttribute('aria-current', String(b.dataset.range===hRange)));
+}
+
+
+function setHRange(t){ hRange=t; renderHRange(); renderHList(); }  
 hRangeSw.addEventListener('click',ev=>{
   const b=ev.target.closest('button'); if(!b) return;
-  hRange=b.dataset.t; renderHRange(); renderHList();   
+  setHRange(b.dataset.t);
 });
 
 
