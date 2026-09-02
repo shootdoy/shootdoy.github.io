@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.95.0">
+<meta name="version" content="3.95.1">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -3087,7 +3087,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.95.0';
+const VERSION='3.95.1';
 const BUILT='2026-09-02';
 
 
@@ -4594,7 +4594,7 @@ function renderFoes(){
 
 
 
-function setBoss(id){
+function setBoss(id,rec){
   if(bossId===id) return false;
   bossId=id; foes=[null,null]; foePickAt=-1; foeChain=false;
   
@@ -4604,7 +4604,14 @@ function setBoss(id){
   
 
 
-  hAutoStart();
+  
+
+
+
+
+
+
+  if(rec) hAutoStart(); else if(!hAutoDirty) hAutoSync();
   save(); return true;
 }
 
@@ -4688,7 +4695,7 @@ function renderBosses(){
 
 
 
-  const fill=(g2,goTo)=>{ if(!g2) return; g2.innerHTML='';
+  const fill=(g2,goTo,rec)=>{ if(!g2) return; g2.innerHTML='';
     groups.forEach(([r, rows])=>{
       if(r){ const h=el(`<div class="bgh" style="color:${RARITY[r].color}">${RARITY[r].label}
         <b>${rows.length}</b></div>`); g2.appendChild(h); }
@@ -4696,11 +4703,11 @@ function renderBosses(){
         const n=el(bossTag(b,b.id===bossId));
         
 
-        n.addEventListener('click',()=>{ if(!setBoss(b.id)) hAutoAgain(); renderAll(); goSection(goTo) });
+        n.addEventListener('click',()=>{ if(!setBoss(b.id,rec)){ if(rec) hAutoAgain(); } renderAll(); goSection(goTo) });
         g2.appendChild(n);
       }); }); };
-  fill(g,'sSup');
-  fill(document.getElementById('trBossGrid'),'sTrCmp');
+  fill(g,'sSup',true);
+  fill(document.getElementById('trBossGrid'),'sTrCmp',false);
   document.getElementById('sw1').setAttribute('aria-pressed',setView==='1');
   document.getElementById('sw2').setAttribute('aria-pressed',setView==='2');
   
