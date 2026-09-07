@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.96.1">
+<meta name="version" content="3.96.2">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -108,9 +108,24 @@ body{padding-top:env(safe-area-inset-top,0px)}
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 :root{--bz:11px; --bzr:24px;
-  --dkgap:max(8px,calc(env(safe-area-inset-bottom,0px) - 8px));
-  --tkgap:calc(env(safe-area-inset-top,0px) + 8px)}
+  --dkgap:max(4px,calc(max(var(--bz),env(safe-area-inset-bottom,0px)) - var(--bz) - 8px));
+  --tktop:calc(max(var(--bz),env(safe-area-inset-top,0px)) + 4px)}
 
 
 .bezel{position:fixed;inset:0;z-index:100;pointer-events:none;
@@ -452,8 +467,8 @@ section:first-child{margin-top:0}
 
 
 
-.viewsw{position:sticky;top:calc(var(--bz) + var(--tkgap));z-index:92;
-  display:flex;gap:6px;padding:8px 8px 10px;margin:2px -8px 8px;border-radius:16px;
+.viewsw{position:sticky;top:var(--tktop);z-index:92;
+  display:flex;gap:6px;padding:6px 8px 10px;margin:2px -8px 8px;border-radius:16px;
   
 
 
@@ -484,8 +499,10 @@ section:first-child{margin-top:0}
 
 
 
+
+
 .viewsw::before{content:'';position:fixed;pointer-events:none;
-  top:var(--bz);left:var(--bz);right:var(--bz);height:var(--tkgap);
+  top:var(--bz);left:var(--bz);right:var(--bz);height:calc(var(--tktop) - var(--bz));
   background:var(--void)}
 .viewsw button{flex:1;padding:11px 6px;border-radius:12px;border:1px solid var(--rim);
   background:rgba(30,19,73,.92);color:var(--ink-dim);font-family:var(--display);font-weight:400;
@@ -3178,7 +3195,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.96.1';
+const VERSION='3.96.2';
 const BUILT='2026-09-07';
 
 
@@ -4027,7 +4044,9 @@ function topInset(){
 
     const sw=document.querySelector('.viewsw');
     const bar=(sw&&sw.offsetHeight)||0;
-    return sat+bz+16+(bar?bar+4:0);
+    
+
+    return Math.max(bz,sat)+16+(bar?bar+4:0);
   }catch(e){ return 24 }
 }
 
