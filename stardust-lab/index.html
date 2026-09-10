@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.97.0">
+<meta name="version" content="3.99.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -170,6 +170,103 @@ body{padding-top:env(safe-area-inset-top,0px)}
 .upd .updtbl s{text-decoration:none;color:var(--ink-dim)}
 .upd button{flex:none;padding:7px 14px;border-radius:999px;border:0;cursor:pointer;
   background:var(--cyan);color:#0C0722;font-family:var(--body);font-weight:700;font-size:12px}
+
+
+
+
+.cammodal{position:fixed;inset:0;z-index:210;display:flex;align-items:flex-start;
+  justify-content:center;background:rgba(6,3,20,.78);overflow-y:auto;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) 10px 20px}
+.cammodal[hidden]{display:none}
+.cambox{width:100%;max-width:520px;background:var(--panel);border:1px solid var(--rim);
+  border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:9px;
+  box-shadow:0 14px 40px rgba(0,0,0,.6)}
+
+
+
+
+
+
+.camview{position:relative;aspect-ratio:4/3;border-radius:11px;overflow:hidden;
+  background:#000;display:flex;align-items:center;justify-content:center}
+.camview video{width:100%;height:100%;object-fit:cover;display:block}
+
+
+
+.camguide{position:absolute;width:94%;aspect-ratio:1.546;border:2px dashed rgba(255,90,90,.5);
+  border-radius:8px;pointer-events:none}
+.camguide::before,.camguide::after{content:'';position:absolute;top:0;bottom:0;
+  border-left:1px dashed rgba(255,90,90,.45)}
+.camguide::before{left:33.33%}
+.camguide::after{left:66.66%}
+
+
+
+
+
+
+.camguide b{position:absolute;top:70%;height:16%;width:31.3%;
+  border:2px solid var(--bad);border-radius:5px;box-shadow:0 0 0 2px rgba(0,0,0,.45)}
+.camguide b.g0{left:1%}
+.camguide b.g1{left:67.7%}
+.camguide b::after{position:absolute;left:0;right:0;top:-16px;text-align:center;
+  font-size:10.5px;font-weight:700;color:var(--bad);text-shadow:0 1px 3px #000}
+.camguide b.g0::after{content:'서브1'}
+.camguide b.g1::after{content:'서브2'}
+
+
+
+.camshot{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);
+  width:58px;height:58px;border-radius:50%;padding:0;cursor:pointer;
+  border:3px solid rgba(255,255,255,.92);background:transparent;
+  box-shadow:0 2px 10px rgba(0,0,0,.45)}
+.camshot::after{content:'';position:absolute;inset:4px;border-radius:50%;
+  background:#fff;transition:transform .08s}
+.camshot:active::after{transform:scale(.9)}
+
+.camstill{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.camstill[hidden]{display:none}
+
+.camview.shot .camshot{display:none}
+
+.camslot{display:flex;flex-direction:column;gap:5px}
+.camslabel{font-size:11.5px;font-weight:700;color:var(--ink-dim)}
+.camslabel b{color:var(--ok)}
+.camrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.camstate{margin:0;font-size:12.5px;color:var(--ink-dim);min-height:18px}
+
+
+.camcands{display:flex;flex-direction:column;gap:9px}
+.camcands[hidden]{display:none}
+.camcand{display:flex;flex-direction:column;gap:4px;padding:7px;border-radius:11px;
+  border:1px solid var(--rim);background:rgba(0,0,0,.25);color:var(--ink);cursor:pointer;text-align:center}
+.camcand i{display:block;aspect-ratio:16/9;border-radius:7px;background:var(--art) center/cover,rgba(255,255,255,.06)}
+.camcand b{font-size:12.5px;font-weight:700;line-height:1.25;word-break:keep-all}
+.camcand span{font-size:10.5px;color:var(--ink-dim);font-family:var(--mono)}
+.camrow2{display:flex;flex-wrap:wrap;gap:7px}
+.camrow2 .mini{flex:1;min-width:88px}
+.camrow2 #camShot{background:var(--star);color:#0C0722;font-weight:800}
+.camrow2 [hidden]{display:none}
+
+
+
+
+.camask{margin-top:10px;padding:11px 12px;border-radius:11px;
+  background:rgba(0,0,0,.22);border:1px solid var(--rim);font-size:12.5px;color:var(--ink-dim)}
+.camask[hidden]{display:none}
+.camask b{color:var(--ink)}
+.camrow{display:flex;gap:8px;align-items:center;margin-top:9px}
+
+.camrow input{flex:1;min-width:0;padding:9px 11px;border-radius:9px;
+  border:1px solid var(--rim);background:rgba(0,0,0,.3);color:var(--ink);
+  font-family:var(--mono);font-size:16px;letter-spacing:.32em;text-align:center;
+  -webkit-appearance:none;appearance:none}
+.camrow button{flex:none;padding:9px 14px;border-radius:9px;border:0;cursor:pointer;
+  font-family:var(--body);font-weight:700;font-size:12.5px}
+#camYes{background:var(--star);color:#0C0722}
+#camNo{background:rgba(255,255,255,.1);color:var(--ink)}
+.cammsg{display:block;margin-top:8px;color:var(--bad);font-size:12px;font-weight:600}
+.cammsg[hidden]{display:none}
 
 
 
@@ -2131,6 +2228,40 @@ footer .fver{margin:15px 0 0}
         QR 사진만 이 기기에 저장되고, 어느 ID 에 무엇이 들어 있는지는 앱이 알지 못합니다.</p>
     </div>
   </section>
+  <section id="sCam">
+    <div class="sec-head"><h2>카메라 인식</h2>
+      <span class="hint">만드는 중인 기능 · <b>패스워드가 필요합니다</b></span></div>
+    <div class="card">
+      <div class="setsw" role="group" aria-label="카메라 인식" id="camSw">
+        <button data-cam="off" aria-pressed="true">끔</button>
+        <button data-cam="on" aria-pressed="false">켬</button>
+      </div>
+      
+
+
+      <div class="camask" id="camAsk" hidden>
+        <b>테스트 중인 기능을 사용합니다.</b> 패스워드를 넣으세요.
+        <div class="camrow">
+          <input id="camPw" type="password" inputmode="numeric" maxlength="4"
+                 autocomplete="off" placeholder="••••" aria-label="패스워드">
+          <button id="camYes">확인</button>
+          <button id="camNo">취소</button>
+        </div>
+        <span class="cammsg" id="camMsg" hidden>패스워드가 다릅니다.</span>
+      </div>
+      
+
+
+
+      <div class="camrow2">
+        <button class="mini" id="camExport">기억 내보내기</button>
+        <button class="mini" id="camForget">기억 지우기</button>
+      </div>
+      <p class="camstate" id="camMemMsg"></p>
+      <p class="tab-note" id="camNote"></p>
+    </div>
+  </section>
+
   <section>
     <div class="sec-head"><h2>게임기 버전</h2>
       <span class="hint">기계 화면에 적힌 버전 · 기록에 함께 남습니다</span></div>
@@ -2185,6 +2316,14 @@ footer .fver{margin:15px 0 0}
         브라우저의 사이트 데이터를 지우면 됩니다. 통계·광고 쿠키는 브라우저 설정에서 지웁니다.</p>
     </div>
   </section>
+  
+
+
+
+
+
+
+
   <section id="sWipe">
     <div class="card">
       <div class="wipebox" style="margin-top:0;padding-top:0;border-top:0">
@@ -2461,6 +2600,37 @@ footer .fver{margin:15px 0 0}
 
 
 
+
+
+
+
+
+<div class="cammodal" id="camModal" hidden>
+  <div class="cambox">
+    <div class="pickhead"><b>서브 인식</b>
+      <button class="pickx" id="camClose" aria-label="닫기">✕</button></div>
+    <div class="camview">
+      <video id="camVid" playsinline muted autoplay></video>
+      
+
+
+
+      <img class="camstill" id="camStill" alt="찍은 화면" hidden>
+      
+
+      <i class="camguide"><b class="g0"></b><b class="g1"></b></i>
+      <button class="camshot" id="camShot" aria-label="찍기"></button>
+    </div>
+    <p class="camstate" id="camState"></p>
+    <div class="camcands" id="camCands" hidden></div>
+    <div class="camrow2">
+      <button class="mini" id="camAgain" hidden>다시 찍기</button>
+      <button class="mini" id="camPickBtn">직접 고르기</button>
+    </div>
+    <p class="tab-note">못 알아보면 «직접 고르기» 로 넘어갑니다. 그때 고른 태그를
+      <b>이 화면의 모습으로 기억</b>해 다음부터 후보로 올립니다.</p>
+  </div>
+</div>
 
 <div class="upd" id="upd" hidden role="status">
   <div class="updmsg">
@@ -3242,8 +3412,8 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.97.0';
-const BUILT='2026-09-10';
+const VERSION='3.99.0';
+const BUILT='2026-09-11';
 
 
 
@@ -3254,7 +3424,7 @@ const BUILT='2026-09-10';
 
 
 
-const WHATSNEW='[Bug] 보스가 특수 기술로 때릴 때 특수공격을 쓰도록 고쳤습니다. 이 변경에 의해 BEST 태그들이 변경되었습니다.';
+const WHATSNEW='[테스트] 서브 칸을 누르면 카메라가 열립니다. 못 알아보면 직접 고르고, 그것을 기억해 다음부터 후보로 올립니다.';
 
 
 
@@ -3262,7 +3432,15 @@ const WHATSNEW='[Bug] 보스가 특수 기술로 때릴 때 특수공격을 쓰�
 
 
 
-const WHATSNEW_TBL='BEST-A25|2턴 격파 43 → 42마리|미라이돈·이상해꽃이 들어오고 마휘핑·리피아가 빠졌습니다;;BEST-B|37마리 그대로|샤미드·고릴타가 들어오고 마휘핑·피죤투가 빠졌습니다;;BEST-C|15마리 그대로|10장에서 14장으로 늘었습니다';
+const WHATSNEW_TBL='';
+
+
+
+
+
+
+
+const CAMSEED='';
 
 
 const AK={}, TK={}, GK={}, SK={};
@@ -3483,6 +3661,15 @@ let dmaxLv=5;
 
 
 let foeSets={'1':true,'2':true};
+
+
+
+
+
+
+
+const CAM_PW='1114';
+let camOn=false;
 const foeOn=c=> c.s==='공통' || foeSets[c.s]!==false;
 let colTab='battle';           
 let dex=new Bag();             
@@ -3553,7 +3740,8 @@ async function load(){
     if(saved&&Array.isArray(saved.foes)) foes=[0,1].map(i=>SUBBY.has(saved.foes[i])?saved.foes[i]:null);
     
     if(saved&&saved.gver) gver={...GVER_DEFAULT,...saved.gver};
-    loadPicks(saved&&saved.picks);   
+    loadPicks(saved&&saved.picks);
+    camOn=!!(saved&&saved.camOn);   
     if(saved&&Array.isArray(saved.dex)) dex=toBag(saved.dex);
     backend='claude';
     if(loadOwned(saved,arr)) loaded=true;
@@ -3579,7 +3767,8 @@ async function load(){
       if(saved&&saved.mode&&MODES[saved.mode]) mode=saved.mode;
     if(saved&&Array.isArray(saved.foes)) foes=[0,1].map(i=>SUBBY.has(saved.foes[i])?saved.foes[i]:null);
       if(saved&&saved.gver) gver={...GVER_DEFAULT,...saved.gver};
-      loadPicks(saved&&saved.picks);   
+      loadPicks(saved&&saved.picks);
+      camOn=!!(saved&&saved.camOn);   
       if(saved&&Array.isArray(saved.dex)) dex=toBag(saved.dex);
         if(loadOwned(saved,arr)) loaded=true; }
   }catch(e){ backend='memory' }
@@ -3602,7 +3791,7 @@ function saveFail(where,e){
   backend='memory'; renderBackend();
   try{ console.error('[스타더스트] 저장 실패:',where,e) }catch(_){}
 }
-const savePayload=()=>JSON.stringify({ownedA:bagArr(ownedSets.A),ownedB:bagArr(ownedSets.B),ownedC:bagArr(ownedSets.C),chance,guideHidden,detail,bossRank,dmaxLv,megaTier,mode,foes,foeSets,tagClass,dex:bagArr(dex),gver,picks});
+const savePayload=()=>JSON.stringify({ownedA:bagArr(ownedSets.A),ownedB:bagArr(ownedSets.B),ownedC:bagArr(ownedSets.C),chance,guideHidden,detail,bossRank,dmaxLv,megaTier,mode,foes,foeSets,tagClass,dex:bagArr(dex),gver,picks,camOn});
 async function saveWrite(){
   let p;
   try{ p=savePayload() }catch(e){ saveFail('값 만들기',e); return }
@@ -4684,6 +4873,10 @@ function renderFoes(){
         
 
 
+        
+
+
+        if(typeof camOn!=='undefined' && camOn && typeof camOpen==='function'){ camOpen(i); return; }
         foePickAt=i; foeChain = (foes[0]==null && foes[1]==null); clearFoeQ();
       }
       renderFoes();
@@ -4751,6 +4944,10 @@ function renderFoes(){
       pickArt(b,s);
       b.addEventListener('click',()=>{
         foes[foePickAt]=s.id;
+        
+
+
+        if(typeof camRemember==='function') camRemember(s.id);
         hAutoSync();                    
         clearFoeQ();          
         const other = foePickAt===0?1:0;
@@ -5796,8 +5993,42 @@ function wipe(){
   dmaxLv=5; megaTier='대성공'; mode='지역'; foes=[null,null]; foeSets={'1':true,'2':true};
   tagClass='A'; dex=new Bag(); gver={...GVER_DEFAULT};   
   picks={};                                              
+  camOn=false;                                           
   renderAll();
 }
+
+
+
+
+const camSw=document.getElementById('camSw'), camAsk=document.getElementById('camAsk'),
+      camPw=document.getElementById('camPw'), camMsg=document.getElementById('camMsg'),
+      camNote=document.getElementById('camNote');
+function camHide(){ if(!camAsk) return; camAsk.hidden=true; if(camPw) camPw.value='';
+  if(camMsg) camMsg.hidden=true; }
+function renderCam(){
+  if(camSw) [...camSw.querySelectorAll('button')].forEach(b=>
+    b.setAttribute('aria-pressed', String((b.dataset.cam==='on')===camOn)));
+  if(camNote) camNote.textContent = camOn
+    ? '켜져 있습니다 — 아직 만드는 중이라 화면에 나타나는 것은 없습니다.'
+    : '서브1·2 를 카메라로 읽는 기능을 만드는 중입니다. 켜려면 패스워드가 필요합니다.';
+}
+function camTry(){
+  if(!camPw) return;
+  if(camPw.value===CAM_PW){ camOn=true; camHide(); save(); renderCam(); }
+  else { if(camMsg) camMsg.hidden=false; camPw.value=''; camPw.focus(); }
+}
+if(camSw) camSw.addEventListener('click',ev=>{
+  const b=ev.target.closest('button'); if(!b) return;
+  if(b.dataset.cam==='off'){ camOn=false; camHide(); save(); renderCam(); return; }
+  if(camOn) return;                       
+  if(camAsk){ camAsk.hidden=false; if(camMsg) camMsg.hidden=true; if(camPw){ camPw.value=''; camPw.focus(); } }
+});
+const camYes=document.getElementById('camYes'), camNo=document.getElementById('camNo');
+if(camYes) camYes.addEventListener('click',camTry);
+if(camNo)  camNo.addEventListener('click',camHide);
+
+if(camPw) camPw.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); camTry(); } });
+
 const wipeBtn=document.getElementById('wipeBtn'),
       wipeAsk=document.getElementById('wipeAsk'),
       wipeNo=document.getElementById('wipeNo'),
@@ -7643,6 +7874,503 @@ function renderTrPick(){
   } finally{ mode=prevMode; foes=prevFoes; }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const CKEY=KEY+':cam';
+let camMem=[];          
+let camAt=-1;           
+let camLastH=[null,null];  
+let camStream=null;
+
+function camLoad(){
+  try{ const r=JSON.parse(localStorage.getItem(CKEY)||'[]');
+       camMem=Array.isArray(r)?r.filter(x=>x&&x.h&&x.id):[]; }catch(e){ camMem=[]; }
+}
+function camSave(){ try{ localStorage.setItem(CKEY,JSON.stringify(camMem)) }catch(e){} }
+
+
+
+
+
+function camHashOf(ctx,sx,sy,sw,sh){
+  const W=9,H=8, c=document.createElement('canvas'); c.width=W; c.height=H;
+  const g=c.getContext('2d'); g.drawImage(ctx.canvas,sx,sy,sw,sh,0,0,W,H);
+  const d=g.getImageData(0,0,W,H).data, L=[];
+  for(let i=0;i<W*H;i++) L.push(d[i*4]*0.299+d[i*4+1]*0.587+d[i*4+2]*0.114);
+  let bits='';
+  for(let y=0;y<H;y++) for(let x=0;x<W-1;x++) bits+= (L[y*W+x]>L[y*W+x+1]) ? '1':'0';
+  let hex=''; for(let i=0;i<64;i+=4) hex+=parseInt(bits.slice(i,i+4),2).toString(16);
+  return hex;
+}
+const camPop=n=>{ let c=0; while(n){ n&=n-1; c++; } return c; };
+
+function camDist(a,b){
+  let d=0; for(let i=0;i<16;i+=4) d+=camPop(parseInt(a.slice(i,i+4),16)^parseInt(b.slice(i,i+4),16));
+  return d;
+}
+
+
+const CAM_NEAR=12;
+
+
+
+function camSeeds(){
+  const out=[];
+  String(CAMSEED||'').split(';').forEach(sec=>{
+    const i=sec.indexOf(':'); if(i<0) return;
+    const id=sec.slice(0,i).trim(); if(!id) return;
+    sec.slice(i+1).split(',').forEach(h=>{ h=h.trim(); if(h.length===16) out.push({h,id}); });
+  });
+  return out;
+}
+const camSeed=camSeeds();
+function camGuess(h){
+  const seen=new Map();
+  camSeed.concat(camMem).forEach(m=>{ const d=camDist(h,m.h);
+    if(!seen.has(m.id)||d<seen.get(m.id)) seen.set(m.id,d); });
+  return [...seen].filter(([,d])=>d<=CAM_NEAR).sort((a,b)=>a[1]-b[1]).slice(0,3);
+}
+
+
+
+
+
+
+
+
+function camOtsu(v){
+  const h=new Float64Array(256); const n=v.length;
+  for(let i=0;i<n;i++) h[v[i]|0]++;
+  let sum=0; for(let i=0;i<256;i++) sum+=i*h[i];
+  let wB=0,sB=0,best=0,th=128;
+  for(let t=0;t<256;t++){
+    wB+=h[t]; if(!wB) continue;
+    const wF=n-wB; if(!wF) break;
+    sB+=t*h[t];
+    const d=sB/wB-(sum-sB)/wF, v2=wB*wF*d*d;
+    if(v2>best){ best=v2; th=t; }
+  }
+  return th;
+}
+
+
+
+function camSmooth(v,k){
+  const n=v.length, out=new Float64Array(n), h=k>>1;
+  for(let i=0;i<n;i++){
+    let s=0,c=0;
+    for(let j=Math.max(0,i-h);j<=Math.min(n-1,i+h);j++){ s+=v[j]; c++; }
+    out[i]=s/c;
+  }
+  return out;
+}
+
+function camRuns(on,gap){
+  const n=on.length, out=[]; let i=0;
+  while(i<n){
+    if(on[i]){ const s=i; let last=i;
+      while(i<n && (on[i] || i-last<=gap)){ if(on[i]) last=i; i++; }
+      out.push([s,last+1]);
+    } else i++;
+  }
+  return out;
+}
+const CAM_TW=64, CAM_TH=16;      
+
+
+function camGrid(get,gw,gh,W,Hh){
+  const out=new Float64Array(W*Hh);
+  for(let y=0;y<Hh;y++){
+    const a=(y*gh/Hh)|0, b=Math.max(a+1,((y+1)*gh/Hh)|0);
+    for(let x=0;x<W;x++){
+      const c=(x*gw/W)|0, d=Math.max(c+1,((x+1)*gw/W)|0);
+      let s=0,n=0;
+      for(let yy=a;yy<Math.min(gh,b);yy++) for(let xx=c;xx<Math.min(gw,d);xx++){ s+=get(xx,yy); n++; }
+      out[y*W+x]=n?s/n:0;
+    }
+  }
+  return out;
+}
+
+
+
+
+function camText(L,S,W,H,frac,ksc,up){
+  const y0=(H*0.55)|0, y1=(H*0.92)|0;
+  const m=new Float64Array(H);
+  for(let y=0;y<H;y++){ let s=0; const o=y*W; for(let x=0;x<W;x++) s+=L[o+x]; m[y]=s/W; }
+  const k=Math.max(3,(H*ksc)|0), ms=camSmooth(m,k);
+  let peak=y0; for(let y=y0;y<y1;y++) if(ms[y]<ms[peak]) peak=y;
+  const lo=Math.max(0,peak-6*k), hi=Math.min(H,peak+6*k), around=[];
+  for(let y=lo;y<hi;y++) around.push(m[y]);
+  around.sort((a,b)=>a-b);
+  const base=around[Math.min(around.length-1,(around.length*0.75)|0)];
+  const th=ms[peak]+(base-ms[peak])*frac;
+  let ya=peak, yb=peak;
+  while(ya>y0 && ms[ya-1]<th) ya--;
+  while(yb<y1-1 && ms[yb+1]<th) yb++;
+  const bh=yb-ya+1;
+  if(bh < H*0.01) return null;
+  ya=Math.max(y0, ya-((bh*up)|0));
+  const BH=yb-ya+1, band=new Float64Array(BH*W);
+  for(let y=0;y<BH;y++) for(let x=0;x<W;x++) band[y*W+x]=L[(ya+y)*W+x];
+  const t=camOtsu(band);
+  const wh=new Uint8Array(BH*W);
+  for(let y=0;y<BH;y++) for(let x=0;x<W;x++){
+    const o=(ya+y)*W+x;
+    wh[y*W+x]=(L[o]>t && S[o]<0.35)?1:0;
+  }
+  const col=new Float64Array(W);
+  for(let x=0;x<W;x++){ let s=0; for(let y=0;y<BH;y++) s+=wh[y*W+x]; col[x]=s/BH; }
+  let cmax=0; for(let x=0;x<W;x++) if(col[x]>cmax) cmax=col[x];
+  const cth=Math.max(0.06,cmax*0.28), on=new Uint8Array(W);
+  for(let x=0;x<W;x++) on[x]=col[x]>cth?1:0;
+  const runs=camRuns(on,Math.max(2,(BH*0.45)|0));
+  if(!runs.length) return null;
+  let bx=runs[0], bm=-1;
+  runs.forEach(r=>{ let s=0; for(let y=0;y<BH;y++) for(let x=r[0];x<r[1];x++) s+=wh[y*W+x];
+    if(s>bm){ bm=s; bx=r; } });
+  let ry=-1, ry2=-1;
+  for(let y=0;y<BH;y++){ let any=0; for(let x=bx[0];x<bx[1];x++) if(wh[y*W+x]){ any=1; break; }
+    if(any){ if(ry<0) ry=y; ry2=y; } }
+  if(ry<0 || ry2-ry<3) return null;
+  
+  const gw=bx[1]-bx[0], gh=ry2-ry+1;
+  let gmin=1e9, gmax=-1e9;
+  const at=(x,y)=>{ const o=(ya+ry+y)*W+(bx[0]+x); return (S[o]>0.45)?0:L[o]; };
+  for(let y=0;y<gh;y++) for(let x=0;x<gw;x++){ const v=at(x,y); if(v<gmin)gmin=v; if(v>gmax)gmax=v; }
+  const sp=Math.max(1,gmax-gmin);
+  const raw=camGrid(at,gw,gh,CAM_TW,CAM_TH);
+  for(let i=0;i<raw.length;i++) raw[i]=(raw[i]-gmin)/sp;
+  return {img:raw, w:gw, h:gh};
+}
+
+function camHashArr(g){
+  const L=camGrid((x,y)=>g[y*CAM_TW+x],CAM_TW,CAM_TH,9,8);
+  let bits='';
+  for(let y=0;y<8;y++) for(let x=0;x<8;x++) bits+=(L[y*9+x]>L[y*9+x+1])?'1':'0';
+  let hex=''; for(let i=0;i<64;i+=4) hex+=parseInt(bits.slice(i,i+4),2).toString(16);
+  return hex;
+}
+
+
+
+
+
+
+const CAM_FONT="500 64px 'Apple SD Gothic Neo','Noto Sans KR','Gothic A1',sans-serif";
+let camTplMap=null;
+function camTpls(){
+  if(camTplMap) return camTplMap;
+  camTplMap={};
+  let c=null,g=null;
+  try{ c=document.createElement('canvas'); g=c.getContext('2d'); }catch(e){}
+  if(!g||!g.measureText) return camTplMap;
+  const names={}; FOEPOOL.forEach(p=>{ names[p.n]=1; });
+  Object.keys(names).forEach(n=>{
+    g.font=CAM_FONT;
+    const w=Math.ceil(g.measureText(n).width)+24;
+    if(!(w>8)) return;
+    c.width=w; c.height=110;
+    const q=c.getContext('2d');
+    q.fillStyle='#000'; q.fillRect(0,0,w,110);
+    q.font=CAM_FONT; q.fillStyle='#fff'; q.textBaseline='top'; q.fillText(n,12,10);
+    const d=q.getImageData(0,0,w,110).data;
+    let x0=w,x1=-1,y0=110,y1=-1;
+    for(let y=0;y<110;y++) for(let x=0;x<w;x++){
+      if(d[(y*w+x)*4]>110){ if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y; }
+    }
+    if(x1<0) return;
+    camTplMap[n]=camGrid((x,y)=>d[((y0+y)*w+(x0+x))*4]/255,x1-x0+1,y1-y0+1,CAM_TW,CAM_TH);
+  });
+  return camTplMap;
+}
+
+function camZncc(a,b){
+  const n=a.length; let ma=0,mb=0;
+  for(let i=0;i<n;i++){ ma+=a[i]; mb+=b[i]; }
+  ma/=n; mb/=n;
+  let s=0,sa=0,sb=0;
+  for(let i=0;i<n;i++){ const x=a[i]-ma, y=b[i]-mb; s+=x*y; sa+=x*x; sb+=y*y; }
+  return s/Math.sqrt(sa*sb+1e-9);
+}
+
+
+
+const CAM_SET=[];
+[0.45,0.55,0.65].forEach(f=>[0.02,0.03].forEach(k=>[0,0.4,0.8,1.2].forEach(u=>CAM_SET.push([f,k,u]))));
+function camScan(L,S,W,H,slot){
+  const T=camTpls(), best={};
+  let h0=null;
+  CAM_SET.forEach(fk=>{
+    const r=camText(L,S,W,H,fk[0],fk[1],fk[2]);
+    if(!r) return;
+    if(h0===null) h0=camHashArr(r.img);
+    for(const n in T){ const v=camZncc(r.img,T[n]); if(!(n in best)||v>best[n]) best[n]=v; }
+  });
+  camLastH[slot]=h0;
+  if(h0===null) return [];
+  
+  const out=[], seen={};
+  camGuess(h0).forEach(g=>{ if(!seen[g[0]]){ seen[g[0]]=1; out.push([g[0],null]); } });
+  
+
+  const rank=Object.keys(best).sort((a,b)=>best[b]-best[a]);
+  for(let i=0;i<rank.length&&out.length<3;i++){
+    const c=FOEPOOL.filter(p=>p.n===rank[i]);
+    for(let j=0;j<c.length&&out.length<3;j++) if(!seen[c[j].id]){ seen[c[j].id]=1; out.push([c[j].id,best[rank[i]]]); }
+  }
+  return out;
+}
+
+
+const camModal=document.getElementById('camModal'), camVid=document.getElementById('camVid'),
+      camShot=document.getElementById('camShot'), camPickBtn=document.getElementById('camPickBtn'),
+      camClose=document.getElementById('camClose'), camCands=document.getElementById('camCands'),
+      camState=document.getElementById('camState'), camAgain=document.getElementById('camAgain'),
+      camForget=document.getElementById('camForget'),
+      camStill=document.getElementById('camStill'),
+      camViewEl=document.querySelector('.camview'),
+      camMemMsg=document.getElementById('camMemMsg');
+
+function camStop(){
+  try{ if(camStream) camStream.getTracks().forEach(t=>t.stop()); }catch(e){}
+  camStream=null;
+}
+function camHideUI(){
+  camStop(); camAt=-1;
+  if(camModal) camModal.hidden=true;
+  if(camCands) camCands.hidden=true;
+  camStillOff();
+  if(camAgain) camAgain.hidden=true;
+}
+
+function camStillOff(){
+  if(camStill){ camStill.hidden=true; camStill.removeAttribute('src'); }
+  if(camViewEl) camViewEl.classList.remove('shot');
+}
+
+
+
+async function camOpen(at){
+  camAt=at; camLastH=[null,null];
+  if(!camModal){ camToPick(); return; }
+  camModal.hidden=false;
+  if(camCands) camCands.hidden=true;
+  camStillOff();
+  if(camAgain) camAgain.hidden=true;
+  if(camState) camState.textContent='상대 세 칸을 네모에 맞추고, 빨간 칸 둘에 «이름판» 을 넣으세요.';
+  
+
+  const nav=(typeof window!=='undefined')&&window.navigator;
+  if(!nav||!nav.mediaDevices||!nav.mediaDevices.getUserMedia){
+    camSay('이 브라우저에서는 카메라를 열 수 없습니다.'); return;
+  }
+  try{
+    
+
+    camStream=await nav.mediaDevices.getUserMedia({video:{facingMode:'environment',
+      width:{ideal:1080}, height:{ideal:1920}}});
+    if(camVid){ camVid.srcObject=camStream; await camVid.play().catch(()=>{}); }
+  }catch(e){
+    
+    camSay('카메라를 열지 못했습니다. 권한을 확인하거나 직접 고르세요.');
+  }
+}
+function camSay(msg){ if(camState) camState.textContent=msg; camStop(); }
+
+
+
+
+
+
+
+
+
+
+const CAM_A3=1.546, CAM_GW=0.94, CAM_W=640, CAM_ASPECT=1.94;
+function camCapture(){
+  if(!camVid||!camVid.videoWidth){ camSay('아직 화면이 안 잡혔습니다. 잠시 뒤 다시 찍으세요.'); return; }
+  const vw=camVid.videoWidth, vh=camVid.videoHeight;
+  let dw=vw, dh=vh;
+  try{
+    const bb=camVid.getBoundingClientRect();
+    if(bb&&bb.width&&bb.height){ const sc=Math.max(bb.width/vw,bb.height/vh); dw=bb.width/sc; dh=bb.height/sc; }
+  }catch(e){}
+  let gw=dw*CAM_GW, gh=gw/CAM_A3;
+  if(gh>dh){ gh=dh*0.98; gw=gh*CAM_A3; }      
+  const gx=(vw-gw)/2, gy=(vh-gh)/2;
+  
+
+  const cw=gw/3;
+  
+
+  try{
+    const sc=document.createElement('canvas'); sc.width=560; sc.height=Math.round(560/CAM_A3);
+    sc.getContext('2d').drawImage(camVid,gx,gy,gw,gh,0,0,sc.width,sc.height);
+    if(camStill){ camStill.src=sc.toDataURL('image/jpeg',0.7); camStill.hidden=false;
+                  if(camViewEl) camViewEl.classList.add('shot'); }
+  }catch(e){ camStillOff(); }
+  const W=CAM_W, H=Math.round(W*CAM_ASPECT), out=[];
+  for(let slot=0;slot<2;slot++){
+    const cx=gx+(slot===1 ? cw*2 : 0);
+    const c=document.createElement('canvas'); c.width=W; c.height=H;
+    const ctx=c.getContext('2d'); ctx.drawImage(camVid,cx,gy,cw,gh,0,0,W,H);
+    const px=ctx.getImageData(0,0,W,H).data, N=W*H;
+    const L=new Float64Array(N), S=new Float64Array(N);
+    for(let k=0;k<N;k++){
+      const r=px[k*4], g=px[k*4+1], b2=px[k*4+2];
+      L[k]=r*0.299+g*0.587+b2*0.114;
+      const mx=Math.max(r,g,b2), mn=Math.min(r,g,b2);
+      S[k]=mx?(mx-mn)/mx:0;
+    }
+    out.push(camScan(L,S,W,H,slot));
+  }
+  
+  if(!out[0].length && !out[1].length){ camToPick(); return; }
+  camShowCands(out);
+}
+
+function camShowCands(rows){
+  if(!camCands) return;
+  camStop();
+  if(camState) camState.textContent='자리마다 하나씩 고르세요.';
+  camCands.innerHTML=rows.map((hit,slot)=>{
+    const done = foes[slot] ? FOEPOOL.find(p=>p.id===foes[slot]) : null;
+    const head = `<div class="camslabel">서브 ${slot+1}`
+      + (done ? ` — <b>${done.n}</b>` : (hit.length?'':' — 못 알아봤습니다'))+`</div>`;
+    const cells = hit.map(([id,d])=>{
+      const c=FOEPOOL.find(p=>p.id===id);
+      if(!c) return '';
+      
+      const note = (d===null) ? '가르친 그림' : '닮음 '+Math.round(Math.max(0,d)*100)+'%';
+      return `<button class="camcand ${artCls(c)}" data-slot="${slot}" data-id="${id}">`
+        +`<i></i><b>${c.n}</b><span>★${c.r} · ${note}</span></button>`;
+    }).join('');
+    
+
+    const body = hit.length ? `<div class="camrow">${cells}</div>`
+      : (done ? '' : `<button class="mini" data-pick="${slot}">서브 ${slot+1} 직접 고르기</button>`);
+    return `<div class="camslot">${head}${body}</div>`;
+  }).join('');
+  camCands.hidden=false;
+  if(camAgain) camAgain.hidden=false;
+}
+
+
+function camToPick(slot){
+  
+
+
+
+  let at = (slot===0||slot===1) ? slot
+         : (!foes[0] ? 0 : (!foes[1] ? 1 : camAt));
+  if(at<0) at=0;
+  camHideUI();
+  foePickAt=at; foeChain=false; clearFoeQ(); renderFoes();
+}
+
+function camRemember(id){
+  
+  const h=camLastH&&camLastH[foePickAt];
+  if(!h||!id) return;
+  camMem.push({h,id}); camLastH[foePickAt]=null;
+  if(camMem.length>400) camMem=camMem.slice(-400);   
+  camSave();
+}
+function camChoose(slot,id){
+  
+  if(camLastH[slot]){ camMem.push({h:camLastH[slot],id}); camLastH[slot]=null; camSave(); }
+  foes[slot]=id; save(); renderAll();
+  
+
+  if(foes[0]&&foes[1]){ camHideUI(); return; }
+  
+
+  if(camCands && camCands.children[slot]){
+    const b=camCands.children[slot].querySelector('.camslabel');
+    const c=FOEPOOL.find(p=>p.id===id);
+    if(b&&c) b.innerHTML=`서브 ${slot+1} — <b>${c.n}</b>`;
+  }
+}
+
+if(camShot)    camShot.addEventListener('click',camCapture);
+if(camPickBtn) camPickBtn.addEventListener('click',()=>camToPick());
+if(camClose)   camClose.addEventListener('click',camHideUI);
+if(camAgain)   camAgain.addEventListener('click',()=>{ if(camAt>=0) camOpen(camAt); });
+if(camCands)   camCands.addEventListener('click',ev=>{
+  const p=ev.target.closest('button[data-pick]');
+  if(p){ camToPick(+p.dataset.pick); return; }
+  const b=ev.target.closest('button[data-id]'); if(b) camChoose(+b.dataset.slot, b.dataset.id);
+});
+
+
+
+
+
+
+
+
+
+
+function camDump(){
+  const by=new Map();
+  camMem.forEach(m=>{ if(!by.has(m.id)) by.set(m.id,[]);
+    const a=by.get(m.id); if(a.indexOf(m.h)<0) a.push(m.h); });
+  return [...by].map(([id,hs])=>id+':'+hs.join(',')).join(';');
+}
+const camExport=document.getElementById('camExport');
+function camCopy(txt){
+  const done=()=>{ if(camMemMsg) camMemMsg.textContent=camMem.length+'개 복사됨 — dev/camseed.js 에 먹이세요.'; };
+  
+  if(typeof window!=='undefined'&&window.navigator&&window.navigator.clipboard&&window.navigator.clipboard.writeText)
+    window.navigator.clipboard.writeText(txt).then(done,()=>hCopyFallback(txt,done));
+  else hCopyFallback(txt,done);
+}
+if(camExport) camExport.addEventListener('click',async ()=>{
+  if(!camMem.length){ if(camMemMsg) camMemMsg.textContent='내보낼 기억이 아직 없습니다.'; return; }
+  const txt=camDump(), nav=(typeof window!=='undefined')&&window.navigator;
+  try{
+    if(nav&&nav.share&&typeof File==='function'){
+      const f=new File([txt],'camseed.txt',{type:'text/plain'});
+      
+      if(!nav.canShare||nav.canShare({files:[f]})){
+        await nav.share({files:[f],title:'카메라 기억'});
+        if(camMemMsg) camMemMsg.textContent=camMem.length+'개 내보냈습니다.';
+        return;
+      }
+    }
+  }catch(e){
+    if(e&&e.name==='AbortError') return;      
+  }
+  camCopy(txt);
+});
+
+
+if(camForget) camForget.addEventListener('click',()=>{
+  camMem=[]; camSave();
+  if(camMemMsg) camMemMsg.textContent='기억을 지웠습니다. 다시 가르치면 쌓입니다.';
+});
+
+if(camModal) camModal.addEventListener('click',ev=>{ if(ev.target===camModal) camHideUI(); });
+
+camLoad();
+
 function renderDetail(){
   const v=document.getElementById('viewBattle'); if(!v)return;
   v.dataset.d=detail;
@@ -7725,7 +8453,7 @@ function renderChance(){
 
 
 function renderAll(){
-  renderTagClass();renderFoeSets();renderBosses();renderBossGuide();renderFoes();renderReadout();renderRotation();renderSupport();renderRoster();renderDex();renderMyQR();renderTidSet();renderBackend();renderChance();renderDmax();renderMega();renderGuide();renderDetail();renderDock();renderHCur();renderTrain();
+  renderTagClass();renderFoeSets();renderBosses();renderBossGuide();renderFoes();renderReadout();renderRotation();renderSupport();renderRoster();renderDex();renderMyQR();renderTidSet();renderBackend();renderChance();renderCam();renderDmax();renderMega();renderGuide();renderDetail();renderDock();renderHCur();renderTrain();
   
 
   const bh=document.getElementById('b23ct');
