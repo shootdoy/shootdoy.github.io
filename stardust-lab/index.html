@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.99.2">
+<meta name="version" content="3.99.3">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -205,7 +205,11 @@ body{padding-top:env(safe-area-inset-top,0px)}
 
 .camview{position:relative;flex:1 1 auto;min-height:40vh;border-radius:11px;overflow:hidden;
   background:#000;display:flex;align-items:center;justify-content:center}
-.camview video{width:100%;height:100%;object-fit:cover;display:block}
+
+
+
+.camframe{position:relative;overflow:hidden;border-radius:11px;background:#000;flex:0 0 auto}
+.camframe video{width:100%;height:100%;object-fit:cover;display:block}
 
 
 
@@ -241,6 +245,7 @@ body{padding-top:env(safe-area-inset-top,0px)}
   font-size:10.5px;font-weight:700;color:var(--bad);text-shadow:0 1px 3px #000}
 .camguide b.g0::after{content:'서브1'}
 .camguide b.g1::after{content:'서브2'}
+
 
 
 
@@ -2650,6 +2655,15 @@ footer .fver{margin:15px 0 0}
     <div class="pickhead"><b>서브 인식</b>
       <button class="pickx" id="camClose" aria-label="닫기">✕</button></div>
     <div class="camview">
+      
+
+
+
+
+
+
+
+      <i class="camframe">
       <video id="camVid" playsinline muted autoplay></video>
       
 
@@ -2659,6 +2673,7 @@ footer .fver{margin:15px 0 0}
       
 
       <i class="camguide"><b class="g0"></b><b class="g1"></b></i>
+      </i>
       <button class="camshot" id="camShot" aria-label="찍기"></button>
     </div>
     <p class="camstate" id="camState"></p>
@@ -3452,7 +3467,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.99.2';
+const VERSION='3.99.3';
 const BUILT='2026-09-11';
 
 
@@ -3464,7 +3479,7 @@ const BUILT='2026-09-11';
 
 
 
-const WHATSNEW='찍은 화면이 맞춰 찍은 자리 그대로 보이고, 추천이 붙어도 팝업이 화면을 안 넘칩니다.';
+const WHATSNEW='카메라가 «당겨 찍은» 것처럼 보이던 것을 고쳤습니다. 화각이 잘리지 않고 다 보입니다.';
 
 
 
@@ -8186,6 +8201,8 @@ const camModal=document.getElementById('camModal'), camVid=document.getElementBy
       camForget=document.getElementById('camForget'),
       camStill=document.getElementById('camStill'),
       camViewEl=document.querySelector('.camview'),
+      camFrame=document.querySelector('.camframe'),
+      camGuideEl=document.querySelector('.camguide'),
       camMemMsg=document.getElementById('camMemMsg');
 
 function camStop(){
@@ -8203,6 +8220,33 @@ function camHideUI(){
 function camStillOff(){
   if(camStill){ camStill.hidden=true; camStill.removeAttribute('src'); }
   if(camViewEl) camViewEl.classList.remove('shot');
+}
+
+
+
+
+
+
+
+
+
+
+function camFit(){
+  if(!camFrame||!camViewEl) return;
+  const shot=camViewEl.classList.contains('shot');
+  const aw = shot ? CAM_A3 : ((camVid&&camVid.videoWidth)||0);
+  const ah = shot ? 1      : ((camVid&&camVid.videoHeight)||0);
+  if(!aw||!ah) return;
+  let bb; try{ bb=camViewEl.getBoundingClientRect(); }catch(e){ return; }
+  if(!bb||!bb.width||!bb.height) return;
+  const s=Math.min(bb.width/aw, bb.height/ah);
+  camFrame.style.width=(aw*s)+'px'; camFrame.style.height=(ah*s)+'px';
+  if(!camGuideEl) return;
+  if(shot){ camGuideEl.style.removeProperty('width'); camGuideEl.style.removeProperty('height'); return; }
+  const a=aw/ah;
+  let gw=CAM_GW, gh=CAM_GW*a/CAM_A3;
+  if(gh>1){ gh=0.98; gw=0.98*CAM_A3/a; }   
+  camGuideEl.style.width=(gw*100)+'%'; camGuideEl.style.height=(gh*100)+'%';
 }
 
 
@@ -8226,7 +8270,7 @@ async function camOpen(at){
 
     camStream=await nav.mediaDevices.getUserMedia({video:{facingMode:'environment',
       width:{ideal:1080}, height:{ideal:1920}}});
-    if(camVid){ camVid.srcObject=camStream; await camVid.play().catch(()=>{}); }
+    if(camVid){ camVid.srcObject=camStream; await camVid.play().catch(()=>{}); camFit(); }
   }catch(e){
     
     camSay('카메라를 열지 못했습니다. 권한을 확인하거나 직접 고르세요.');
@@ -8264,7 +8308,7 @@ function camCapture(){
     const sc=document.createElement('canvas'); sc.width=560; sc.height=Math.round(560/CAM_A3);
     sc.getContext('2d').drawImage(camVid,gx,gy,gw,gh,0,0,sc.width,sc.height);
     if(camStill){ camStill.src=sc.toDataURL('image/jpeg',0.7); camStill.hidden=false;
-                  if(camViewEl) camViewEl.classList.add('shot'); }
+                  if(camViewEl) camViewEl.classList.add('shot'); camFit(); }
   }catch(e){ camStillOff(); }
   const W=CAM_W, H=Math.round(W*CAM_ASPECT), out=[];
   for(let slot=0;slot<2;slot++){
@@ -8355,6 +8399,11 @@ if(camShot)    camShot.addEventListener('click',camCapture);
 if(camPickBtn) camPickBtn.addEventListener('click',()=>camToPick());
 if(camClose)   camClose.addEventListener('click',camHideUI);
 if(camAgain)   camAgain.addEventListener('click',()=>{ if(camAt>=0) camOpen(camAt); });
+
+
+if(camVid) camVid.addEventListener('loadedmetadata',camFit);
+try{ if(typeof window!=='undefined'&&window.addEventListener)
+       window.addEventListener('resize',()=>{ if(camModal&&!camModal.hidden) camFit(); }); }catch(e){}
 if(camCands)   camCands.addEventListener('click',ev=>{
   const p=ev.target.closest('button[data-pick]');
   if(p){ camToPick(+p.dataset.pick); return; }
