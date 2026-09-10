@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.99.1">
+<meta name="version" content="3.99.2">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -181,13 +181,20 @@ body{padding-top:env(safe-area-inset-top,0px)}
 
 
 
+
+
+
+
+
 .cammodal{position:fixed;inset:0;z-index:210;display:flex;align-items:stretch;
   justify-content:center;background:rgba(6,3,20,.78);overflow-y:auto;
-  padding:calc(env(safe-area-inset-top,0px) + 14px) 10px calc(var(--bz) + var(--dkgap) + 76px)}
+  --camgap:calc(var(--bz) + var(--dkgap) + 76px);
+  padding:calc(env(safe-area-inset-top,0px) + 14px) 10px 0}
 .cammodal[hidden]{display:none}
 .cambox{width:100%;max-width:520px;background:var(--panel);border:1px solid var(--rim);
   border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:9px;
-  box-shadow:0 14px 40px rgba(0,0,0,.6);min-height:100%}
+  box-shadow:0 14px 40px rgba(0,0,0,.6);
+  min-height:calc(100% - var(--camgap));margin-bottom:var(--camgap)}
 
 
 
@@ -249,6 +256,18 @@ body{padding-top:env(safe-area-inset-top,0px)}
 .camstill[hidden]{display:none}
 
 .camview.shot .camshot{display:none}
+
+
+
+
+
+
+
+
+
+
+.camview.shot{flex:0 0 auto;min-height:0;aspect-ratio:1.546}
+.camview.shot .camguide{width:100%;box-shadow:none}
 
 .camslot{display:flex;flex-direction:column;gap:5px}
 .camslabel{font-size:11.5px;font-weight:700;color:var(--ink-dim)}
@@ -3433,7 +3452,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.99.1';
+const VERSION='3.99.2';
 const BUILT='2026-09-11';
 
 
@@ -3445,7 +3464,7 @@ const BUILT='2026-09-11';
 
 
 
-const WHATSNEW='카메라 미리보기를 아래 볼 줄 바로 위까지 키우고, 가이드 밖은 어둡게 덮었습니다.';
+const WHATSNEW='찍은 화면이 맞춰 찍은 자리 그대로 보이고, 추천이 붙어도 팝업이 화면을 안 넘칩니다.';
 
 
 
