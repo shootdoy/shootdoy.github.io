@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.99.3">
+<meta name="version" content="3.100.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -2679,9 +2679,14 @@ footer .fver{margin:15px 0 0}
     <p class="camstate" id="camState"></p>
     <div class="camcands" id="camCands" hidden></div>
     <div class="camrow2">
-      <button class="mini" id="camAgain" hidden>다시 찍기</button>
+      <button class="mini" id="camAgain" hidden>다시 찾기</button>
       <button class="mini" id="camPickBtn">직접 고르기</button>
     </div>
+    
+
+
+    <p class="tab-note">네모에 맞춰 들고 있으면 <b>저절로 알아봅니다</b>. 잘 안 잡히면
+      가운데 단추로 한 장을 찍어도 됩니다.</p>
     <p class="tab-note">못 알아보면 «직접 고르기» 로 넘어갑니다. 그때 고른 태그를
       <b>이 화면의 모습으로 기억</b>해 다음부터 후보로 올립니다.</p>
   </div>
@@ -3467,7 +3472,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.99.3';
+const VERSION='3.100.0';
 const BUILT='2026-09-11';
 
 
@@ -3479,7 +3484,7 @@ const BUILT='2026-09-11';
 
 
 
-const WHATSNEW='카메라가 «당겨 찍은» 것처럼 보이던 것을 고쳤습니다. 화각이 잘리지 않고 다 보입니다.';
+const WHATSNEW='카메라를 네모에 맞춰 들고만 있으면 저절로 알아봅니다. 셔터를 누를 필요가 없습니다.';
 
 
 
@@ -8169,15 +8174,33 @@ function camZncc(a,b){
 
 const CAM_SET=[];
 [0.45,0.55,0.65].forEach(f=>[0.02,0.03].forEach(k=>[0,0.4,0.8,1.2].forEach(u=>CAM_SET.push([f,k,u]))));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function camScan(L,S,W,H,slot){
   const T=camTpls(), best={};
-  let h0=null;
+  let bestImg=null, bestScore=-Infinity;
   CAM_SET.forEach(fk=>{
     const r=camText(L,S,W,H,fk[0],fk[1],fk[2]);
     if(!r) return;
-    if(h0===null) h0=camHashArr(r.img);
-    for(const n in T){ const v=camZncc(r.img,T[n]); if(!(n in best)||v>best[n]) best[n]=v; }
+    let top=-Infinity;
+    for(const n in T){ const v=camZncc(r.img,T[n]);
+      if(v>top) top=v;
+      if(!(n in best)||v>best[n]) best[n]=v; }
+    if(bestImg===null || top>bestScore){ bestImg=r.img; bestScore=top; }
   });
+  const h0 = bestImg ? camHashArr(bestImg) : null;
   camLastH[slot]=h0;
   if(h0===null) return [];
   
@@ -8206,6 +8229,7 @@ const camModal=document.getElementById('camModal'), camVid=document.getElementBy
       camMemMsg=document.getElementById('camMemMsg');
 
 function camStop(){
+  camWatchStop();          
   try{ if(camStream) camStream.getTracks().forEach(t=>t.stop()); }catch(e){}
   camStream=null;
 }
@@ -8258,7 +8282,7 @@ async function camOpen(at){
   if(camCands) camCands.hidden=true;
   camStillOff();
   if(camAgain) camAgain.hidden=true;
-  if(camState) camState.textContent='상대 세 칸을 네모에 맞추고, 빨간 칸 둘에 «이름판» 을 넣으세요.';
+  if(camState) camState.textContent='상대 세 칸을 네모에 맞추세요 — 그대로 들고 있으면 저절로 알아봅니다.';
   
 
   const nav=(typeof window!=='undefined')&&window.navigator;
@@ -8270,7 +8294,7 @@ async function camOpen(at){
 
     camStream=await nav.mediaDevices.getUserMedia({video:{facingMode:'environment',
       width:{ideal:1080}, height:{ideal:1920}}});
-    if(camVid){ camVid.srcObject=camStream; await camVid.play().catch(()=>{}); camFit(); }
+    if(camVid){ camVid.srcObject=camStream; await camVid.play().catch(()=>{}); camFit(); camWatchStart(); }
   }catch(e){
     
     camSay('카메라를 열지 못했습니다. 권한을 확인하거나 직접 고르세요.');
@@ -8288,8 +8312,10 @@ function camSay(msg){ if(camState) camState.textContent=msg; camStop(); }
 
 
 const CAM_A3=1.546, CAM_GW=0.94, CAM_W=640, CAM_ASPECT=1.94;
-function camCapture(){
-  if(!camVid||!camVid.videoWidth){ camSay('아직 화면이 안 잡혔습니다. 잠시 뒤 다시 찍으세요.'); return; }
+
+
+function camGeom(){
+  if(!camVid||!camVid.videoWidth) return null;
   const vw=camVid.videoWidth, vh=camVid.videoHeight;
   let dw=vw, dh=vh;
   try{
@@ -8298,36 +8324,108 @@ function camCapture(){
   }catch(e){}
   let gw=dw*CAM_GW, gh=gw/CAM_A3;
   if(gh>dh){ gh=dh*0.98; gw=gh*CAM_A3; }      
-  const gx=(vw-gw)/2, gy=(vh-gh)/2;
-  
+  return {gx:(vw-gw)/2, gy:(vh-gh)/2, gw:gw, gh:gh, cw:gw/3};
+}
 
-  const cw=gw/3;
-  
 
+
+function camRead(g,slot){
+  const W=CAM_W, H=Math.round(W*CAM_ASPECT);
+  const cx=g.gx+(slot===1 ? g.cw*2 : 0);
+  const c=document.createElement('canvas'); c.width=W; c.height=H;
+  const ctx=c.getContext('2d'); ctx.drawImage(camVid,cx,g.gy,g.cw,g.gh,0,0,W,H);
+  const px=ctx.getImageData(0,0,W,H).data, N=W*H;
+  const L=new Float64Array(N), S=new Float64Array(N);
+  for(let k=0;k<N;k++){
+    const r=px[k*4], g2=px[k*4+1], b2=px[k*4+2];
+    L[k]=r*0.299+g2*0.587+b2*0.114;
+    const mx=Math.max(r,g2,b2), mn=Math.min(r,g2,b2);
+    S[k]=mx?(mx-mn)/mx:0;
+  }
+  return camScan(L,S,W,H,slot);
+}
+
+
+function camDrawStill(g){
   try{
     const sc=document.createElement('canvas'); sc.width=560; sc.height=Math.round(560/CAM_A3);
-    sc.getContext('2d').drawImage(camVid,gx,gy,gw,gh,0,0,sc.width,sc.height);
+    sc.getContext('2d').drawImage(camVid,g.gx,g.gy,g.gw,g.gh,0,0,sc.width,sc.height);
     if(camStill){ camStill.src=sc.toDataURL('image/jpeg',0.7); camStill.hidden=false;
                   if(camViewEl) camViewEl.classList.add('shot'); camFit(); }
   }catch(e){ camStillOff(); }
-  const W=CAM_W, H=Math.round(W*CAM_ASPECT), out=[];
-  for(let slot=0;slot<2;slot++){
-    const cx=gx+(slot===1 ? cw*2 : 0);
-    const c=document.createElement('canvas'); c.width=W; c.height=H;
-    const ctx=c.getContext('2d'); ctx.drawImage(camVid,cx,gy,cw,gh,0,0,W,H);
-    const px=ctx.getImageData(0,0,W,H).data, N=W*H;
-    const L=new Float64Array(N), S=new Float64Array(N);
-    for(let k=0;k<N;k++){
-      const r=px[k*4], g=px[k*4+1], b2=px[k*4+2];
-      L[k]=r*0.299+g*0.587+b2*0.114;
-      const mx=Math.max(r,g,b2), mn=Math.min(r,g,b2);
-      S[k]=mx?(mx-mn)/mx:0;
-    }
-    out.push(camScan(L,S,W,H,slot));
-  }
+}
+function camCapture(){
+  const g=camGeom();
+  if(!g){ camSay('아직 화면이 안 잡혔습니다. 잠시 뒤 다시 찍으세요.'); return; }
+  camWatchStop();
+  camDrawStill(g);
+  
+
+  const out=[camRead(g,0), camRead(g,1)];
   
   if(!out[0].length && !out[1].length){ camToPick(); return; }
   camShowCands(out);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const CAM_HITS=3, CAM_KEEP=8, CAM_GAP=60, CAM_MAX=40;
+let camTimer=null, camSeen=[[],[]], camHold=[null,null], camFrames=0;
+function camWatchStop(){ if(camTimer){ clearTimeout(camTimer); camTimer=null; } }
+function camWatchStart(){
+  camWatchStop(); camSeen=[[],[]]; camHold=[null,null]; camFrames=0;
+  camTimer=setTimeout(camTick,400);   
+}
+function camTick(){
+  camTimer=null;
+  if(!camModal||camModal.hidden||!camStream) return;
+  const g=camGeom();
+  if(g){
+    camFrames++;
+    for(let s=0;s<2;s++){
+      
+      if(camHold[s]) continue;
+      const hit=camRead(g,s);
+      const top=hit.length?hit[0][0]:null;
+      const seen=camSeen[s];
+      seen.push(top); if(seen.length>CAM_KEEP) seen.shift();
+      if(top && seen.length>=CAM_HITS && seen.slice(-CAM_HITS).every(v=>v===top)) camHold[s]=hit;
+    }
+    if(camHold[0]&&camHold[1]){ camDrawStill(g); camShowCands([camHold[0],camHold[1]]); return; }
+    
+
+    if(camFrames>=CAM_MAX){
+      if(camHold[0]||camHold[1]){ camDrawStill(g); camShowCands([camHold[0]||[],camHold[1]||[]]); return; }
+      if(camState) camState.textContent='아직 못 알아봤습니다 — 셔터를 누르거나 «직접 고르기» 로 넘어가세요.';
+      return;
+    }
+    camWatchSay();
+  }
+  camTimer=setTimeout(camTick,CAM_GAP);
+}
+
+function camWatchSay(){
+  if(!camState) return;
+  const nm=s=>{ const h=camHold[s]; if(!h||!h.length) return '찾는 중…';
+    const c=FOEPOOL.find(p=>p.id===h[0][0]); return c?c.n:'찾는 중…'; };
+  camState.textContent='서브1 '+nm(0)+' · 서브2 '+nm(1);
 }
 
 function camShowCands(rows){
