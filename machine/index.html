@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>게임기는 태그를 어떻게 고르는가 · 특허로 본 태그스타 배출 구조</title>
+<meta name="description" content="포켓몬 태그스타 게임기의 태그 배출 구조를 Marvelous 특허 JP7155177B2 로 살펴봅니다. 스토커에서 50슬롯 후보 풀로, 카메라 식별을 거쳐 지정 배출까지의 과정과, 실제 플레이 관측이 그 구조와 어떻게 맞아떨어지는지 정리했습니다.">
+<meta name="theme-color" content="#120B2E">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://shootdoy.github.io/machine/">
+<!-- Google AdSense — 사이트 소유권 확인용. 반드시 head 안에 둘 것 -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1384191135178594"
+     crossorigin="anonymous"></script>
+<!-- ⚠ CSS 는 인라인이다 — 외부 파일을 참조하면 그 하나가 빠졌을 때 쪽이 통째로 민무늬가 된다.
+     실제로 about·guide·contact·privacy 네 쪽이 없는 _style.css 를 가리키고 있었다 (2026-09-11 에
+     고쳤다). boss/ 53쪽이 인라인인 것과 같은 규칙이다. -->
+<style>
+:root{--void:#120B2E;--panel:#1E1349;--rim:#4A2F9C;--star:#FFC831;--cyan:#38E1FF;--ink:#F2ECFF;--dim:#A392D6}
+*{box-sizing:border-box}
+body{margin:0;background:var(--void);color:var(--ink);line-height:1.75;
+  font-family:'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;font-size:16px}
+.wrap{max-width:720px;margin:0 auto;padding:22px 16px 60px}
+header{border-bottom:1px solid var(--rim);padding-bottom:14px;margin-bottom:26px}
+header a.home{color:var(--star);text-decoration:none;font-weight:700;font-size:15px}
+nav{margin-top:10px;display:flex;gap:14px;flex-wrap:wrap;font-size:14px}
+nav a{color:var(--dim);text-decoration:none}
+nav a:hover,nav a[aria-current]{color:var(--ink)}
+h1{font-size:24px;margin:0 0 6px;line-height:1.4}
+h2{font-size:18px;margin:32px 0 10px;color:var(--star)}
+h3{font-size:16px;margin:22px 0 6px}
+p,li{color:#E4DCFF}
+.lead{color:var(--dim);margin:0 0 24px}
+ul,ol{padding-left:20px}
+li{margin:5px 0}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14.5px}
+th,td{border:1px solid var(--rim);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:var(--panel);color:var(--star)}
+.box{background:var(--panel);border:1px solid var(--rim);border-radius:12px;padding:14px 16px;margin:18px 0}
+.box p:last-child{margin-bottom:0}
+.box p:first-child{margin-top:0}
+.flow{background:var(--panel);border:1px solid var(--rim);border-radius:12px;padding:16px;margin:18px 0;
+  font-size:14.5px;line-height:2;color:var(--ink)}
+.flow b{color:var(--star);font-weight:700}
+.warn{border-color:var(--star)}
+a{color:var(--cyan)}
+footer{margin-top:44px;border-top:1px solid var(--rim);padding-top:16px;font-size:13px;color:var(--dim)}
+code{background:rgba(0,0,0,.3);padding:1px 5px;border-radius:4px;font-size:13.5px}
+.tblwrap{overflow-x:auto}
+.flow-img{margin:20px 0}
+.flow-img img{width:100%;height:auto;border:1px solid var(--rim);border-radius:12px;display:block}
+.flow-img figcaption{margin-top:9px;font-size:13px;color:var(--dim);line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="home" href="../">&#8592; 스타더스트 랩</a>
+  <nav>
+    <a href="../about.html">소개</a>
+    <a href="../guide.html">이용 방법</a>
+    <a href="../boss/">보스별 공략</a>
+    <a href="./" aria-current="page">게임기 구조</a>
+    <a href="../stardust-lab/">공략 도구 열기</a>
+  </nav>
+</header>
+
+<h1>게임기는 태그를 어떻게 고르는가</h1>
+<p class="lead">특허 JP7155177B2 로 살펴본 포켓몬 태그스타의 태그 배출 구조</p>
+
+<p>태그스타를 플레이하다 보면 한 가지 궁금증이 생깁니다.
+<strong>화면에 등장한 포켓몬과 실제로 배출되는 태그는 어떻게 연결되는 걸까요?</strong></p>
+
+<p>단순히 기계 안에서 다음 태그 한 장이 순서대로 나오는 구조일까요?
+아니면 기계가 내부에 어떤 태그가 있는지 알고, 그중 하나를 골라서 배출하는 구조일까요?</p>
+
+<p>이 질문을 이해하는 데 중요한 자료가 일본 <strong>Marvelous</strong>가 출원한 특허
+<strong>JP7155177B2</strong> &#12300;배출기구 및 게임장치(配出機構およびゲーム装置)&#12301;입니다.
+2020년 1월 23일 출원됐고, 발명자는 土手真悟(도테 신고)&#183;大林武尊(오바야시 타케루)입니다.
+특허의 목적은 <strong>게임 결과에 따라 서로 다른 배출물을 효율적으로 선택해 배출하는</strong>
+게임장치를 구현하는 것입니다.</p>
+
+<div class="box warn">
+<p><strong>먼저 밝혀 둡니다.</strong> 아래 내용은 특허 명세서를 기반으로 구조를 정리한 것입니다.
+실제 상용 태그스타 기기의 소프트웨어와 내부 구성이 특허 실시예와 100% 동일하다고
+단정할 수는 없습니다. 특허는 &#171;이런 구조로 만들 수 있다&#187;를 적은 문서이지
+&#171;이 기계가 지금 이렇게 돌고 있다&#187;를 보증하는 문서가 아닙니다.</p>
+</div>
+
+<h2>한 장으로 보는 전체 흐름</h2>
+<figure class="flow-img">
+  <a href="flow.webp" target="_blank" rel="noopener">
+    <img src="flow.webp" width="667" height="2000" loading="lazy" decoding="async"
+         alt="태그스타 내부 구조와 동작 과정 10단계 — 400장 박스를 50장씩 8묶음으로 포장하고, 매장에서 스토커 1~8에 보충하며, 턴테이블이 회전해 원하는 스토커를 고르고, 스토커 맨 아래 태그 한 장이 50슬롯 턴테이블로 밀려 들어가 카메라로 종류를 판독한 뒤, 게임 후보를 선별해 최종 후보를 배출구로 밀어내고, 빈 슬롯을 다시 보충하는 과정">
+  </a>
+  <figcaption>특허 JP7155177B2 와 플레이어 분석 자료를 기반으로 구조를 그린 것입니다.
+  그림을 누르면 원본 크기로 볼 수 있습니다.</figcaption>
+</figure>
+
+<h2>핵심은 &#171;스토커 &#8594; 50칸 후보 풀 &#8594; 선택 배출&#187; 구조</h2>
+
+<p>이 특허에서 가장 중요한 것은 <strong>태그를 저장하는 대량 재고부</strong>와
+<strong>실제 게임에서 쓸 후보 태그를 보관하는 부분</strong>이 분리되어 있다는 점입니다.</p>
+
+<p>게임기 내부에는 여러 개의 <strong>스토커</strong>가 있고 이곳에 많은 태그가 쌓여 있습니다.
+하지만 스토커에서 태그가 바로 플레이어에게 나오는 것이 아닙니다. 중간에
+<strong>배출후보 유지부(配出候補保持部)</strong>라는 별도의 원형 구조가 있습니다.</p>
+
+<p>실시예에서는 이곳에 총 <strong>50개의 유지판</strong>이 있고 각각 실제 태그 한 장을
+보관합니다. 특허는 제1&#126;제5 슬롯을 메모리용, 제6&#126;제25 슬롯을 Rare,
+제26&#126;제50 슬롯을 Normal로 구성하는 예를 제시합니다.</p>
+
+<div class="flow">
+대량 태그 재고<br>
+&#8595;<br>
+여러 개의 <b>스토커</b><br>
+&#8595;<br>
+<b>50슬롯 배출 후보 풀</b><br>
+&#8595;<br>
+<b>카메라로 태그 식별</b><br>
+&#8595;<br>
+게임 후보 선정<br>
+&#8595;<br>
+플레이어 선택<br>
+&#8595;<br>
+<b>해당 태그 지정 배출</b>
+</div>
+
+<p>즉 이 시스템은 단순한 &#171;다음 태그 한 장 배출&#187; 방식보다 훨씬 복잡합니다.
+이전 세대 기기처럼 배열표 순서대로 나오는 것이 아니라,
+<strong>게임기가 무엇을 줬는지 기억하고 무엇을 줄지 제어할 수 있도록</strong> 설계되었습니다.</p>
+
+<h2>스토커와 50슬롯 턴테이블은 모두 움직인다</h2>
+
+<p>기계 구조에는 두 개의 주요 동작부가 있습니다.
+<strong>제1 동작부</strong>에는 여러 스토커가 원형으로 배치되어 있고,
+그 바깥쪽을 둘러싸는 형태로 <strong>제2 동작부</strong>, 즉 50개의 배출 후보 유지판이 있습니다.</p>
+
+<p>중요한 점은 <strong>두 부분을 독립적으로 제어할 수 있다</strong>는 것입니다.
+특허 청구항에서도 제1 동작부는 회전 가능하며 복수의 스토커가 그 위에 원형으로 배치되고,
+제2 동작부는 그 바깥쪽에 위치한다고 설명합니다.</p>
+
+<p>따라서 흔히 말하는 &#171;스토커가 회전한다&#187;는 표현은 조금 부정확합니다. 정확하게는
+<strong>스토커 하나하나가 도는 것이 아니라, 스토커들이 올라간 원형 동작부 전체가 회전합니다.</strong>
+그리고 50슬롯 후보부 역시 별도의 모터로 회전할 수 있습니다.</p>
+
+<h3>스토커에서는 가장 아래쪽 태그가 한 장씩 이동한다</h3>
+
+<p>태그를 후보 풀로 옮길 때는 <strong>푸셔</strong>가 사용됩니다. 예를 들어 Rare 태그가
+필요하면, 제어부가 Rare가 들어 있는 스토커와 특정 빈 유지판을 푸셔 위치로 맞춥니다.
+그다음 <strong>스토커 최하단</strong>에 있는 태그 한 장을 밀어서 50슬롯 후보부로 보냅니다.</p>
+
+<p>실시예에서는 Rare 태그가 든 제3 스토커와 제6 유지판을 맞춘 뒤, 스토커 최하단의
+Rare 태그를 제6 유지판으로 밀어냅니다. 즉 <strong>스토커 안에서는 아래쪽 태그부터
+소비됩니다.</strong></p>
+
+<h2>후보 풀로 들어오면 카메라가 정체를 확인한다</h2>
+
+<p>50슬롯 후보부로 태그가 들어오면 끝이 아닙니다. 해당 슬롯을 <strong>카메라</strong> 아래로
+이동시킨 뒤 태그의 식별정보를 촬영합니다. 이를 통해 게임기는
+<strong>어느 슬롯에 / 어떤 태그가 들어 있고 / 어떤 캐릭터인지</strong>를 알게 됩니다.</p>
+
+<p>이 정보를 특허에서는 <strong>유지판 테이블 정보(保持板テーブル情報)</strong>로 저장합니다.
+개념적으로는 내부에 이런 표가 있는 셈입니다.</p>
+
+<div class="tblwrap">
+<table>
+<tr><th>슬롯</th><th>태그</th></tr>
+<tr><td>6</td><td>Rare A</td></tr>
+<tr><td>7</td><td>Rare B</td></tr>
+<tr><td>8</td><td>Rare C</td></tr>
+<tr><td>24</td><td>Rare H</td></tr>
+<tr><td>26</td><td>Normal A</td></tr>
+<tr><td>27</td><td>Normal B</td></tr>
+</table>
+</div>
+
+<p>따라서 50슬롯은 단순한 회전판이 아니라
+<strong>어떤 태그가 어느 위치에 있는지 알고 있는 활성 재고 풀</strong>이라고 보는 것이
+더 정확합니다.</p>
+
+<h2>게임을 시작하기 전에 이미 배출 후보가 정해질 수 있다</h2>
+
+<p>이 특허에서 가장 흥미로운 부분입니다. 게임이 시작되면 게임처리수단이
+<strong>플레이어 정보를 기반으로 배출 후보 태그를 먼저 가선택</strong>합니다.
+2인 플레이 실시예에서는 각 플레이어에게 <strong>6개의 실제 배출 후보</strong>를
+게임 시작 전에 정합니다. 이 후보들은 앞서 만들어진 50슬롯 테이블에서 선택됩니다.</p>
+
+<div class="flow">
+실제 태그 50개 준비<br>&#8595;<br><b>게임 시작</b><br>&#8595;<br>
+각 플레이어 후보 6개 <b>가선택</b><br>&#8595;<br>실제 게임 플레이
+</div>
+
+<p>따라서 이 실시예에서는 <strong>게임이 완전히 끝난 뒤 처음부터 태그를 고르는 구조가
+아닙니다.</strong> 물리적으로 존재하는 태그 중 일부가 이미 게임 전에 후보로 잡힐 수 있습니다.</p>
+
+<h3>게임 결과가 최종 획득 후보를 결정한다</h3>
+
+<p>가선택한 후보가 모두 실제 획득 가능한 것은 아닙니다. 게임이 끝난 뒤 게임처리수단은
+게임 결과에 따라 가선택한 후보의 <strong>일부 또는 전부</strong>를 최종 후보로 선택합니다.
+그 후 화면에 해당 태그를 표시하고 플레이어가 그중 하나를 고릅니다.</p>
+
+<div class="flow">
+50슬롯 실제 태그<br>&#8595;<br>게임 전 후보 6개<br>&#8595;<br><b>배틀</b><br>&#8595;<br>
+게임 결과<br>&#8595;<br>후보 일부 또는 전부 공개<br>&#8595;<br>플레이어가 태그 선택
+</div>
+
+<p>이 점이 중요합니다. 특허 구조상 <strong>실제 태그 재고와 게임 화면의 후보가 서로
+독립적이지 않을 수 있기</strong> 때문입니다.</p>
+
+<h2>플레이어가 선택하면 해당 슬롯을 정확히 찾아간다</h2>
+
+<p>실시예에서는 Player 1이 제6 유지판의 Rare A를, Player 2가 제24 유지판의 Rare H를
+선택합니다. 그러면 게임기는 제1&#183;제2 동작부와 푸셔를 독립적으로 움직여 해당 유지판을
+정확한 배출 위치에 맞춥니다. 이후 푸셔가 태그를 배출로로 밀어내고, 태그는 중력으로
+배출구까지 이동합니다.</p>
+
+<div class="flow">
+화면에서 <b>Rare A</b> 선택<br>&#8595;<br>Rare A = <b>Slot 6</b> 확인<br>&#8595;<br>
+50슬롯 턴테이블 회전<br>&#8595;<br>Slot 6 배출 위치 도착<br>&#8595;<br>푸셔 작동<br>&#8595;<br>
+<b>Rare A 배출</b>
+</div>
+
+<p>즉 기계가 선택 이후에 태그를 &#171;찾는&#187; 것이 아닙니다.
+<strong>이미 어느 슬롯에 있는지 알고 있기 때문에 바로 그 위치로 이동시키는 구조</strong>입니다.</p>
+
+<h2>같은 태그가 두 장 있다면 협력 플레이에도 쓸 수 있다</h2>
+
+<p>특허에는 더 흥미로운 내용도 있습니다. <strong>두 플레이어에게 같은 종류의 배출물이 각각
+가선택된 경우, 게임처리수단이 협력 플레이를 실행할 수도 있다</strong>고 설명합니다.</p>
+
+<p>예를 들어 Player 1과 Player 2에게 각각 실제 Rare A 한 장씩이 후보로 잡혔다면,
+이를 이용해 두 사람이 함께 플레이하는 게임을 실행할 수 있습니다.</p>
+
+<p>이 부분은 태그 재고 상태가 단순히 &#171;마지막 배출 결과&#187;에만 쓰이는 것이 아니라,
+<strong>게임 내용 자체를 결정하는 조건으로 활용될 수도 있다</strong>는 의미입니다.</p>
+
+<h2>태그가 빠지면 빈 슬롯을 다시 채운다</h2>
+
+<p>태그가 배출되면 해당 슬롯은 빈 상태가 됩니다. 게임기는 이 빈 슬롯 역시 인식할 수 있습니다.
+특허에서는 유지판 자체에 식별코드를 붙여 어떤 슬롯이 비었는지 관리하는 방법까지 설명합니다.</p>
+
+<p>그리고 게임 종료 후 또는 후보 수가 일정 수준 이하로 줄었을 때 자동으로 보충할 수 있습니다.
+특히 Rare가 배출되었는지 확인한 뒤 그에 맞는 태그를 다시 채워 넣는 방식이 설명되어 있습니다.
+즉 <strong>후보 풀을 계속 일정한 구성으로 유지</strong>할 수 있습니다.</p>
+
+<h3>Rare 비율도 관리할 수 있다</h3>
+
+<p>실시예에서는 50슬롯 중 Rare를 <strong>20장</strong> 유지하도록 설정합니다. 제어부는 Rare가
+20장보다 부족하면 Rare 스토커에서 계속 태그를 가져와 채우고, 20장이 되면 Normal을 채우기
+시작합니다.</p>
+
+<p>따라서 이 구조는 단순 재고 관리가 아니라
+<strong>후보 풀의 종류별 구성 비율을 소프트웨어적으로 유지할 수 있는 구조</strong>입니다.</p>
+
+<div class="box">
+<p><strong>주의.</strong> 특허의 Rare와 Normal은 특허 설명을 위한 분류입니다.
+이를 실제 태그스타의 6성&#183;5성&#183;4성 등급과 그대로 대응한다고 단정할 수는 없습니다.</p>
+</div>
+
+<h2>그렇다면 태그스타의 태그는 완전 랜덤일까?</h2>
+
+<p>이 특허만 놓고 보면 &#171;완전 랜덤&#187;이라고 볼 근거는 없습니다. 핵심은 오히려 이렇습니다.</p>
+
+<div class="flow">
+실제 태그 재고 확인<br>&#8595;<br>후보 풀 구성<br>&#8595;<br>플레이어 정보 기반 후보 가선택<br>&#8595;<br>
+게임 진행<br>&#8595;<br>게임 결과 기반 최종 후보 선정<br>&#8595;<br><b>특정 실물 태그 지정 배출</b>
+</div>
+
+<p>물론 실제 상용 게임에서 이 과정 안에 난수나 확률 테이블을 사용할 가능성은 충분히 있습니다.
+그러나 JP7155177B2 자체에는 &#171;50개 중 완전히 무작위로 태그를 뽑는다&#187;는 규칙이
+핵심으로 기술되어 있지는 않습니다.</p>
+
+<h2>실제 플레이 관측과 맞춰 보면</h2>
+
+<p>저는 이 게임을 기록하면서 기계 내부와 플레이 로그를 따로 모아 왔습니다.
+특허를 읽고 나서 그 기록과 대조해 보니, <strong>맞아떨어지는 것이 셋</strong> 있었습니다.</p>
+
+<div class="tblwrap">
+<table>
+<tr><th>플레이 기록에서 관찰한 것</th><th>특허가 말하는 것</th></tr>
+<tr><td>배출용 스토커는 8통이고 통당 50장.
+  <strong>★6은 각 통 맨 아래 3&#126;4장</strong></td>
+  <td>스토커 최하단 태그부터 푸셔로 밀어낸다</td></tr>
+<tr><td>통에서 곧장 나오지 않고 <strong>중간 저장소</strong>를 거치며,
+  <strong>거기 있는 카드만 화면에 뜬다</strong></td>
+  <td>50슬롯 배출후보 유지부를 반드시 거친다</td></tr>
+<tr><td>스페셜태그배틀은 저장소에
+  <strong>같은 ★6 두 장</strong>이 있을 때 발동한다</td>
+  <td>두 플레이어에게 같은 종류가 가선택되면 <strong>협력 플레이를 실행할 수 있다</strong></td></tr>
+</table>
+</div>
+
+<p>세 번째가 특히 흥미로웠습니다. 저는 이것을 <strong>플레이 관측만으로 추측</strong>하고
+있었는데, 특허에는 그것이 <strong>설계 의도</strong>로 적혀 있었습니다.</p>
+
+<p>반대로 <strong>제가 틀렸던 것도 하나</strong> 있었습니다. 배출 경로에서 스캐너를 찾지 못해
+&#171;기계는 배출된 카드를 광학적으로 알지 못하고 내부 계수로만 추적할 것&#187;이라고 적어
+두었는데, 특허는 <strong>카메라로 식별한다</strong>고 명시합니다. 근거가
+&#171;없다는 증거&#187;가 아니라 &#171;못 찾았다&#187;였던 자리입니다.</p>
+
+<div class="box warn">
+<p><strong>그래도 &#171;★6 예측&#187;은 만들 수 없습니다.</strong>
+오히려 특허를 읽고 나니 그 판단이 더 분명해졌습니다.
+후보가 <strong>게임이 시작되기 전에</strong> 플레이어 정보를 근거로 정해진다면,
+화면에 뜨는 것은 이미 정해진 결과입니다.
+&#171;몇 판을 쳤으니 이제 나올 때가 됐다&#187;를 계산할 자리가 애초에 없습니다.</p>
+</div>
+
+<h2>이 특허에서 기억할 핵심 여덟 가지</h2>
+<ol>
+<li>대량 태그를 보관하는 <strong>복수의 스토커</strong>가 존재합니다.</li>
+<li>태그는 바로 배출되지 않고 <strong>50슬롯 후보 풀</strong>을 거칩니다.</li>
+<li>스토커가 올라간 제1 동작부와 50슬롯 제2 동작부는 <strong>각각 움직일 수 있습니다.</strong></li>
+<li>후보 풀로 들어온 태그는 <strong>카메라로 식별</strong>됩니다.</li>
+<li>시스템은 <strong>어느 슬롯에 어떤 태그가 있는지 기억</strong>합니다.</li>
+<li>게임 <strong>전에</strong> 실제 태그 후보를 미리 정할 수 있습니다.</li>
+<li>게임 결과에 따라 후보 일부 또는 전부가 최종 획득 대상이 됩니다.</li>
+<li>플레이어가 선택하면 <strong>해당 물리 슬롯을 정확히 이동시켜</strong> 배출합니다.</li>
+</ol>
+
+<h2>참고</h2>
+<ul>
+<li>특허 JP7155177B2 &#12300;配出機構およびゲーム装置&#12301;, Marvelous Inc., 2020-01-23 출원</li>
+<li>발명자 土手真悟&#183;大林武尊</li>
+</ul>
+
+<p>이 사이트의 <a href="../stardust-lab/">공략 도구</a>는 위 배출 구조와 무관하게,
+<strong>플레이어가 통제할 수 있는 유일한 변수인 &#171;격파&#187;</strong>를 돕는 데만 집중합니다.
+보스별 약점과 3턴 로테이션은 <a href="../boss/">보스별 공략</a>에 정리해 두었습니다.</p>
+
+<footer>
+  <p>이 사이트는 <strong>비공식 팬 제작</strong> 도구이며 개인이 취미로 만들었습니다.
+  포켓몬 및 태그스타 관련 상표, 캐릭터, 이미지의 권리는 각 권리자에게 있습니다.
+  게임 회사와 아무런 제휴 관계가 없습니다.</p>
+  <p>이 글은 <strong>공개된 특허 문헌을 읽고 정리한 것</strong>이며, 실제 상용 기기의
+  동작을 보증하지 않습니다. 플레이 관측 부분은 직접 기록한 추정입니다.</p>
+  <p>&#169; 2026 shootdoy</p>
+</footer>
+
+</div>
+</body>
+</html>
