@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.101.0">
+<meta name="version" content="3.101.1">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -3483,8 +3483,8 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.101.0';
-const BUILT='2026-09-11';
+const VERSION='3.101.1';
+const BUILT='2026-09-12';
 
 
 
@@ -3495,7 +3495,7 @@ const BUILT='2026-09-11';
 
 
 
-const WHATSNEW='카메라가 엉뚱한 태그를 고르던 것을 고쳤습니다. 화면에 보이는 그 장면으로 후보를 냅니다.';
+const WHATSNEW='카메라가 화면에 보이는 그 장면으로 후보를 냅니다. 읽는 사이 손이 움직여 어긋나던 것을 고쳤습니다.';
 
 
 
@@ -8363,11 +8363,25 @@ function camGeom(){
 
 
 
-function camRead(g,slot){
+
+
+
+
+function camGrab(g){
+  const c=document.createElement('canvas');
+  c.width=Math.max(1,Math.round(g.gw)); c.height=Math.max(1,Math.round(g.gh));
+  c.getContext('2d').drawImage(camVid,g.gx,g.gy,g.gw,g.gh,0,0,c.width,c.height);
+  return c;
+}
+
+
+
+
+function camRead(frame,slot){
   const W=CAM_W, H=Math.round(W*CAM_ASPECT);
-  const cx=g.gx+(slot===1 ? g.cw*2 : 0);
+  const cw=frame.width/3, cx=(slot===1 ? cw*2 : 0);
   const c=document.createElement('canvas'); c.width=W; c.height=H;
-  const ctx=c.getContext('2d'); ctx.drawImage(camVid,cx,g.gy,g.cw,g.gh,0,0,W,H);
+  const ctx=c.getContext('2d'); ctx.drawImage(frame,cx,0,cw,frame.height,0,0,W,H);
   const px=ctx.getImageData(0,0,W,H).data, N=W*H;
   const L=new Float64Array(N), S=new Float64Array(N);
   for(let k=0;k<N;k++){
@@ -8380,10 +8394,10 @@ function camRead(g,slot){
 }
 
 
-function camDrawStill(g){
+function camDrawStill(frame){
   try{
     const sc=document.createElement('canvas'); sc.width=560; sc.height=Math.round(560/CAM_A3);
-    sc.getContext('2d').drawImage(camVid,g.gx,g.gy,g.gw,g.gh,0,0,sc.width,sc.height);
+    sc.getContext('2d').drawImage(frame,0,0,frame.width,frame.height,0,0,sc.width,sc.height);
     if(camStill){ camStill.src=sc.toDataURL('image/jpeg',0.7); camStill.hidden=false;
                   if(camViewEl) camViewEl.classList.add('shot'); camFit(); }
   }catch(e){ camStillOff(); }
@@ -8392,10 +8406,11 @@ function camCapture(){
   const g=camGeom();
   if(!g){ camSay('아직 화면이 안 잡혔습니다. 잠시 뒤 다시 찍으세요.'); return; }
   camWatchStop();
-  camDrawStill(g);
+  const frame=camGrab(g);          
+  camDrawStill(frame);
   
 
-  const out=[camRead(g,0), camRead(g,1)];
+  const out=[camRead(frame,0), camRead(frame,1)];
   
   if(!out[0].length && !out[1].length){ camToPick(); return; }
   camShowCands(out);
@@ -8442,20 +8457,21 @@ function camTick(){
   const g=camGeom();
   if(g){
     camFrames++;
+    const frame=camGrab(g);        
     const hits=[null,null]; let ok=0;
     for(let s=0;s<2;s++){
-      const hit=camRead(g,s);
+      const hit=camRead(frame,s);
       const top=hit.length?hit[0][0]:null;
       const seen=camSeen[s];
       seen.push(top); if(seen.length>CAM_KEEP) seen.shift();
       hits[s]=hit;
       if(top && seen.length>=camHits && seen.slice(-camHits).every(v=>v===top)) ok++;
     }
-    if(ok===2){ camDrawStill(g); camShowCands(hits); return; }
+    if(ok===2){ camDrawStill(frame); camShowCands(hits); return; }
     
 
     if(camFrames>=CAM_MAX){
-      if(hits[0].length||hits[1].length){ camDrawStill(g); camShowCands(hits); return; }
+      if(hits[0].length||hits[1].length){ camDrawStill(frame); camShowCands(hits); return; }
       if(camState) camState.textContent='아직 못 알아봤습니다 — 셔터를 누르거나 «직접 고르기» 로 넘어가세요.';
       return;
     }
