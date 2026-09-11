@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.100.0">
+<meta name="version" content="3.101.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -2298,6 +2298,17 @@ footer .fver{margin:15px 0 0}
 
 
 
+      
+
+      <div class="camhits" id="camHitsRow" hidden>
+        <span class="tk">연달아 같아야 하는 횟수</span>
+        <div class="setsw" role="group" aria-label="연달아 같아야 하는 횟수" id="camHitsSw">
+          <button data-hits="2" aria-pressed="false">2</button>
+          <button data-hits="3" aria-pressed="true">3</button>
+          <button data-hits="4" aria-pressed="false">4</button>
+          <button data-hits="5" aria-pressed="false">5</button>
+        </div>
+      </div>
       <div class="camrow2">
         <button class="mini" id="camExport">기억 내보내기</button>
         <button class="mini" id="camForget">기억 지우기</button>
@@ -3472,7 +3483,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.100.0';
+const VERSION='3.101.0';
 const BUILT='2026-09-11';
 
 
@@ -3484,7 +3495,7 @@ const BUILT='2026-09-11';
 
 
 
-const WHATSNEW='카메라를 네모에 맞춰 들고만 있으면 저절로 알아봅니다. 셔터를 누를 필요가 없습니다.';
+const WHATSNEW='카메라가 엉뚱한 태그를 고르던 것을 고쳤습니다. 화면에 보이는 그 장면으로 후보를 냅니다.';
 
 
 
@@ -3730,6 +3741,14 @@ let foeSets={'1':true,'2':true};
 
 const CAM_PW='1114';
 let camOn=false;
+
+
+
+
+
+const CAM_HITS_DEF=3, CAM_HITS_MIN=2, CAM_HITS_MAX=5;
+const camHitsOf=v=>{ v=Math.round(Number(v)); return (v>=CAM_HITS_MIN && v<=CAM_HITS_MAX) ? v : CAM_HITS_DEF; };
+let camHits=CAM_HITS_DEF;
 const foeOn=c=> c.s==='공통' || foeSets[c.s]!==false;
 let colTab='battle';           
 let dex=new Bag();             
@@ -3802,6 +3821,7 @@ async function load(){
     if(saved&&saved.gver) gver={...GVER_DEFAULT,...saved.gver};
     loadPicks(saved&&saved.picks);
     camOn=!!(saved&&saved.camOn);   
+    camHits=camHitsOf(saved&&saved.camHits);   
     if(saved&&Array.isArray(saved.dex)) dex=toBag(saved.dex);
     backend='claude';
     if(loadOwned(saved,arr)) loaded=true;
@@ -3829,6 +3849,7 @@ async function load(){
       if(saved&&saved.gver) gver={...GVER_DEFAULT,...saved.gver};
       loadPicks(saved&&saved.picks);
       camOn=!!(saved&&saved.camOn);   
+    camHits=camHitsOf(saved&&saved.camHits);   
       if(saved&&Array.isArray(saved.dex)) dex=toBag(saved.dex);
         if(loadOwned(saved,arr)) loaded=true; }
   }catch(e){ backend='memory' }
@@ -3851,7 +3872,7 @@ function saveFail(where,e){
   backend='memory'; renderBackend();
   try{ console.error('[스타더스트] 저장 실패:',where,e) }catch(_){}
 }
-const savePayload=()=>JSON.stringify({ownedA:bagArr(ownedSets.A),ownedB:bagArr(ownedSets.B),ownedC:bagArr(ownedSets.C),chance,guideHidden,detail,bossRank,dmaxLv,megaTier,mode,foes,foeSets,tagClass,dex:bagArr(dex),gver,picks,camOn});
+const savePayload=()=>JSON.stringify({ownedA:bagArr(ownedSets.A),ownedB:bagArr(ownedSets.B),ownedC:bagArr(ownedSets.C),chance,guideHidden,detail,bossRank,dmaxLv,megaTier,mode,foes,foeSets,tagClass,dex:bagArr(dex),gver,picks,camOn,camHits});
 async function saveWrite(){
   let p;
   try{ p=savePayload() }catch(e){ saveFail('값 만들기',e); return }
@@ -6054,24 +6075,37 @@ function wipe(){
   tagClass='A'; dex=new Bag(); gver={...GVER_DEFAULT};   
   picks={};                                              
   camOn=false;                                           
+  camHits=CAM_HITS_DEF;                                  
   renderAll();
 }
 
 
 
 
-const camSw=document.getElementById('camSw'), camAsk=document.getElementById('camAsk'),
+const camHitsSw=document.getElementById('camHitsSw'), camHitsRow=document.getElementById('camHitsRow'),
+      camSw=document.getElementById('camSw'), camAsk=document.getElementById('camAsk'),
       camPw=document.getElementById('camPw'), camMsg=document.getElementById('camMsg'),
       camNote=document.getElementById('camNote');
 function camHide(){ if(!camAsk) return; camAsk.hidden=true; if(camPw) camPw.value='';
   if(camMsg) camMsg.hidden=true; }
+
 function renderCam(){
   if(camSw) [...camSw.querySelectorAll('button')].forEach(b=>
     b.setAttribute('aria-pressed', String((b.dataset.cam==='on')===camOn)));
+  
+  if(camHitsRow) camHitsRow.hidden=!camOn;
+  if(camHitsSw) [...camHitsSw.querySelectorAll('button')].forEach(b=>
+    b.setAttribute('aria-pressed', String(Number(b.dataset.hits)===camHits)));
   if(camNote) camNote.textContent = camOn
-    ? '켜져 있습니다 — 아직 만드는 중이라 화면에 나타나는 것은 없습니다.'
+    ? '켜져 있습니다 — 1탭에서 서브 칸을 누르면 카메라가 열리고, 네모에 맞춰 들고 있으면 저절로 읽습니다. 위 숫자는 «같은 이름이 몇 번 연달아 나와야 믿을까» 입니다. 적게 잡으면 빨리 잡히는 대신 틀리기 쉽고, 많이 잡으면 느린 대신 덜 틀립니다.'
     : '서브1·2 를 카메라로 읽는 기능을 만드는 중입니다. 켜려면 패스워드가 필요합니다.';
 }
+
+if(camHitsSw) camHitsSw.addEventListener('click',ev=>{
+  const b=ev.target.closest('button'); if(!b) return;
+  camHits=camHitsOf(b.dataset.hits); save(); renderCam();
+});
+
 function camTry(){
   if(!camPw) return;
   if(camPw.value===CAM_PW){ camOn=true; camHide(); save(); renderCam(); }
@@ -8386,33 +8420,42 @@ function camCapture(){
 
 
 
-const CAM_HITS=3, CAM_KEEP=8, CAM_GAP=60, CAM_MAX=40;
-let camTimer=null, camSeen=[[],[]], camHold=[null,null], camFrames=0;
+const CAM_KEEP=8, CAM_GAP=60, CAM_MAX=40;
+let camTimer=null, camSeen=[[],[]], camFrames=0;
 function camWatchStop(){ if(camTimer){ clearTimeout(camTimer); camTimer=null; } }
 function camWatchStart(){
-  camWatchStop(); camSeen=[[],[]]; camHold=[null,null]; camFrames=0;
+  camWatchStop(); camSeen=[[],[]]; camFrames=0;
   camTimer=setTimeout(camTick,400);   
 }
+
+
+
+
+
+
+
+
+
 function camTick(){
   camTimer=null;
   if(!camModal||camModal.hidden||!camStream) return;
   const g=camGeom();
   if(g){
     camFrames++;
+    const hits=[null,null]; let ok=0;
     for(let s=0;s<2;s++){
-      
-      if(camHold[s]) continue;
       const hit=camRead(g,s);
       const top=hit.length?hit[0][0]:null;
       const seen=camSeen[s];
       seen.push(top); if(seen.length>CAM_KEEP) seen.shift();
-      if(top && seen.length>=CAM_HITS && seen.slice(-CAM_HITS).every(v=>v===top)) camHold[s]=hit;
+      hits[s]=hit;
+      if(top && seen.length>=camHits && seen.slice(-camHits).every(v=>v===top)) ok++;
     }
-    if(camHold[0]&&camHold[1]){ camDrawStill(g); camShowCands([camHold[0],camHold[1]]); return; }
+    if(ok===2){ camDrawStill(g); camShowCands(hits); return; }
     
 
     if(camFrames>=CAM_MAX){
-      if(camHold[0]||camHold[1]){ camDrawStill(g); camShowCands([camHold[0]||[],camHold[1]||[]]); return; }
+      if(hits[0].length||hits[1].length){ camDrawStill(g); camShowCands(hits); return; }
       if(camState) camState.textContent='아직 못 알아봤습니다 — 셔터를 누르거나 «직접 고르기» 로 넘어가세요.';
       return;
     }
@@ -8423,8 +8466,13 @@ function camTick(){
 
 function camWatchSay(){
   if(!camState) return;
-  const nm=s=>{ const h=camHold[s]; if(!h||!h.length) return '찾는 중…';
-    const c=FOEPOOL.find(p=>p.id===h[0][0]); return c?c.n:'찾는 중…'; };
+  const nm=s=>{
+    const seen=camSeen[s], top=seen.length?seen[seen.length-1]:null;
+    if(!top) return '찾는 중…';
+    let k=0; for(let i=seen.length-1;i>=0 && seen[i]===top;i--) k++;
+    const c=FOEPOOL.find(p=>p.id===top);
+    return (c?c.n:'?')+' '+Math.min(k,camHits)+'/'+camHits;
+  };
   camState.textContent='서브1 '+nm(0)+' · 서브2 '+nm(1);
 }
 

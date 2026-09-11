@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>바뀐 것 · 스타더스트 랩</title>
-<meta name="description" content="스타더스트 랩(포켓몬 태그스타 ★6 보스 공략 도구)의 버전마다 바뀐 것 — v3.100.0 까지 56개 버전의 기록입니다.">
+<meta name="description" content="스타더스트 랩(포켓몬 태그스타 ★6 보스 공략 도구)의 버전마다 바뀐 것 — v3.101.0 까지 59개 버전의 기록입니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
 <link rel="canonical" href="https://shootdoy.github.io/stardust-lab/release.html">
@@ -26,6 +26,7 @@ header a{color:var(--star);text-decoration:none;font-weight:700;font-size:15px}
 h1{font-size:25px;margin:0 0 8px;line-height:1.35}
 .lead{color:var(--dim);margin:0 0 18px}
 .rel{border-top:1px solid var(--rim);padding-top:16px;margin-top:26px}
+.cut{margin-top:26px;padding-top:16px;border-top:1px solid var(--rim);opacity:.62;font-size:13px}
 .rel:first-of-type{border-top:0;margin-top:0}
 h2{font-size:19px;margin:0 0 4px;color:var(--star);display:flex;gap:9px;align-items:baseline}
 h2 .date{font-size:12.5px;color:var(--faint);font-weight:400;
@@ -46,7 +47,7 @@ ins.adsbygoogle[data-ad-status="unfilled"]{display:none!important}
 <header><a href="./">← 스타더스트 랩</a></header>
 
 <h1>바뀐 것</h1>
-<p class="lead">판마다 앱에서 무엇이 달라졌는지 적어 둡니다. 모두 <b>40개 판</b>이고
+<p class="lead">판마다 앱에서 무엇이 달라졌는지 적어 둡니다. 모두 <b>41개 판</b>이고
 맨 위가 가장 새 판입니다.</p>
 
 <div class="adbox">
@@ -56,6 +57,10 @@ ins.adsbygoogle[data-ad-status="unfilled"]{display:none!important}
   <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </div>
 
+<article class="rel" id="v3.101.0">
+  <h2>v3.101.0 <span class="date">2026-09-11</span></h2>
+  <ul><li>[Bug] 카메라가 엉뚱한 태그를 고르던 것을 고쳤습니다. 화면에 보이는 그 장면으로 후보를 냅니다.</li><li>잘 맞춘 화면을 보면서 흔들리던 순간의 답을 받는 일이 있었습니다. 이제 두 칸을 같은 장면에서 함께 정합니다.</li><li>설정의 카메라 인식에 «연달아 같아야 하는 횟수» 를 두었습니다. 적게 잡으면 빨리 잡히고, 많이 잡으면 덜 틀립니다.</li></ul>
+</article>
 <article class="rel" id="v3.100.0">
   <h2>v3.100.0 <span class="date">2026-09-11</span></h2>
   <ul><li>카메라를 네모에 맞춰 들고만 있으면 저절로 알아봅니다. 셔터를 누를 필요가 없습니다.</li><li>같은 이름이 연달아 잡히면 그때 멈추고 후보를 보여줍니다. 고르는 것은 그대로 직접 하십니다.</li><li>잘 안 잡히는 화면에서는 가운데 단추로 한 장을 찍는 길도 그대로 남아 있습니다.</li></ul>
@@ -132,90 +137,7 @@ ins.adsbygoogle[data-ad-status="unfilled"]{display:none!important}
   <h2>v3.90.0 <span class="date">2026-08-30</span></h2>
   <ul><li>「다이맥스 포켓몬」 모드에서는 다이맥스하는 보스만 고르게 했습니다.</li></ul>
 </article>
-<article class="rel" id="v3.89.0">
-  <h2>v3.89.0 <span class="date">2026-08-30</span></h2>
-  <ul><li>상대 서브를 아직 모를 때, 세 칸이 함께 보스를 치도록 추천합니다.</li></ul>
-</article>
-<article class="rel" id="v3.88.0">
-  <h2>v3.88.0 <span class="date">2026-08-30</span></h2>
-  <ul><li>아래쪽 몬스터볼 바로가기가 모든 탭에 생겼습니다.</li></ul>
-</article>
-<article class="rel" id="v3.87.0">
-  <h2>v3.87.0 <span class="date">2026-08-29</span></h2>
-  <ul><li>앱에서 그 보스의 공략 글로 바로 갈 수 있습니다.</li></ul>
-</article>
-<article class="rel" id="v3.86.0">
-  <h2>v3.86.0 <span class="date">2026-08-29</span></h2>
-  <ul><li>「오늘의 태그스타」 공유 카드에 잡은 슈퍼스타포켓몬의 카드 앞면이 크게 들어갑니다.</li></ul>
-</article>
-<article class="rel" id="v3.85.0">
-  <h2>v3.85.0 <span class="date">2026-08-29</span></h2>
-  <ul><li>기록 목록을 왼쪽으로 쓸면 지울 수 있습니다.</li><li>최근 3시간 · 오늘의 태그스타 · 전체로 기간을 걸러 봅니다.</li><li>오늘 친 배틀을 그림 한 장으로 만들어 공유할 수 있습니다.</li></ul>
-</article>
-<article class="rel" id="v3.84.0">
-  <h2>v3.84.0 <span class="date">2026-08-29</span></h2>
-  <ul><li>보스를 고르고 30초가 지난 뒤 다른 보스를 고르면 다른 배틀로 봅니다.</li><li>「겟 타임!」의 볼과 겟 칸이 비어 있는 채로 시작합니다 — 안 누른 배틀과 실패한 배틀이 갈립니다.</li></ul>
-</article>
-<article class="rel" id="v3.83.0">
-  <h2>v3.83.0 <span class="date">2026-08-29</span></h2>
-  <ul><li>배틀을 적고 고치는 일이 「배틀 기록」 팝업 하나로 모였습니다.</li></ul>
-</article>
-<article class="rel" id="v3.82.0">
-  <h2>v3.82.0 <span class="date">2026-08-29</span></h2>
-  <ul><li>배틀이 저절로 기록됩니다. 목록이 표가 되고, 던진 볼과 도감 진행률도 함께 보입니다.</li></ul>
-</article>
-<article class="rel" id="v3.80.0">
-  <h2>v3.80.0 <span class="date">2026-08-29</span></h2>
-  <ul><li>앱이 더 가벼워져 빨리 열립니다.</li></ul>
-</article>
-<article class="rel" id="v3.79.0">
-  <h2>v3.79.0 <span class="date">2026-08-29</span></h2>
-  <ul><li>Z기술 순서 줄을 가운데로 옮기고 아이콘을 붙였습니다.</li></ul>
-</article>
-<article class="rel" id="v3.77.0">
-  <h2>v3.77.0 <span class="date">2026-08-29</span></h2>
-  <ul><li>서포트 QR 팝업이 위쪽에 떠서 게임기에 대기 쉬워졌습니다.</li></ul>
-</article>
-<article class="rel" id="v3.76.0">
-  <h2>v3.76.0 <span class="date">2026-08-29</span></h2>
-  <ul><li>보스 대항 태그가 Z기술·다이맥스를 안 쓰면 서브 대항 태그가 대신 씁니다.</li></ul>
-</article>
-<article class="rel" id="v3.75.0">
-  <h2>v3.75.0 <span class="date">2026-08-29</span></h2>
-  <ul><li>본문 폭을 폰 화면에 맞게 좁혔습니다.</li></ul>
-</article>
-<article class="rel" id="v3.74.0">
-  <h2>v3.74.0 <span class="date">2026-08-26</span></h2>
-  <ul><li>「배틀로 겟!」 탭 색이 로고보다 튀지 않게 낮췄습니다.</li></ul>
-</article>
-<article class="rel" id="v3.73.0">
-  <h2>v3.73.0 <span class="date">2026-08-26</span></h2>
-  <ul><li>아래쪽 바로가기가 잔디에 박힌 몬스터볼이 됐습니다.</li></ul>
-</article>
-<article class="rel" id="v3.72.0">
-  <h2>v3.72.0 <span class="date">2026-08-26</span></h2>
-  <ul><li>컬렉션 탭이 가방 그림이 되고, 그림 탭에서 글자를 뺐습니다.</li></ul>
-</article>
-<article class="rel" id="v3.71.0">
-  <h2>v3.71.0 <span class="date">2026-08-26</span></h2>
-  <ul><li>설정 탭이 톱니 그림이 됐습니다.</li></ul>
-</article>
-<article class="rel" id="v3.50.0">
-  <h2>v3.50.0 <span class="date">2026-08-22</span></h2>
-  <ul><li>2탄 슈퍼스타·스타 태그 그림을 공식 카드에서 다시 뽑아 또렷해졌습니다.</li></ul>
-</article>
-<article class="rel" id="v3.49.0">
-  <h2>v3.49.0 <span class="date">2026-08-22</span></h2>
-  <ul><li>1탄 슈퍼스타·스타 태그 그림을 공식 카드에서 다시 뽑아 또렷해졌습니다.</li></ul>
-</article>
-<article class="rel" id="v3.48.4">
-  <h2>v3.48.4 <span class="date">2026-08-22</span></h2>
-  <ul><li>기록을 고쳐도 화면이 그대로이던 것을 고쳤습니다.</li></ul>
-</article>
-<article class="rel" id="v3.48.3">
-  <h2>v3.48.3 <span class="date">2026-08-22</span></h2>
-  <ul><li>저장이 조용히 실패하던 것을 고쳤습니다.</li></ul>
-</article>
+<p class="cut">v3.89.0 이전 21개 판의 기록은 줄였습니다.</p>
 
 <footer>포켓몬 태그스타 팬 도구 (비공식) · <a href="./">앱으로 돌아가기</a></footer>
 </div>
