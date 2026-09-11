@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.101.1">
+<meta name="version" content="3.102.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -3483,7 +3483,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.101.1';
+const VERSION='3.102.0';
 const BUILT='2026-09-12';
 
 
@@ -3495,7 +3495,7 @@ const BUILT='2026-09-12';
 
 
 
-const WHATSNEW='카메라가 화면에 보이는 그 장면으로 후보를 냅니다. 읽는 사이 손이 움직여 어긋나던 것을 고쳤습니다.';
+const WHATSNEW='카메라가 칸 경계를 그림에서 찾습니다. 화면이 비스듬해도 이름을 덜 놓칩니다.';
 
 
 
@@ -8377,9 +8377,39 @@ function camGrab(g){
 
 
 
-function camRead(frame,slot){
+
+
+
+
+
+function camCols(frame){
+  const W=frame.width, H=frame.height, third=[W/3, W*2/3];
+  const y0=Math.round(H*0.55), y1=Math.round(H*0.95), hh=y1-y0;
+  let d; try{ d=frame.getContext('2d').getImageData(0,y0,W,hh).data; }catch(e){ return third; }
+  const col=new Float64Array(W);
+  for(let x=0;x<W;x++){
+    let s=0, n=0;
+    for(let y=0;y<hh;y+=4){ const o=((y*W)+x)*4; s+=d[o]*0.299+d[o+1]*0.587+d[o+2]*0.114; n++; }
+    col[x]=n?s/n:0;
+  }
+  const span=Math.max(4,Math.round(W*0.08));
+  return third.map(t=>{
+    const lo=Math.max(0,Math.round(t-span)), hi=Math.min(W-1,Math.round(t+span));
+    let at=Math.round(t), mn=Infinity, sum=0, cnt=0;
+    for(let x=lo;x<=hi;x++){ sum+=col[x]; cnt++; if(col[x]<mn){ mn=col[x]; at=x; } }
+    const avg=cnt?sum/cnt:0;
+    
+    return (avg>0 && (avg-mn)/avg > 0.12) ? at : t;
+  });
+}
+
+
+
+
+function camRead(frame,cols,slot){
   const W=CAM_W, H=Math.round(W*CAM_ASPECT);
-  const cw=frame.width/3, cx=(slot===1 ? cw*2 : 0);
+  
+  const cx=(slot===1 ? cols[1] : 0), cw=(slot===1 ? frame.width-cols[1] : cols[0]);
   const c=document.createElement('canvas'); c.width=W; c.height=H;
   const ctx=c.getContext('2d'); ctx.drawImage(frame,cx,0,cw,frame.height,0,0,W,H);
   const px=ctx.getImageData(0,0,W,H).data, N=W*H;
@@ -8407,10 +8437,11 @@ function camCapture(){
   if(!g){ camSay('아직 화면이 안 잡혔습니다. 잠시 뒤 다시 찍으세요.'); return; }
   camWatchStop();
   const frame=camGrab(g);          
+  const cols=camCols(frame);       
   camDrawStill(frame);
   
 
-  const out=[camRead(frame,0), camRead(frame,1)];
+  const out=[camRead(frame,cols,0), camRead(frame,cols,1)];
   
   if(!out[0].length && !out[1].length){ camToPick(); return; }
   camShowCands(out);
@@ -8458,9 +8489,10 @@ function camTick(){
   if(g){
     camFrames++;
     const frame=camGrab(g);        
+    const cols=camCols(frame);     
     const hits=[null,null]; let ok=0;
     for(let s=0;s<2;s++){
-      const hit=camRead(frame,s);
+      const hit=camRead(frame,cols,s);
       const top=hit.length?hit[0][0]:null;
       const seen=camSeen[s];
       seen.push(top); if(seen.length>CAM_KEEP) seen.shift();
