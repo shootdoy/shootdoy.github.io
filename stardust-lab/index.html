@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.103.0">
+<meta name="version" content="3.105.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -3483,7 +3483,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.103.0';
+const VERSION='3.105.0';
 const BUILT='2026-09-12';
 
 
@@ -3495,7 +3495,7 @@ const BUILT='2026-09-12';
 
 
 
-const WHATSNEW='카메라가 이름을 훨씬 잘 알아봅니다. 글자 위아래를 정확히 잘라 내고, 이름판 줄을 두 가지 방법으로 찾습니다.';
+const WHATSNEW='카메라로 서브1 을 고른 뒤 다시 찾으면 서브1 은 그대로 두고 서브2 만 찾습니다.';
 
 
 
@@ -3511,7 +3511,7 @@ const WHATSNEW_TBL='';
 
 
 
-const CAMSEED='';
+const CAMSEED='1-5-부스터:a9e9aac454f24d4c;1-5-피죤투:2d6ded656d79edad,2d6d6d654d59edad;2-2-구구:12101090f1313131;2-2-멍파치:25ad6deded6d2e76,e5cd6df5756d4d66,ad8d5d8d9d4d8e76;2-2-알로라 모래두지:c0f2b1edaab9eeee;2-2-캐이시:246c6474352daa26;2-3-시마사리:481c9ae9e6f4fc6a;2-3-팽태자:24ed34647575ae66;2-3-흔들풍손:5656575655d79657,f0f8debfeffcdcfc;2-4-펄스멍:a9e9e8d5d561d445';
 
 
 const AK={}, TK={}, GK={}, SK={};
@@ -4948,7 +4948,9 @@ function renderFoes(){
   wrap.querySelectorAll('.fl-cell.foe[data-at]').forEach(n=>{
     const i=+n.dataset.at;
     n.addEventListener('click',e=>{
-      if(e.target&&e.target.dataset.clr!=null){ foes[i]=null; foePickAt=-1; foeChain=false; save(); renderAll(); return; }
+      
+
+      if(e.target&&e.target.dataset.clr!=null){ foes[i]=null; foePickAt=-1; foeChain=false; hAutoSync(); save(); renderAll(); return; }
       if(foePickAt===i){ foePickAt=-1; foeChain=false; }
       else {
         
@@ -7988,6 +7990,15 @@ function renderTrPick(){
 const CKEY=KEY+':cam';
 let camMem=[];          
 let camAt=-1;           
+
+
+
+
+
+
+
+
+const camLocked=s=> !!foes[s] && s!==camAt;
 let camLastH=[null,null];  
 let camStream=null;
 
@@ -8163,7 +8174,17 @@ function camText(L,S,W,H,m,frac,ksc,up){
 
   const bw=bx[1]-bx[0], rowp=new Float64Array(BH); let rmax=0;
   for(let y=0;y<BH;y++){ let s=0; for(let x=bx[0];x<bx[1];x++) s+=wh[y*W+x]; rowp[y]=s/bw; if(rowp[y]>rmax) rmax=rowp[y]; }
-  const rth=Math.max(0.06,rmax*0.28), onr=new Uint8Array(BH);
+  
+
+
+
+
+
+
+
+
+
+  const rth=Math.max(0.06,rmax*0.12), onr=new Uint8Array(BH);
   for(let y=0;y<BH;y++) onr[y]=rowp[y]>rth?1:0;
   const rr=camRuns(onr,Math.max(1,(BH*0.08)|0));
   if(!rr.length) return null;
@@ -8349,7 +8370,11 @@ async function camOpen(at){
   if(camCands) camCands.hidden=true;
   camStillOff();
   if(camAgain) camAgain.hidden=true;
-  if(camState) camState.textContent='상대 세 칸을 네모에 맞추세요 — 그대로 들고 있으면 저절로 알아봅니다.';
+  if(camState){
+    const lk=[0,1].filter(camLocked).map(s=>{ const c=FOEPOOL.find(p=>p.id===foes[s]); return '서브'+(s+1)+' '+(c?c.n:'?'); });
+    camState.textContent=(lk.length?lk.join(' · ')+' 은 지정한 태그로 둡니다 — 남은 칸만 찾습니다. ':'')
+      +'상대 세 칸을 네모에 맞추세요 — 그대로 들고 있으면 저절로 알아봅니다.';
+  }
   
 
   const nav=(typeof window!=='undefined')&&window.navigator;
@@ -8465,7 +8490,7 @@ function camCapture(){
   camDrawStill(frame);
   
 
-  const out=[camRead(frame,0), camRead(frame,1)];
+  const out=[0,1].map(s=> camLocked(s) ? [] : camRead(frame,s));   
   
   if(!out[0].length && !out[1].length){ camToPick(); return; }
   camShowCands(out);
@@ -8515,6 +8540,8 @@ function camTick(){
     const frame=camGrab(g);        
     const hits=[null,null]; let ok=0;
     for(let s=0;s<2;s++){
+      
+      if(camLocked(s)){ hits[s]=[]; ok++; continue; }
       const hit=camRead(frame,s);
       const top=hit.length?hit[0][0]:null;
       const seen=camSeen[s];
@@ -8538,6 +8565,7 @@ function camTick(){
 function camWatchSay(){
   if(!camState) return;
   const nm=s=>{
+    if(camLocked(s)){ const c=FOEPOOL.find(p=>p.id===foes[s]); return (c?c.n:'?')+' (지정)'; }
     const seen=camSeen[s], top=seen.length?seen[seen.length-1]:null;
     if(!top) return '찾는 중…';
     let k=0; for(let i=seen.length-1;i>=0 && seen[i]===top;i--) k++;
@@ -8553,8 +8581,11 @@ function camShowCands(rows){
   if(camState) camState.textContent='자리마다 하나씩 고르세요.';
   camCands.innerHTML=rows.map((hit,slot)=>{
     const done = foes[slot] ? FOEPOOL.find(p=>p.id===foes[slot]) : null;
+    const lock = camLocked(slot);
     const head = `<div class="camslabel">서브 ${slot+1}`
-      + (done ? ` — <b>${done.n}</b>` : (hit.length?'':' — 못 알아봤습니다'))+`</div>`;
+      + (done ? ` — <b>${done.n}</b>`+(lock?' · 지정한 태그':'') : (hit.length?'':' — 못 알아봤습니다'))+`</div>`;
+    
+    if(lock) return `<div class="camslot">${head}</div>`;
     const cells = hit.map(([id,d])=>{
       const c=FOEPOOL.find(p=>p.id===id);
       if(!c) return '';
@@ -8599,10 +8630,21 @@ function camRemember(id){
 function camChoose(slot,id){
   
   if(camLastH[slot]){ camMem.push({h:camLastH[slot],id}); camLastH[slot]=null; camSave(); }
-  foes[slot]=id; save(); renderAll();
+  foes[slot]=id;
+  
+
+
+
+
+  hAutoSync();
+  save(); renderAll();
   
 
   if(foes[0]&&foes[1]){ camHideUI(); return; }
+  
+
+
+  camAt = foes[0]==null ? 0 : 1;
   
 
   if(camCands && camCands.children[slot]){
@@ -8615,7 +8657,10 @@ function camChoose(slot,id){
 if(camShot)    camShot.addEventListener('click',camCapture);
 if(camPickBtn) camPickBtn.addEventListener('click',()=>camToPick());
 if(camClose)   camClose.addEventListener('click',camHideUI);
-if(camAgain)   camAgain.addEventListener('click',()=>{ if(camAt>=0) camOpen(camAt); });
+
+
+if(camAgain)   camAgain.addEventListener('click',()=>{ if(camAt<0) return;
+  camOpen(foes[0]==null ? 0 : (foes[1]==null ? 1 : camAt)); });
 
 
 if(camVid) camVid.addEventListener('loadedmetadata',camFit);
