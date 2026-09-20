@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.108.0">
+<meta name="version" content="3.110.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -306,20 +306,6 @@ body{padding-top:env(safe-area-inset-top,0px)}
 
 
 
-.camask{margin-top:10px;padding:11px 12px;border-radius:var(--r-sm);
-  background:rgba(0,0,0,.22);border:1px solid var(--rim);font-size:12.5px;color:var(--ink-dim)}
-.camask[hidden]{display:none}
-.camask b{color:var(--ink)}
-.camrow{display:flex;gap:8px;align-items:center;margin-top:9px}
-
-.camrow input{flex:1;min-width:0;padding:9px 11px;border-radius:var(--r-sm);
-  border:1px solid var(--rim);background:rgba(0,0,0,.3);color:var(--ink);
-  font-family:var(--mono);font-size:16px;letter-spacing:.32em;text-align:center;
-  -webkit-appearance:none;appearance:none}
-.camrow button{flex:none;min-height:var(--tap);padding:9px 14px;border-radius:var(--r-sm);border:0;cursor:pointer;
-  font-family:var(--body);font-weight:700;font-size:12.5px}
-#camYes{background:var(--star);color:#0C0722}
-#camNo{background:rgba(255,255,255,.1);color:var(--ink)}
 .cammsg{display:block;margin-top:8px;color:var(--bad);font-size:12px;font-weight:600}
 .cammsg[hidden]{display:none}
 
@@ -2284,25 +2270,14 @@ footer .fver{margin:15px 0 0}
   </section>
   <section id="sCam">
     <div class="sec-head"><h2>카메라 인식</h2>
-      <span class="hint">만드는 중인 기능 · <b>패스워드가 필요합니다</b></span></div>
+      <span class="hint">서브 칸을 누르면 카메라로 상대 이름을 읽습니다 · 영상은 기기 밖으로 안 나갑니다</span></div>
     <div class="card">
       <div class="setsw" role="group" aria-label="카메라 인식" id="camSw">
-        <button data-cam="off" aria-pressed="true">끔</button>
-        <button data-cam="on" aria-pressed="false">켬</button>
+        <button data-cam="off" aria-pressed="false">끔</button>
+        <button data-cam="on" aria-pressed="true">켬</button>
       </div>
       
 
-
-      <div class="camask" id="camAsk" hidden>
-        <b>테스트 중인 기능을 사용합니다.</b> 패스워드를 넣으세요.
-        <div class="camrow">
-          <input id="camPw" type="password" inputmode="numeric" maxlength="4"
-                 autocomplete="off" placeholder="••••" aria-label="패스워드">
-          <button id="camYes">확인</button>
-          <button id="camNo">취소</button>
-        </div>
-        <span class="cammsg" id="camMsg" hidden>패스워드가 다릅니다.</span>
-      </div>
       
 
 
@@ -2361,6 +2336,8 @@ footer .fver{margin:15px 0 0}
       <p><b>이 앱에는 서버가 없습니다.</b> 컬렉션 · 도감 · 보정 · 상대 파티 기록은
         <b>이 브라우저</b>(로컬 저장소)에만 남고, Claude 앱에서 열었을 때만 Claude 계정 저장소에 남습니다.
         어느 쪽이든 <b>운영자가 그 내용을 들여다볼 수 없습니다.</b></p>
+      <p><b>카메라 인식</b>은 게임기 화면을 이 기기 안에서만 읽습니다. 영상은 어디에도 보내거나
+        저장하지 않고, 알아본 이름의 <b>짧은 요약(«기억»)</b>만 이 브라우저에 남습니다.</p>
 
       <p><b>쿠키를 쓰는 곳은 둘입니다.</b></p>
       <ul>
@@ -3492,8 +3469,8 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.108.0';
-const BUILT='2026-09-13';
+const VERSION='3.110.0';
+const BUILT='2026-09-20';
 
 
 
@@ -3504,7 +3481,7 @@ const BUILT='2026-09-13';
 
 
 
-const WHATSNEW='서포트 티켓과 상대 서브를 얼마나 쓰는지 이용 통계에 담습니다. 이름이나 개인정보는 보내지 않습니다.';
+const WHATSNEW='카메라 인식이 열렸습니다. 1탭에서 서브 칸을 누르면 카메라가 게임기 화면의 상대 이름을 읽어 후보를 냅니다. 설정에서 끌 수 있습니다.';
 
 
 
@@ -3520,7 +3497,7 @@ const WHATSNEW_TBL='';
 
 
 
-const CAMSEED='1-5-부스터:a9e9aac454f24d4c;1-5-피죤투:2d6ded656d79edad,2d6d6d654d59edad;2-2-구구:12101090f1313131;2-2-멍파치:25ad6deded6d2e76,e5cd6df5756d4d66,ad8d5d8d9d4d8e76;2-2-알로라 모래두지:c0f2b1edaab9eeee;2-2-캐이시:246c6474352daa26;2-3-시마사리:481c9ae9e6f4fc6a;2-3-팽태자:24ed34647575ae66;2-3-흔들풍손:5656575655d79657,f0f8debfeffcdcfc;2-4-펄스멍:a9e9e8d5d561d445';
+const CAMSEED='1-3-이브이:6444c4858503070d;1-3-피카츄:ccd5cd4d5b57cf1c;1-4-포푸니라:32321212929a5a5a;1-5-부스터:a9e9aac454f24d4c;1-5-에이스번:9e969793abbd256d;1-5-피죤투:2d6ded656d79edad,2d6d6d654d59edad;2-2-구구:12101090f1313131;2-2-동미러:644d5554764ccd66,654d5555764d2d66;2-2-멍파치:25ad6deded6d2e76,e5cd6df5756d4d66,ad8d5d8d9d4d8e76;2-2-모부기:55cd958d6d4e6aea,514d95ad654e6a6c;2-2-알로라 모래두지:c0f2b1edaab9eeee;2-2-캐이시:64ed4d35b58d8e74,727433333b31381a,246d6d35352daa36,246c6474352daa26;2-2-톱치:7272723212521434;2-3-롱스톤:6969696d71694d41;2-3-루주라:6d2d2d95e206694e,494d69d5d21ce84c;2-3-비브라바:56d4e4d458d4d41a;2-3-수풀부기:1e15d696d4171514;2-3-시마사리:481c9ae9e6f4fc6a;2-3-팽태자:24ed34647575ae66;2-3-피죤:5173515253775753,11715352535676d3;2-3-흔들풍손:5656545654d79654,5656575655d79657,f0f8debfeffcdcfc;2-4-둥실라이드:e4b6b3aba8a8b8b1,c8caa7e4b6baa8b5;2-4-알로라 고지:2aaa28a8baaaabaa;2-4-펄스멍:a9e9e8d5d561d445;2-4-플라이곤:5856564c6d67d459';
 
 
 const AK={}, TK={}, GK={}, SK={};
@@ -3748,8 +3725,7 @@ let foeSets={'1':true,'2':true};
 
 
 
-const CAM_PW='1114';
-let camOn=false;
+let camOn=true;
 
 
 
@@ -3829,7 +3805,7 @@ async function load(){
     
     if(saved&&saved.gver) gver={...GVER_DEFAULT,...saved.gver};
     loadPicks(saved&&saved.picks);
-    camOn=!!(saved&&saved.camOn);   
+    camOn=!(saved&&saved.camOff);   
     camHits=camHitsOf(saved&&saved.camHits);   
     if(saved&&Array.isArray(saved.dex)) dex=toBag(saved.dex);
     backend='claude';
@@ -3857,7 +3833,7 @@ async function load(){
     if(saved&&Array.isArray(saved.foes)) foes=[0,1].map(i=>SUBBY.has(saved.foes[i])?saved.foes[i]:null);
       if(saved&&saved.gver) gver={...GVER_DEFAULT,...saved.gver};
       loadPicks(saved&&saved.picks);
-      camOn=!!(saved&&saved.camOn);   
+      camOn=!(saved&&saved.camOff);   
     camHits=camHitsOf(saved&&saved.camHits);   
       if(saved&&Array.isArray(saved.dex)) dex=toBag(saved.dex);
         if(loadOwned(saved,arr)) loaded=true; }
@@ -3881,7 +3857,7 @@ function saveFail(where,e){
   backend='memory'; renderBackend();
   try{ console.error('[스타더스트] 저장 실패:',where,e) }catch(_){}
 }
-const savePayload=()=>JSON.stringify({ownedA:bagArr(ownedSets.A),ownedB:bagArr(ownedSets.B),ownedC:bagArr(ownedSets.C),chance,guideHidden,detail,bossRank,dmaxLv,megaTier,mode,foes,foeSets,tagClass,dex:bagArr(dex),gver,picks,camOn,camHits});
+const savePayload=()=>JSON.stringify({ownedA:bagArr(ownedSets.A),ownedB:bagArr(ownedSets.B),ownedC:bagArr(ownedSets.C),chance,guideHidden,detail,bossRank,dmaxLv,megaTier,mode,foes,foeSets,tagClass,dex:bagArr(dex),gver,picks,camOff:!camOn,camHits});
 async function saveWrite(){
   let p;
   try{ p=savePayload() }catch(e){ saveFail('값 만들기',e); return }
@@ -6089,21 +6065,15 @@ function wipe(){
   dmaxLv=5; megaTier='대성공'; mode='지역'; foes=[null,null]; foeSets={'1':true,'2':true};
   tagClass='A'; dex=new Bag(); gver={...GVER_DEFAULT};   
   picks={};                                              
-  camOn=false;                                           
+  camOn=true;                                            
   camHits=CAM_HITS_DEF;                                  
   renderAll();
 }
 
 
 
-
 const camHitsSw=document.getElementById('camHitsSw'), camHitsRow=document.getElementById('camHitsRow'),
-      camSw=document.getElementById('camSw'), camAsk=document.getElementById('camAsk'),
-      camPw=document.getElementById('camPw'), camMsg=document.getElementById('camMsg'),
-      camNote=document.getElementById('camNote');
-function camHide(){ if(!camAsk) return; camAsk.hidden=true; if(camPw) camPw.value='';
-  if(camMsg) camMsg.hidden=true; }
-
+      camSw=document.getElementById('camSw'), camNote=document.getElementById('camNote');
 function renderCam(){
   if(camSw) [...camSw.querySelectorAll('button')].forEach(b=>
     b.setAttribute('aria-pressed', String((b.dataset.cam==='on')===camOn)));
@@ -6113,7 +6083,7 @@ function renderCam(){
     b.setAttribute('aria-pressed', String(Number(b.dataset.hits)===camHits)));
   if(camNote) camNote.textContent = camOn
     ? '켜져 있습니다 — 1탭에서 서브 칸을 누르면 카메라가 열리고, 네모에 맞춰 들고 있으면 저절로 읽습니다. 위 숫자는 «같은 이름이 몇 번 연달아 나와야 믿을까» 입니다. 적게 잡으면 빨리 잡히는 대신 틀리기 쉽고, 많이 잡으면 느린 대신 덜 틀립니다.'
-    : '서브1·2 를 카메라로 읽는 기능을 만드는 중입니다. 켜려면 패스워드가 필요합니다.';
+    : '꺼져 있습니다 — 1탭에서 서브 칸을 누르면 목록에서 고릅니다. 켜면 게임기 화면의 상대 이름을 카메라로 읽어 후보를 냅니다. 영상은 이 기기 밖으로 나가지 않습니다.';
 }
 
 if(camHitsSw) camHitsSw.addEventListener('click',ev=>{
@@ -6121,22 +6091,10 @@ if(camHitsSw) camHitsSw.addEventListener('click',ev=>{
   camHits=camHitsOf(b.dataset.hits); save(); renderCam();
 });
 
-function camTry(){
-  if(!camPw) return;
-  if(camPw.value===CAM_PW){ camOn=true; camHide(); save(); renderCam(); }
-  else { if(camMsg) camMsg.hidden=false; camPw.value=''; camPw.focus(); }
-}
 if(camSw) camSw.addEventListener('click',ev=>{
   const b=ev.target.closest('button'); if(!b) return;
-  if(b.dataset.cam==='off'){ camOn=false; camHide(); save(); renderCam(); return; }
-  if(camOn) return;                       
-  if(camAsk){ camAsk.hidden=false; if(camMsg) camMsg.hidden=true; if(camPw){ camPw.value=''; camPw.focus(); } }
+  camOn = b.dataset.cam==='on'; save(); renderCam();
 });
-const camYes=document.getElementById('camYes'), camNo=document.getElementById('camNo');
-if(camYes) camYes.addEventListener('click',camTry);
-if(camNo)  camNo.addEventListener('click',camHide);
-
-if(camPw) camPw.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); camTry(); } });
 
 const wipeBtn=document.getElementById('wipeBtn'),
       wipeAsk=document.getElementById('wipeAsk'),
