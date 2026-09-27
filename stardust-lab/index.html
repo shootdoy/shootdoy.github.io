@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.112.0">
+<meta name="version" content="3.113.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -564,9 +564,9 @@ section:first-child{margin-top:0}
 
 .setsw{display:flex;gap:6px;margin-bottom:9px}
 .setsw + .setsw{margin-bottom:13px}
-#trnDeckSw{flex-wrap:wrap}#trnDeckSw>*{flex:1 1 30%}
+#trnDeckSw{flex-wrap:wrap}#trnDeckSw>*{flex:1 1 30%}#trnDeckSw>.own{flex-basis:100%}   
 
-#trnDeckSw .u:not([aria-pressed="true"]){border-color:var(--magenta);color:var(--magenta)}.trnsave{display:block;margin:8px 0 0 auto}
+#trnDeckSw .u:not([aria-pressed="true"]){border-color:var(--magenta);color:var(--magenta)}.trnsave{display:flex;gap:6px;justify-content:flex-end;margin-top:8px}.tsl{position:relative}.tsl select{position:absolute;inset:0;width:100%;height:100%;opacity:0;font-size:16px}
 .setsw button{flex:1;min-height:var(--tap);padding:9px 8px;border-radius:var(--r-sm);border:1px solid var(--rim);background:transparent;
   color:var(--ink-dim);font-family:var(--body);font-weight:700;font-size:12.5px;cursor:pointer;transition:.14s}
 .setsw button[aria-pressed="true"]{background:var(--cyan);color:#0C0722;border-color:var(--cyan)}
@@ -821,6 +821,8 @@ section:first-child{margin-top:0}
 .fl-art{position:relative}
 .fl-no{position:absolute;left:2px;bottom:2px;min-width:22px;padding:1px 5px;border:2px solid #0C0722;border-radius:var(--r-xs);font-size:15px;font-weight:900;line-height:17px;text-align:center;color:#0C0722;box-shadow:0 1px 4px rgba(0,0,0,.7)}   
 .fl-no.s1{background:var(--set1)}.fl-no.s2{background:var(--set2)}
+
+.fl-cell.miss{opacity:.42;filter:grayscale(.85)}
 .fl-cell.foe{cursor:pointer;border-style:dashed;border-color:rgba(255,255,255,.18)}
 .fl-cell.foe.set{border-style:solid;border-color:rgba(255,255,255,.22)}
 
@@ -3609,7 +3611,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.112.0';
+const VERSION='3.113.0';
 const BUILT='2026-09-28';
 
 
@@ -3621,7 +3623,7 @@ const BUILT='2026-09-28';
 
 
 
-const WHATSNEW='스페셜모드 하이스코어태그에 추천 덱 A~F 와 유저 덱이 생겼습니다.';
+const WHATSNEW='가진 태그로 하이스코어 덱을 추천받을 수 있습니다.';
 
 
 
@@ -4561,12 +4563,12 @@ const trnSim=(s,FS,ln,FC)=>{ const F=FS.flat(), n=FS.length, mh=s.map(r=>r?1:0),
 
 
       if(l){ fh[b+fi]-=l.p; F.forEach((g,i)=>{ if(i!==b+fi&&fh[i]>0) fh[i]-=.6*l.pw*l.atk/(l.move.k=='물리'?g.d:g.sd)*eff(l.move.t,g.t)*KHP/g.hp; }); } }
-    for(const [m,x] of on) if(fh[x]>0&&mh[m]>0){ const h=trnFH(FC,F[x],s[m].c,!fg[x]); fg[x]=1; mh[m]-=h[0];
+    for(const [m,x] of on) if(fh[x]>0&&mh[m]>0){ mh[m]-=trnFH(FC,F[x],s[m].c,!fg[x]); fg[x]=1;
       
 
 
 
-      s.forEach((q,i)=>{ if(q&&i!==m&&mh[i]>0) mh[i]-=.6*trnFH(FC,F[x],q.c,false)[0]; }); } }
+      s.forEach((q,i)=>{ if(q&&i!==m&&mh[i]>0) mh[i]-=.6*trnFH(FC,F[x],q.c,false); }); } }
   const alive=s.map((r,i)=>!!r&&mh[i]>0);
   
 
@@ -4576,7 +4578,7 @@ const trnSim=(s,FS,ln,FC)=>{ const F=FS.flat(), n=FS.length, mh=s.map(r=>r?1:0),
 
 function trnFH(FC,f,c,g){ const x=f.id+c.id+g; if(!FC.has(x)){ const ms=f.mv.filter(m=>g||!m.tagx||f.mv.every(y=>y.tagx));
     const m=ms.reduce((a,m)=>bossHit(c,f,m)>bossHit(c,f,a)?m:a,ms[0]);
-    FC.set(x,[bossHit(c,f,m),POWER[m.n]??100,(m.k==='물리'?f.a:f.sa)+bonusOf(m),m.t]); } return FC.get(x); }
+    FC.set(x,bossHit(c,f,m)); } return FC.get(x); }
 
 
 
@@ -4599,27 +4601,34 @@ function trnPlan(t,pins,deck){
   
 
 
-  const D=B&&t.decks?(deck&&deck.s?deck:t.decks[deck|0]||t.decks[0]):null;   
-  const L=T.flatMap((fs,k)=>fs.map((f,j)=>{ const pc=pins&&MYBY.get(pins[k*3+j]), pr=pc?rows(pc,f,T[1-k],1):[];
-    if(pr.length) return pr;
-    if(D) return rows(MYBY.get(D.s[k*3+j]),f,T[1-k],1);   
+  
+  const D=B&&t.decks&&!(deck&&deck.own)?(deck&&deck.s?deck:t.decks[deck|0]||t.decks[0]):null;
+  
+  const tk=B&&!D?mine.map(c=>[c,T.flat().reduce((a,f)=>a+hitAny(c,f),0)]).sort((x,y)=>x[1]-y[1]).slice(0,4).map(x=>x[0]):[];
+  const PN=[], L=T.flatMap((fs,k)=>fs.map((f,j)=>{ const pc=pins&&MYBY.get(pins[k*3+j]), pr=pc?rows(pc,f,T[1-k],1):[];
+    if(pr.length) return PN[k*3+j]=1,pr;
+    if(D) return D.s[k*3+j]?rows(MYBY.get(D.s[k*3+j]),f,T[1-k],1):[];   
     const n=mine.map(c=>trnLane(c,f,T[1-k])).filter(Boolean), g=mine.flatMap(c=>trnGk(c).map(x=>trnLane(c,f,T[1-k],x))).filter(Boolean);
-    return [...n.sort(by).slice(0,5),...g.sort(by).slice(0,3)]; }));
+    
+    const dc=B?[...new Set(t.decks.map(d=>d.s[k*3+j]))].filter(id=>owned.has(id)).flatMap(id=>rows(MYBY.get(id),f,T[1-k])):[];
+    return [...n.sort(by).slice(0,B?5:8),...g.sort(by).slice(0,3),...tk.flatMap(c=>rows(c,f,T[1-k])),...dc]; }));
   
 
   const LC=new Map(), ln=(c,f)=>{ const x=c.id+f.id; if(!LC.has(x)) LC.set(x,trnLane(c,f,T[T[0].includes(f)?1:0])); return LC.get(x); };
-  if(D) return trnPlanB(T,L,ln);
-  let best=null; const sel=[], gim=[new Set(),new Set()];   
-  const add=(k,r)=>{ const v=trnKey(r); return k.map((x,j)=>x+v[j]); };
-  const go=(i,k)=>{
-    if(i===L.length){ if(!best||trnCmp(k,best.k)<0) best={k,s:[...sel]}; return; }
-    let any=0;
-    for(const r of L[i]){ const g=gim[i/3|0]; if(r.gk&&g.has(r.gk)) continue;
-      any=1; if(r.gk) g.add(r.gk); sel.push(r); go(i+1,add(k,r)); sel.pop(); if(r.gk) g.delete(r.gk); }
-    if(!any){ sel.push(null); go(i+1,k); sel.pop(); }
-  };
-  go(0,[0,0]);
-  return {T,s:best.s};
+  if(B) return trnPlanB(T,L,ln);   
+  
+
+  const add=(k,r)=>{ const v=trnKey(r); return k.map((x,j)=>x+v[j]); }, S=[];
+  for(let q=0;q<2;q++){ let best=null; const sel=[], g=new Set(), u=new Set();
+    const go=(i,k)=>{
+      if(i===q*3+3){ if(!best||trnCmp(k,best.k)<0) best={k,s:[...sel]}; return; }
+      let any=0;
+      for(const r of L[i]){ const id=r.c.id; if(r.gk&&g.has(r.gk)||!PN[i]&&u.has(id)) continue;
+        any=1; if(r.gk) g.add(r.gk); const nu=!u.has(id); u.add(id); sel.push(r); go(i+1,add(k,r)); sel.pop(); if(nu) u.delete(id); if(r.gk) g.delete(r.gk); }
+      if(!any){ sel.push(null); go(i+1,k); sel.pop(); }
+    };
+    go(q*3,[0,0]); S.push(...best.s); }
+  return {T,s:S};
 }
 
 
@@ -5159,11 +5168,12 @@ let trnDeck=0;
 let trnLast=null;
 
 
+
 const UKEY=KEY+':udeck';
 let udecks=(()=>{ try{ return JSON.parse(localStorage.getItem(UKEY))||[]; }catch(e){ return []; } })();
 
 const trnDk=(t,j)=>{ const n=t.decks.length; if(j<n) return t.decks[j]; const k=j-n, u=udecks[k];
-  return {n:'유저'+'ABCDEF'[k], s:u||t.decks[k].s, e:!u}; };
+  return {n:'유저'+'ABCDEF'[k], s:u||[null,null,null,null,null,null], e:!u}; };
 let myPin={}, myPinBoss=null, mePickK=null, meRank='6', meSet='1';
 const meAttr=k=>k?` data-me="${k}" role="button" tabindex="0"`:'';
 const meTag=k=>myPin[k]?'<span class="fl-role">직접</span>':'';
@@ -5674,28 +5684,32 @@ function renderBosses(){
   }
   
 
+  const usl=j=>'유저'+'ABCDEF'[j]+(udecks[j]?' · 덮어쓰기':' · 비어 있음');
   const tpn=document.getElementById('trnPlan');
-  if(tpn&&trn){ { const t=TRAINERS[0], DK=tagClass==='B'&&t.decks, D=DK&&trnDk(t,trnDeck), P=trnPlan(t,[0,1,2,3,4,5].map(x=>myPin['t'+x]||null),D); let i=0;
+  if(tpn&&trn){ { const t=TRAINERS[0], DK=tagClass==='B'&&t.decks, D=DK&&(trnDeck<0?{n:'내 태그',own:1}:trnDk(t,trnDeck)), P=trnPlan(t,[0,1,2,3,4,5].map(x=>myPin['t'+x]||null),D); let i=0;
     
-    const ds=document.getElementById('trnDeckSw'), chg=P.s.some((r,j)=>myPin['t'+j]);
+    const ds=document.getElementById('trnDeckSw'), chg=P.s.some((r,j)=>myPin['t'+j]),
+      sk=trnDeck<0?[0,1,2,3,4,5].find(i=>!udecks[i])??0:trnDeck%t.decks.length;   
     trnLast={dk:DK?D.n+(chg?'*':''):null, my:P.s.map(r=>r&&{n:r.c.n,r:r.c.r})};
-    if(ds){ ds.hidden=!DK; if(DK){ ds.innerHTML=[...t.decks,...t.decks].map((d,j)=>(d=trnDk(t,j),`<button${j<t.decks.length?'':' class="u"'} aria-pressed="${j===trnDeck}">${d.n} <small>${d.e?'비어 있음':'에너지 '+d.s.reduce((a,id)=>a+MYBY.get(id).e,0)}</small></button>`)).join('');
-      ds.querySelectorAll('button').forEach((b,j)=>b.addEventListener('click',()=>{ trnDeck=j; for(let x=0;x<6;x++) delete myPin['t'+x]; renderAll(); })); } }
+    if(ds){ ds.hidden=!DK; if(DK){ ds.innerHTML=`<button class="own" data-j="-1" aria-pressed="${trnDeck<0}">★ 내 태그로 추천 <small>보유 ${owned.size}장에서</small></button>`+[...t.decks,...t.decks].map((d,j)=>(d=trnDk(t,j),`<button data-j="${j}"${j<t.decks.length?'':' class="u"'} aria-pressed="${j===trnDeck}">${d.n} <small>${d.e?'비어 있음':'에너지 '+d.s.reduce((a,id)=>a+(id?MYBY.get(id).e:0),0)}</small></button>`)).join('');
+      ds.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ trnDeck=+b.dataset.j; for(let x=0;x<6;x++) delete myPin['t'+x]; renderAll(); })); } }
     const bT=r=>`<b class="fl-b ${r.ok?'ok">버팀':'bad">버팀 ✗'}</b>`;
     tpn.innerHTML=P.T.map((fs,k)=>{ const pf=fs.some(isPort)?' pf':'', R=fs.map(()=>P.s[i++]);
       return `<div class="fl-h">${t.team[k][0]}<span>아래 낼 태그 ▲ 위 상대</span></div><div class="fl-grid">`
         +fs.map(f=>`<div class="fl-cell foe set${pf} ${artCls(f)}">${art(f)}${foeInfo(f)}</div>`).join('')
         +fs.map(()=>'<div class="fl-link">▲</div>').join('')
-        +R.map((r,x)=>{ const q='t'+(k*3+x); return r?`<div class="fl-cell ${artCls(r.c)}"${meAttr(q)}>${meTag(q)}${art(r.c,0,1)}${meName(r.c,r.move,r.c.g?`<i class="gi fl-gi ${GK[r.c.g]}${r.gk?' use':''}" title="${r.c.g}${r.gk?' 사용':' 보유 · 이 칸에서는 안 씀'}"></i>`:'')}${mvLine(r.move,r.mult)}`
+        +R.map((r,x)=>{ const q='t'+(k*3+x); return r?`<div class="fl-cell ${artCls(r.c)}${DK&&!owned.has(r.c.id)?' miss':''}"${meAttr(q)}>${meTag(q)}${art(r.c,0,1)}${meName(r.c,r.move,r.c.g?`<i class="gi fl-gi ${GK[r.c.g]}${r.gk?' use':''}" title="${r.c.g}${r.gk?' 사용':' 보유 · 이 칸에서는 안 씀'}"></i>`:'')}${mvLine(r.move,r.mult)}`
           +`<span class="fl-r">${r.need?Math.round(r.p*100)+'% · '+r.need+'타':'공격이 안 통함'}</span>${bT(r)}</div>`
           :meEmpty(0,q); }).join('')+'</div>'
         +eS(R.map(r=>r&&r.c),fs); }).join('')
       
       
-      +(DK&&chg?`<button class="mini trnsave" id="trnSave">${'유저'+'ABCDEF'[trnDeck%t.decks.length]} 에 저장</button>`:'')
+      
+      +(DK&&chg?`<div class="trnsave"><label class="mini tsl"><span>${usl(sk)} ▾</span><select id="trnSaveTo" aria-label="유저 덱" onchange="this.previousSibling.textContent=this.selectedOptions[0].text+' ▾'">${[0,1,2,3,4,5].map(j=>`<option value="${j}"${j===sk?' selected':''}>${usl(j)}</option>`).join('')}</select></label><button class="mini" id="trnSave">에 저장</button></div>`:'')
       +planDet(tpn, P.s.map((r,j)=>mSlot(r,P.T[j/3|0][j%3],t.team[j/3|0][0],0,r&&bT(r))).join(''));
+    
     const sv=document.getElementById('trnSave');
-    if(sv) sv.addEventListener('click',()=>{ const k=trnDeck%t.decks.length;
+    if(sv) sv.addEventListener('click',()=>{ const to=document.getElementById('trnSaveTo'), k=to?+to.value:sk;
       udecks[k]=P.s.map(r=>r&&r.c.id); try{ localStorage.setItem(UKEY,JSON.stringify(udecks)); }catch(e){}
       trnDeck=t.decks.length+k; for(let x=0;x<6;x++) delete myPin['t'+x]; renderAll(); });
     bindMe(tpn); } }
