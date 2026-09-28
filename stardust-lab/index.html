@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.114.0">
+<meta name="version" content="3.115.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -569,6 +569,7 @@ section:first-child{margin-top:0}
 .setsw{display:flex;gap:6px;margin-bottom:9px}
 .setsw + .setsw{margin-bottom:13px}
 #trnDeckSw{flex-wrap:wrap}#trnDeckSw>*{flex:1 1 30%}#trnDeckSw>.own{flex-basis:100%}   
+#trnDeckSw>:not(.own) small{display:block}   
 
 #trnDeckSw .u:not([aria-pressed="true"]){border-color:var(--magenta);color:var(--magenta)}.trnsave{display:flex;gap:6px;justify-content:flex-end;margin-top:8px}
 
@@ -1276,15 +1277,6 @@ section:first-child{margin-top:0}
 .sparen{margin:9px 2px 0;font-size:11.5px;color:var(--ink-dim);line-height:1.65}
 .slots3{margin-top:10px;padding:11px 12px;border-radius:var(--r-md);
   background:rgba(30,19,73,.5);border:1px dashed var(--rim)}
-.s3l{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ink-dim)}
-.s3r{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0 6px}
-.s3c{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:var(--r-sm);
-  font-size:12px;font-weight:700;background:rgba(255,200,49,.14);color:var(--star);
-  box-shadow:inset 0 0 0 1px rgba(255,200,49,.35)}
-.s3c.sp{background:rgba(126,231,255,.12);color:var(--cyan);box-shadow:inset 0 0 0 1px rgba(126,231,255,.35)}
-.s3c.rd{background:rgba(163,146,214,.12);color:var(--ink-dim);box-shadow:inset 0 0 0 1px var(--rim)}
-.s3c i{font-family:var(--mono);font-style:normal;font-size:8.5px;opacity:.85}
-.s3n{display:block;font-size:11px;color:var(--ink-dim);line-height:1.6}
 .slot.rand{border-style:dashed;background:rgba(18,11,46,.3)}
 .thumb.rthumb{display:flex;align-items:center;justify-content:center;
   background:repeating-linear-gradient(135deg,rgba(74,47,156,.5) 0 7px,rgba(30,19,73,.5) 7px 14px)}
@@ -3667,8 +3659,8 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.114.0';
-const BUILT='2026-09-28';
+const VERSION='3.115.0';
+const BUILT='2026-09-29';
 
 
 
@@ -3679,7 +3671,7 @@ const BUILT='2026-09-28';
 
 
 
-const WHATSNEW='하이스코어 추천이 태그별로 실제 관찰한 룰렛 값을 봅니다.';
+const WHATSNEW='하이스코어태그 추천이 보스를 세 번째 공격에 잡는 조합을 먼저 고릅니다.';
 
 
 
@@ -4450,17 +4442,13 @@ function buildSeq(boss,force){
     const s3=all.filter(c=>survivesN(c,boss,3)), b3=s3.length?s3:all;
     const cards=hasF(b3)?b3:[...b3, all.find(p=>p.id===F)];
     const M=new Map(cards.map(c=>[c.id,movesOf(c).map(o=>({...o,h:hsMatchMetrics({c:o.c,m:o.m,mult:o.r.mult,mega:o.gk==='메가진화'},boss)}))]));
-    const keyOf=rows=>{ const k=[0,0,0,0,0,0,0,0];
-      rows.forEach(o=>{ const h=o.h; k[0]+=+h.eligible; k[1]+=+h.lowWeak; k[2]+=+h.low; k[3]+=h.gap;
-        k[4]+=+h.rouletteKnown; k[5]+=h.roulette||0; k[6]+=h.typeMultiplier; k[7]+=o.r.dmg; });
-      return k; };
     let best=null, bk=null;
     for(const X of cards) for(const Y of cards){
       if(X.id===Y.id && owned.cnt(X.id)<2) continue;
       if(F && X.id!==F && Y.id!==F) continue;
       for(const a of M.get(X.id)) for(const b of M.get(Y.id)) for(const c2 of M.get(X.id)){
         if(clash(a,b,c2)) continue;
-        const k=keyOf([a,b,c2]);
+        const k=hsRotationKeyNormal([a,b,c2],boss);
         if(!bk || hsCompare(k,bk)>0){ bk=k; best=[a.r,b.r,c2.r]; }
       }
     }
@@ -4575,7 +4563,7 @@ const trnLane=(c,f,oth,gk=null,z)=>{
 
 const trnKey=r=>{ const h=r.hs; return h ? [+r.ok,+h.eligible,+h.lowWeak,+h.low,Math.max(0,h.gap),hsRouletteTier(h),h.roulette||0,h.typeMultiplier,Math.min(1,r.p)]
   : [+r.ok,Math.min(1,r.p)]; };
-const trnCmp=(a,b)=>{ for(let i=0;i<a.length;i++) if(a[i]!==b[i]) return b[i]-a[i]; return 0; };
+const hsMatchCmpSpecial=(a,b)=>{ for(let i=0;i<a.length;i++) if(a[i]!==b[i]) return b[i]-a[i]; return 0; };
 
 
 
@@ -4666,7 +4654,7 @@ const keyB=(s,FS,ln,FC)=>{ const R=trnSim(s,FS,ln,FC), v=Array(16).fill(0);
   return v; };
 function trnPlan(t,pins,deck){
   const T=t.team.map(x=>x[1].map(i=>SUBBY.get(i))), mine=classPool().filter(p=>owned.has(p.id));
-  const B=tagClass==='B', by=(a,b)=>trnCmp(trnKey(a),trnKey(b)), rows=(c,f,o,z)=>[trnLane(c,f,o,null,z),...trnGk(c).map(g=>trnLane(c,f,o,g,z))].filter(Boolean);
+  const B=tagClass==='B', by=(a,b)=>hsMatchCmpSpecial(trnKey(a),trnKey(b)), rows=(c,f,o,z)=>[trnLane(c,f,o,null,z),...trnGk(c).map(g=>trnLane(c,f,o,g,z))].filter(Boolean);
   
 
 
@@ -4690,7 +4678,7 @@ function trnPlan(t,pins,deck){
   const add=(k,r)=>{ const v=trnKey(r); return k.map((x,j)=>x+v[j]); }, S=[];
   for(let q=0;q<2;q++){ let best=null; const sel=[], g=new Set(), u=new Set();
     const go=(i,k)=>{
-      if(i===q*3+3){ if(!best||trnCmp(k,best.k)<0) best={k,s:[...sel]}; return; }
+      if(i===q*3+3){ if(!best||hsMatchCmpSpecial(k,best.k)<0) best={k,s:[...sel]}; return; }
       let any=0;
       for(const r of L[i]){ const id=r.c.id; if(r.gk&&g.has(r.gk)||!PN[i]&&u.has(id)) continue;
         any=1; if(r.gk) g.add(r.gk); const nu=!u.has(id); u.add(id); sel.push(r); go(i+1,add(k,r)); sel.pop(); if(nu) u.delete(id); if(r.gk) g.delete(r.gk); }
@@ -4708,9 +4696,9 @@ function trnPlanB(T,L,ln){
     for(const a of C[0]) for(const b of C[1]) for(const c of C[2]){ const q=[a,b,c], gk=q.filter(r=>r&&r.gk).map(r=>r.gk);
       if(new Set(gk).size<gk.length) continue;
       out.push({q,k:keyB(q,[T[k]],ln,FC)}); }
-    return out.sort((x,y)=>trnCmp(x.k,y.k)); };
+    return out.sort((x,y)=>hsMatchCmpSpecial(x.k,y.k)); };
   const A=[side(0),side(1)]; let best=null;
-  const put=s=>{ const k=keyB(s,T,ln,FC); if(!best||trnCmp(k,best.k)<0) best={k,s}; };
+  const put=s=>{ const k=keyB(s,T,ln,FC); if(!best||hsMatchCmpSpecial(k,best.k)<0) best={k,s}; };
   for(const a of A[0].slice(0,30)) for(const b of A[1].slice(0,30)) put([...a.q,...b.q]);
   return {T,s:best?best.s:L.map(()=>null)};
 }
@@ -4956,7 +4944,7 @@ function foeCands(foe,boss,isBoss,waiters,gimOK){
 
 
 function cmpCand(a,b,isBoss){
-  if(tagClass==='B') return hsMatchCmp(a,b);
+  if(tagClass==='B') return hsMatchCmpNormal(a,b,isBoss);
   
 
 
@@ -5024,13 +5012,13 @@ function assignPlans(cols, foeOf, boss, force, pins){
     return out; });
   
   const key=sel=>{
-    let tier=0, inc=0, dmg=0, sp=0, bsv=0, bdmg=0;
+    let tier=0, inc=0, dmg=0, sp=0, bsv=0, bdmg=0, bkt=0;
     cols.forEach((at,i)=>{ const r=sel[i]; if(!r) return;
       sp+=r.splash||0;                       
       
 
 
-      if(aimB(at)){ dmg+=r.dmg; bsv+=r.sv; if(at==='B') bdmg=r.dmg; }
+      if(aimB(at)){ dmg+=r.dmg; bsv+=r.sv; if(at==='B'){ bdmg=r.dmg; bkt=tagClass==='B'?hsBossTurn(r):0; } }
       else { tier+=r.tier; inc+=r.inc; } });
     
 
@@ -5044,7 +5032,7 @@ function assignPlans(cols, foeOf, boss, force, pins){
       sel.forEach(r=>{if(!r)return;const h=r.hs||hsMatchMetrics(r,r.foe);
        hsv+=r.sv;eligible+=+h.eligible;lowWeak+=+h.lowWeak;low+=+h.low;gap+=Math.max(0,h.gap);
        known+=+h.rouletteKnown;roulette+=h.roulette||0;type+=h.typeMultiplier});
-return [hsv,-eligible,-lowWeak,-low,-gap,-known,-roulette,-type,tier,-dmg,-bdmg,-sp,inc];
+return [hsv,-bkt,-eligible,-lowWeak,-low,-gap,-known,-roulette,-type,tier,-dmg,-bdmg,-sp,inc];   
     }
     return [bsv,tier,-dmg,-bdmg,-sp,inc];
   };
@@ -5327,7 +5315,7 @@ function mSlot(p,f,lab,isB,tag){
         <span class="mult t2"><span class="k">룰렛</span><b>${p.hs.rouletteKnown?p.hs.roulette.toFixed(1).replace('.0',''):'미확인'}</b><span>최대 ${p.hs.rouletteMax??'미확인'}</span></span>`:''}
         <span class="mult"><span class="k">받는</span><b class="${dc(p.d)}">×${p.d}</b>${p.d===0?'<span style="color:var(--ok)">무효</span>':''}</span>
         ${p.move?`<span class="mult t2"><span class="k">위력</span><b>${p.pw}</b></span>`:''}
-        <span class="mult t2"><span class="k">스피드</span><b>${c.sp}</b><span>${sp}</span></span>
+        <span class="mult t2"><span class="k">스피드</span><b>${c.sp}</b><span>${sp}${p.spd<0&&!p.ch?' · 선공찬스 가능':''}</span></span>
         <span class="mult t2"><span class="k">피격</span>
           <b>${p.inc<0.005?'&lt;1':Math.round(p.inc*100)}%</b>
           ${p.tier===0?'<span>격파 실패 · 후공 때만</span>':''}</span>
@@ -5571,11 +5559,12 @@ function renderFoes(){
 
 
 
+  
   const spdNote = (bp && bp.c && bp.c.sp<=boss.sp)
     
 
     ? ` <b style="color:var(--star)">보스 칸 ${bp.c.n} — 보스보다 느립니다 (속 ${bp.c.sp} vs ${boss.sp}).`
-      + ` 보스가 먼저 치므로 기절시키기 전에 한 대를 맞습니다.</b>`
+      + ` 보스가 먼저 치므로 기절시키기 전에 한 대를 맞습니다 — 선공찬스가 뜨면 먼저 칩니다.</b>`
     : '';
   document.getElementById('foeNote').innerHTML = (k
     
@@ -9396,12 +9385,29 @@ function hsMatchMetrics(r,enemy){
  return {low,lowWeak,eligible:lowWeak&&roulette>=HS_THRESHOLD,roulette,
  rouletteKnown:rr.known,rouletteMax:rr.max,rouletteValues:rr.values,typeMultiplier:r.mult,gap};
 }
-function hsMatchCmp(a,b){
+
+
+const hsBossTurn=r=>hsKoTurn([r.dmg,r.dmg,r.dmg],r.foe);
+function hsMatchCmpNormal(a,b,isBoss){
  const x=a.hs||hsMatchMetrics(a,a.foe),y=b.hs||hsMatchMetrics(b,b.foe);
- return a.sv-b.sv||+y.eligible-+x.eligible||+y.lowWeak-+x.lowWeak||+y.low-+x.low||y.gap-x.gap
+ return a.sv-b.sv||(isBoss?hsBossTurn(b)-hsBossTurn(a):0)||+y.eligible-+x.eligible||+y.lowWeak-+x.lowWeak||+y.low-+x.low||y.gap-x.gap
  ||hsRouletteTier(y)-hsRouletteTier(x)||+y.rouletteKnown-+x.rouletteKnown||(y.roulette||0)-(x.roulette||0)
  ||y.typeMultiplier-x.typeMultiplier||b.dmg-a.dmg||b.splash-a.splash;
 }
+
+
+
+function hsRotationKeyNormal(rows,boss){ const k=[0,0,0,0,0,0,0,0,0];
+  k[0]=hsKoTurn(rows.map(o=>o.r.dmg),boss);
+  rows.forEach(o=>{ const h=o.h; k[1]+=+h.eligible; k[2]+=+h.lowWeak; k[3]+=+h.low; k[4]+=h.gap;
+    k[5]+=+h.rouletteKnown; k[6]+=h.roulette||0; k[7]+=h.typeMultiplier; k[8]+=o.r.dmg; });
+  return k; }
+
+
+
+
+
+const hsKoTurn=(dmgs,boss)=>{ let s=0; for(let i=0;i<dmgs.length;i++){ s+=dmgs[i]; if(koIn2(s,boss)) return i+1; } return 0; };
 
 function hsRender(){
   const local=mode==='지역';
