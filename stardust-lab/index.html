@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.115.0">
+<meta name="version" content="3.118.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -312,8 +312,6 @@ body{padding-top:env(safe-area-inset-top,0px)}
 
 
 
-.cammsg{display:block;margin-top:8px;color:var(--bad);font-size:12px;font-weight:600}
-.cammsg[hidden]{display:none}
 
 
 
@@ -1045,7 +1043,6 @@ section:first-child{margin-top:0}
 .fl-h{display:flex;align-items:baseline;gap:8px;margin:0 0 10px;font-weight:800;font-size:13px;line-height:1;color:var(--ink)}
 .fl-h span{font-weight:600;font-size:10.5px;line-height:1;color:var(--ink-dim)}
 
-.foepick{margin-top:11px;padding-top:11px;border-top:1px solid rgba(255,255,255,.09)}
 .foegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:6px;
   max-height:238px;overflow-y:auto;margin-top:8px}
 
@@ -1205,14 +1202,9 @@ section:first-child{margin-top:0}
 .bhero .tps{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:9px}
 .binner{padding:15px 16px 16px}
 .binner .stats{margin-top:0}
-.boss-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap}
-.boss-name{font-family:var(--display);font-weight:400;font-size:clamp(28px,8vw,42px);margin:0;line-height:1;
-  color:#fff;text-shadow:0 0 22px rgba(255,61,139,.4)}
-.boss-code{font-family:var(--mono);font-size:10.5px;color:var(--ink-dim);letter-spacing:.1em;margin-top:6px}
 .energy{text-align:right;flex:none}
 .energy .v{font-family:var(--display);font-size:34px;line-height:1;color:var(--star)}
 .energy .l{font-family:var(--mono);font-size:9px;color:var(--ink-dim);letter-spacing:.16em}
-.boss-types{display:flex;gap:6px;margin-top:11px;flex-wrap:wrap;align-items:center}
 
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin-top:16px}
 .st{display:grid;grid-template-columns:44px 1fr 40px;align-items:center;gap:8px}
@@ -1500,6 +1492,11 @@ summary .ct{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--
 
 .dlv{margin:14px 0 2px;padding:11px 12px;border-radius:var(--r-md);
   background:rgba(255,61,139,.07);border:1px solid rgba(255,61,139,.28)}
+
+.dlv-h{display:flex;align-items:center;gap:10px}
+
+.setsw.rpos{flex:none;margin:0}
+.setsw.rpos button.rc{flex:none;width:44px;height:44px;min-height:0;padding:0;border-radius:50%;font-size:12.5px;white-space:nowrap}   
 .dlv-l{display:block;font-size:12.5px;font-weight:700}
 .dlv-l i{display:block;font-family:var(--mono);font-style:normal;font-size:10px;
   color:var(--ink-dim);font-weight:500;margin-top:3px}
@@ -1543,9 +1540,9 @@ summary .ct{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--
   box-shadow:inset 0 0 0 1.5px rgba(163,146,214,.4)}
 
 .step{display:flex;align-items:center;gap:8px}
-.step .val{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;
+.step .val{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;   
   background:radial-gradient(circle at 50% 30%,#FFD86B,#D9920C);color:#241300;
-  font-family:var(--display);font-weight:400;font-size:20px;
+  font-family:var(--display);font-weight:400;font-size:17px;
   text-shadow:0 1px 0 rgba(255,255,255,.35);
   box-shadow:0 0 0 3px #0B0718,0 0 0 5px rgba(255,255,255,.22),0 3px 8px rgba(0,0,0,.5)}
 .step button{width:var(--tap);height:var(--tap);border-radius:var(--r-sm);border:1px solid var(--rim);background:rgba(18,11,46,.6);
@@ -1776,7 +1773,7 @@ summary:focus-visible{outline:2.5px solid var(--cyan);outline-offset:-3px}
 
 .setsw button.rc{border:3px solid #0B0718;border-radius:999px;color:#fff;font-family:var(--display);font-size:16px;text-shadow:0 0 3px #0B0718,0 0 3px #0B0718}
 .setsw .rc.c1{background:#2BC4DB}.setsw .rc.c2{background:#F5921E}.setsw .rc.c3{background:#F23F63}
-.hroulpick button[aria-pressed="true"]{outline:2px dashed #fff;outline-offset:2px}
+.hroulpick button[aria-pressed="true"],.rpos button[aria-pressed="true"]{outline:2px dashed #fff;outline-offset:2px}
 .hscorerow .htimein{flex:1}
 .hscorerow .hmain{min-height:var(--tap)}
 .htimein{min-width:0;font-family:var(--mono);font-size:16px;padding:7px 10px;
@@ -2297,7 +2294,7 @@ footer .fver{margin:15px 0 0}
     <div class="card">
       <p style="font-size:12.5px;color:var(--ink-dim);margin:0 0 14px;line-height:1.7">
         룰렛에서 뜬 숫자가 공격력에 그대로 더해집니다. 다이맥스는 태그의 다이맥스 레벨에 따라
-        룰렛 숫자가 커지고, 다이맥스밴드+의 거다이맥스 보너스+가 발동하면 최대 80까지 나옵니다.<br><b style="color:var(--ink)">기본값 20 / 45 / 30 / 70은 실제 플레이에서 관찰한 값</b>입니다 (일반은 가장 자주 나온 20). 체감이 다르면 조절하세요.</p>
+        룰렛 숫자가 커지고, 다이맥스밴드+의 거다이맥스 보너스+가 발동하면 최대 80까지 나옵니다.<br><b style="color:var(--ink)">룰렛 판은 태그마다 다릅니다</b> — 판의 세 칸(파랑 최소 · 노랑 중간 · 빨강 최대) 중 어느 칸으로 계산할지 고르세요. 기본은 노랑입니다. 보스의 공격은 늘 노랑으로 셉니다.</p>
       <div class="roul" aria-hidden="true">
         <svg viewBox="0 0 300 150" width="100%" height="150" role="img">
           <path d="M38 132 A112 112 0 0 1 262 132" fill="none"
@@ -2323,7 +2320,7 @@ footer .fver{margin:15px 0 0}
       </div>
       <div id="chanceRows"></div>
       <div class="dlv">
-        <span class="dlv-l">다이맥스 레벨 <i>룰렛에서 뜬 값 · 에너지에 배율</i></span>
+        <div class="dlv-h"><span class="cgi" data-gk="다이맥스"></span><span class="dlv-l">다이맥스 레벨 <i>룰렛에서 뜬 값 · 에너지에 배율</i></span></div>
         <div class="dlv-b" role="group" aria-label="다이맥스 레벨">
           <button data-dlv="0">꽝</button>
           <button data-dlv="1">레벨 1</button>
@@ -2333,7 +2330,7 @@ footer .fver{margin:15px 0 0}
         <span class="dlv-n" id="dlvNote"></span>
       </div>
       <div class="dlv mgt">
-        <span class="dlv-l">메가진화 등급 <i>성공 · 대성공</i></span>
+        <div class="dlv-h"><span class="cgi" data-gk="메가진화"></span><span class="dlv-l">메가진화 등급 <i>성공 · 대성공</i></span></div>
         <div class="dlv-b" role="group" aria-label="메가진화 등급">
           <button data-mg="성공">성공</button>
           <button data-mg="대성공" aria-pressed="true">대성공</button>
@@ -3496,41 +3493,81 @@ const POOL=[
 
 
 const ROULETTE_OBS={
+ '1-2-골비람|놀래키기':[5,10,20],
+ '1-2-뜨아거|불꽃세례':[5,10,20],
  '2-2-알로라 모래두지|고드름침':[10,20,35],
+ '1-3-골루그|섀도펀치':[5,10,20],
+ '1-3-나로테|매지컬리프':[5,10,20],
+ '1-3-누겔레온|물의파동':[5,10,20],
+ '1-3-래비풋|니트로차지':[5,10,20],
+ '1-3-머드나기|땅고르기':[5,10,20],
+ '1-3-악뜨거|불태우기':[5,10,20],
+ '1-3-이브이|스피드스타':[5,10,20],
  '1-3-전지충이|시저크로스':[10,20,35],
+ '1-3-피카츄|스파크':[5,10,20],
+ '1-4-가로막구리|승부굳히기':[5,10,20],
+ '1-4-님피아|매지컬샤인':[10,20,50],
+ '1-4-두트리오|쪼아대기':[5,10,20],
+ '1-4-리피아|잎날가르기':[5,10,20],
+ '1-4-쥬피썬더|번개':[10,20,50],
+ '1-4-포푸니라|깜짝베기':[5,10,20],
+ '1-4-폭거북스|불태우기':[5,10,20],
  '2-4-마스카나|깜짝베기':[5,10,20],
  '2-4-부스터|분연':[10,20,35],
- '2-5-쥬피썬더|10만볼트':[10,20,35],
- '2-5-에브이|사이코키네시스':[10,20,35],
+ '1-5-고릴타|드럼어택':[10,20,35],
+ '1-5-글레이시아|눈보라':[10,20,50],
+ '1-5-에이스번|화염볼':[10,20,50],
+ '1-5-인텔리레온|노려맞히기':[10,20,35],
+ '1-5-피죤투|폭풍':[10,20,50],
  '1-5-피카츄|10만볼트':[10,20,50],
- '1-6-뮤츠|사이코브레이크':[10,20,35],
+ '2-5-에브이|사이코키네시스':[10,20,35],
+ '2-5-쥬피썬더|10만볼트':[10,20,35],
+ '1-6-거북왕|하이드로펌프':[10,20,50],
  '1-6-마기라스|스톤에지':[10,20,35],
  '1-6-메타그로스|코멧펀치':[10,20,50],
+ '1-6-뮤츠|사이코브레이크':[10,20,35],
+ '1-6-미라이돈|라이트닝드라이브':[10,20,35],
+ '2-6-그란돈|지진':[10,20,35],
  '2-6-잠만보|기가임팩트':[10,20,50],
- '1-6-거북왕|하이드로펌프':[10,20,50]
+ '2-6-코라이돈|액셀브레이크':[10,20,35]
 };
 
 
 
 const ROULETTE_GIMMICK_OBS={
+ '1-5-피죤투|메가진화|대성공':{values:[10,20,60],energyFrom:100,energyTo:118,result:'great-success'},
  '1-5-피카츄|다이맥스|10':{values:[20,35,70],energyFrom:96,energyTo:111,result:'success'},
+ '1-6-거북왕|메가진화|대성공':{values:[10,20,60],energyFrom:124,energyTo:144,result:'great-success'},
  '1-6-메타그로스|다이맥스|5':{values:[20,35,60],energyFrom:144,energyTo:159,result:'success'},
  '2-6-잠만보|다이맥스|failed':{values:[5,10,50],energyFrom:144,energyTo:null,result:'failed'},
- '2-6-잠만보|다이맥스|10':{values:[20,35,70],energyFrom:144,energyTo:166,result:'success'},
- '1-6-거북왕|메가진화|대성공':{values:[10,20,60],energyFrom:124,energyTo:144,result:'great-success'}
+ '2-6-잠만보|다이맥스|10':{values:[20,35,70],energyFrom:144,energyTo:166,result:'success'}
 };
+
+
 
 
 
 const ROULETTE_RANK_DEFAULT={
  '2':[5,10,20],
- '3':[10,20,35]
+ '3':[5,10,20],
+ '4':[5,10,20],
+ '5':[10,20,35],
+ '6':[10,20,35]
 };
-const addRouletteObs=c=>c.mv.forEach(m=>{
-  const explicit=ROULETTE_OBS[c.id+'|'+m.n],v=explicit||ROULETTE_RANK_DEFAULT[c.r];
-  if(v) m.roulette={values:v,min:Math.min(...v),max:Math.max(...v),
-    observed:true,source:explicit?'tag-move-observation':'rank-observation'};
-});
+
+
+
+
+
+const rouBoard=v=>v&&{values:v,min:Math.min(...v),max:Math.max(...v),observed:true};
+const gimBoard=(id,g)=>Object.entries(ROULETTE_GIMMICK_OBS).filter(([k,o])=>k.startsWith(id+'|'+g+'|')&&o.result!=='failed')
+  .map(([,o])=>o.values).sort((a,b)=>Math.max(...b)-Math.max(...a))[0];
+const addRouletteObs=c=>{ const dm=gimBoard(c.id,'다이맥스'), mg=gimBoard(c.id,'메가진화');
+  c.mv.forEach(m=>{
+  const explicit=ROULETTE_OBS[c.id+'|'+m.n], v=m.tagx==='다이맥스'?dm:m.tagx?null:explicit||ROULETTE_RANK_DEFAULT[c.r];
+  if(v) m.roulette={...rouBoard(v),source:m.tagx?'gimmick-observation':explicit?'tag-move-observation':'rank-observation'};
+  if(mg&&!m.tagx) m.megaRoulette={...rouBoard(mg),source:'gimmick-observation'};
+}); };
 [...POOL,...SUBS].forEach(addRouletteObs);
 
 
@@ -3549,8 +3586,8 @@ const TRAINERS=[{id:'gayoung-jinyoung',n:'가영 & 진영',
      {n:'추천B',s:["2-2-알로라 모래두지","1-3-전지충이","1-5-거대코뿌리","1-2-턱지충이","2-2-톱치","1-5-거대코뿌리"]},
      {n:'추천C',s:["1-2-턱지충이","1-2-골비람","1-5-거대코뿌리","1-2-골비람","1-2-울머기","1-5-거대코뿌리"]},
      {n:'추천D',s:["1-2-턱지충이","1-3-전지충이","1-4-투구뿌논","2-2-톱치","1-3-전지충이","1-4-투구뿌논"]},
-    {n:'추천E',s:["2-3-롱스톤","2-2-알로라 모래두지","공통-S-따라큐","1-2-누니머기","2-3-파이숭이","2-3-동탁군"]},
-    {n:'추천F',s:["2-3-롱스톤","2-2-알로라 모래두지","공통-S-따라큐","2-2-구구","2-3-파이숭이","1-4-투구뿌논"]}]}];
+    {n:'추천E',s:["1-2-턱지충이","2-2-톱치","1-5-거대코뿌리","1-2-턱지충이","2-2-톱치","1-5-거대코뿌리"]},
+    {n:'추천F',s:["1-2-턱지충이","2-2-톱치","1-5-거대코뿌리","1-2-턱지충이","1-2-골비람","1-5-거대코뿌리"]}]}];
 
 
 const GIMICON={
@@ -3659,8 +3696,8 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.115.0';
-const BUILT='2026-09-29';
+const VERSION='3.118.0';
+const BUILT='2026-10-01';
 
 
 
@@ -3671,7 +3708,7 @@ const BUILT='2026-09-29';
 
 
 
-const WHATSNEW='하이스코어태그 추천이 보스를 세 번째 공격에 잡는 조합을 먼저 고릅니다.';
+const WHATSNEW='지역배틀 하이스코어태그 추천이 서브 두 장을 넣으면 3턴 배틀을 따라가 보고 고릅니다.';
 
 
 
@@ -4116,10 +4153,20 @@ const POWER={
 
 
 
-const CHANCE_DEFAULTS={'일반':20,'메가진화':45,'다이맥스':30,'Z기술':70};
-let chance={...CHANCE_DEFAULTS};
 
-const bonusOf=(m,mega)=>chance[m.tagx] ?? (mega?chance['메가진화']:chance['일반']);
+
+
+
+
+
+
+
+const CHANCE_DEFAULTS={'Z기술':70,pos:1,sup:1};
+let chance={...CHANCE_DEFAULTS};
+const ROU_FB={'일반':[10,20,35],'다이맥스':[20,35,70],'메가진화':[10,20,60]};
+
+const bonusOf=(m,mega,boss)=>m.tagx==='Z기술'?(boss?CHANCE_DEFAULTS:chance)['Z기술']
+  :((mega?m.megaRoulette:m.roulette)||{values:ROU_FB[mega?'메가진화':m.tagx||'일반']}).values[boss?1:chance.pos];
 
 function offense(card,boss,banGim){
   if(card.measured){
@@ -4166,7 +4213,7 @@ function bossHit(c,boss,m){
   const pw=POWER[m.n]??100;
   const atk=(m.k==='물리')?boss.a:boss.sa;
   const def=(m.k==='물리')?c.d:c.sd;
-  return pw*(atk+bonusOf(m))/def*eff(m.t,c.t)*KHP*SAFE/c.hp;
+  return pw*(atk+bonusOf(m,false,1))/def*eff(m.t,c.t)*KHP*SAFE/c.hp;
 }
 
 
@@ -4605,7 +4652,11 @@ const trnSim=(s,FS,ln,FC)=>{ const F=FS.flat(), n=FS.length, mh=s.map(r=>r?1:0),
 
 
       if(l){ const before=Math.max(0,fh[b+fi]), dd=Math.min(before,l.p), ev={turn:t+1,side:k+1,card:r.c.n,foe:f.n,energy:r.c.e,foeEnergy:f.e,gap:f.e-r.c.e,weak:eff(l.move.t,f.t)>=2,post:!!fg[b+fi],direct:dd,splash:0}; fh[b+fi]-=l.p; dealt.direct+=dd; dealt.byTurn[t]+=dd; F.forEach((g,i)=>{ if(i!==b+fi&&fh[i]>0){ const sd=.6*l.pw*l.atk/(l.move.k=='물리'?g.d:g.sd)*eff(l.move.t,g.t)*KHP/g.hp, sb=Math.max(0,fh[i]), ad=Math.min(sb,sd); fh[i]-=sd; dealt.splash+=ad; dealt.byTurn[t]+=ad; ev.splash+=ad; } }); events.push(ev); F.forEach((_,i)=>{ if(!ko[i]&&fh[i]<=0) ko[i]=t+1; }); } }
-    for(const [m,x] of on) if(fh[x]>0&&mh[m]>0){ mh[m]-=trnFH(FC,F[x],s[m].c,!fg[x]); fg[x]=1;
+    
+
+
+
+    for(const [m,x] of on) if(fh[x]>0){ if(mh[m]>0) mh[m]-=trnFH(FC,F[x],s[m].c,!fg[x]); fg[x]=1;
       
 
 
@@ -4652,6 +4703,18 @@ const keyB=(s,FS,ln,FC)=>{ const R=trnSim(s,FS,ln,FC), v=Array(16).fill(0);
     v[15]+=fin&&R.alive[b+2]?1:0;
   }
   return v; };
+
+
+
+
+
+
+
+
+
+const keyEv=(s,FS,ln,FC)=>{ const R=trnSim(s,FS,ln,FC); let low=0,gap=0,post=0,weak=0,dd=0;
+  R.events.forEach(e=>{ low+=+(e.energy<e.foeEnergy); gap+=Math.max(0,e.gap); post+=+(e.post&&e.direct>0); weak+=+e.weak; dd+=e.direct; });
+  return [+R.win,-R.rem,R.ko.some(x=>x===1)?0:1,low,R.ko.filter(x=>x===3).length,gap,post,weak,dd]; };
 function trnPlan(t,pins,deck){
   const T=t.team.map(x=>x[1].map(i=>SUBBY.get(i))), mine=classPool().filter(p=>owned.has(p.id));
   const B=tagClass==='B', by=(a,b)=>hsMatchCmpSpecial(trnKey(a),trnKey(b)), rows=(c,f,o,z)=>[trnLane(c,f,o,null,z),...trnGk(c).map(g=>trnLane(c,f,o,g,z))].filter(Boolean);
@@ -4672,7 +4735,7 @@ function trnPlan(t,pins,deck){
   
 
   const LC=new Map(), ln=(c,f)=>{ const x=c.id+f.id; if(!LC.has(x)) LC.set(x,trnLane(c,f,T[T[0].includes(f)?1:0])); return LC.get(x); };
-  if(B) return trnPlanB(T,L,ln);   
+  if(B) return trnPlanB(T,L,ln,D?[]:t.decks.map(d=>d.s));   
   
 
   const add=(k,r)=>{ const v=trnKey(r); return k.map((x,j)=>x+v[j]); }, S=[];
@@ -4690,16 +4753,19 @@ function trnPlan(t,pins,deck){
 
 
 
-function trnPlanB(T,L,ln){
+
+
+
+function trnPlanB(T,L,ln,sd=[]){
   const FC=new Map();
   const side=k=>{ const out=[], C=[0,1,2].map(j=>L[k*3+j].length?L[k*3+j]:[null]);
     for(const a of C[0]) for(const b of C[1]) for(const c of C[2]){ const q=[a,b,c], gk=q.filter(r=>r&&r.gk).map(r=>r.gk);
       if(new Set(gk).size<gk.length) continue;
-      out.push({q,k:keyB(q,[T[k]],ln,FC)}); }
+      out.push({q,k:keyEv(q,[T[k]],ln,FC)}); }
     return out.sort((x,y)=>hsMatchCmpSpecial(x.k,y.k)); };
-  const A=[side(0),side(1)]; let best=null;
-  const put=s=>{ const k=keyB(s,T,ln,FC); if(!best||hsMatchCmpSpecial(k,best.k)<0) best={k,s}; };
-  for(const a of A[0].slice(0,30)) for(const b of A[1].slice(0,30)) put([...a.q,...b.q]);
+  const A=[side(0),side(1)].map((l,k)=>[...new Set([...l.slice(0,30),...l.filter(x=>sd.some(d=>x.q.every((r,j)=>(r&&r.c.id)==d[k*3+j])))])]); let best=null;
+  const put=s=>{ const k=keyEv(s,T,ln,FC); if(!best||hsMatchCmpSpecial(k,best.k)<0) best={k,s}; };
+  for(const a of A[0]) for(const b of A[1]) put([...a.q,...b.q]);
   return {T,s:best?best.s:L.map(()=>null)};
 }
 
@@ -5027,6 +5093,9 @@ function assignPlans(cols, foeOf, boss, force, pins){
 
 
 
+    
+    if(tagClass==='B'&&mode==='지역'&&bi>=0&&cols.every(foeOf)){ let hsv=0; sel.forEach(r=>{ if(r) hsv+=r.sv; });
+      return [...hsLocalSim(sel,cols,foeOf,boss),hsv,tier,-dmg,-bdmg,-sp,inc]; }
     if(tagClass==='B'){
       let hsv=0,eligible=0,lowWeak=0,low=0,gap=0,known=0,roulette=0,type=0;
       sel.forEach(r=>{if(!r)return;const h=r.hs||hsMatchMetrics(r,r.foe);
@@ -9372,7 +9441,7 @@ function hsCompare(a,b){for(let i=0;i<a.length;i++){if(a[i]!==b[i])return a[i]-b
 
 
 const hsRouletteOf=(m,mega)=>{
-  const q=m&&m.roulette;
+  const q=m&&(mega?m.megaRoulette:m.roulette);   
   if(q&&Number.isFinite(q.max)) return {rank:q.max,max:q.max,known:true,values:q.values||[]};
   return {rank:bonusOf(m,mega),max:null,known:false,values:null};
 };
@@ -9408,6 +9477,42 @@ function hsRotationKeyNormal(rows,boss){ const k=[0,0,0,0,0,0,0,0,0];
 
 
 const hsKoTurn=(dmgs,boss)=>{ let s=0; for(let i=0;i<dmgs.length;i++){ s+=dmgs[i]; if(koIn2(s,boss)) return i+1; } return 0; };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const HS_SUP=10;
+const hsSup=()=>chance.sup?HS_SUP:0;
+const hsSimBonus=r=>r.m.tagx==='Z기술'?r.bonus:(q=>q.known?q.max:r.bonus)(hsRouletteOf(r.m,!!r.mega))+hsSup();
+function hsLocalSim(sel,cols,foeOf,boss){
+  const bi=cols.indexOf('B'), F=cols.map(at=>foeOf(at)||boss), sb=[0,1,2].filter(i=>i!==bi); let W=null;
+  for(const o of [[sb[0],sb[1],bi],[sb[1],sb[0],bi]]){
+    const fh=F.map(f=>f===boss?modeHp(boss)*KO_SAFE/boss.hp:1), mh=sel.map(r=>r?1:0), A=[], ko=[0,0,0]; let kt=0;
+    for(let t=0;t<3&&!kt;t++){ const x=o[t], f=F[x], r=sel[x];
+      const hit=()=>{ if(kt||!r||mh[x]<=0||fh[x]<=0) return; const au=r.atk-r.bonus+hsSimBonus(r); A.push(r); fh[x]-=r.dmg*au/r.atk*KHP/f.hp;
+          F.forEach((g,i)=>{ if(i!==x&&fh[i]>0) fh[i]-=splashRate(r.pw,au,eff(r.m.t,g.t)); }); fh.forEach((h,i)=>{ if(h<=0&&!ko[i]) ko[i]=t+1; }); if(fh[bi]<=0) kt=t+1; };
+      const foeHit=()=>{ if(kt||fh[x]<=0) return; const m=mh[x]>0?x:mh.findIndex(h=>h>0);
+          sel.forEach((q,i)=>{ if(q&&mh[i]>0) mh[i]-=i===m?hitAny(q.c,f):.6*hitNorm(q.c,f); }); };
+      if(r&&r.c.sp>f.sp){ hit(); foeHit(); } else { foeHit(); hit(); } }
+    const k=[+!kt,kt?0:fh[bi],-kt,-ko.filter(v=>v===3).length,0,0,0,0,0,0,0];
+    A.forEach(r=>{ const h=r.hs||hsMatchMetrics(r,r.foe); const rr=(h.roulette||0)+(r.m.tagx==='Z기술'?0:hsSup()); k[4]-=h.lowWeak&&rr>=HS_THRESHOLD; k[5]-=h.lowWeak; k[6]-=h.low; k[7]-=Math.max(0,h.gap);
+      k[8]-=h.rouletteKnown; k[9]-=rr; k[10]-=h.typeMultiplier; });
+    if(!W||hsCompare(k,W)>0) W=k; }
+  return W; }
 
 function hsRender(){
   const local=mode==='지역';
@@ -9471,18 +9576,26 @@ function renderFoeSets(){
     + (on.length===1 ? ' · 마지막 하나는 끌 수 없습니다' : '')
     + '<br><b>상대 후보만 거릅니다 — 내가 가진 1탄 태그는 그대로 쓰고 추천에도 그대로 나옵니다.</b>';
 }
+
+const ROU_POS=['최소','중간','최대'];
 function renderChance(){
   const rb=document.getElementById('chanceReset');
-  if(rb) rb.textContent='기본값 ('+Object.values(CHANCE_DEFAULTS).join(' / ')+')';
+  if(rb) rb.textContent='기본값 (노랑 · Z '+CHANCE_DEFAULTS['Z기술']+')';
   const host=document.getElementById('chanceRows'); if(!host)return;
-  const meta={'일반':'기믹없음 - 공격룰렛+서포트룰렛 기대값',
-    '메가진화':'메가진화 - 공격룰렛+서포트룰렛 기대값',
-    '다이맥스':'다이맥스 - 공격룰렛+서포트룰렛 기대값',
-    'Z기술':'Z기술 · 기술 입력 판정 · 평균값'};
+  document.querySelectorAll('[data-gk]').forEach(e=>e.classList.add(GK[e.dataset.gk]));   
   host.innerHTML='';
-  Object.keys(CHANCE_DEFAULTS).forEach(k=>{
+  const pr=el(`<div class="crow"><div class="cl"><span class="cgi cgi-n"></span><span class="ct2">일반 · 메가진화 · 다이맥스<small>태그마다 룰렛 판의 어느 칸으로 계산할지</small></span></div>
+    <div class="setsw rpos" role="group" aria-label="룰렛 칸">`+ROU_POS.map((t,i)=>`<button class="rc c${i+1}" data-p="${i}" aria-pressed="${chance.pos===i}">${t}</button>`).join('')+`</div></div>`);
+  pr.querySelectorAll('[data-p]').forEach(b=>b.addEventListener('click',()=>{ chance.pos=+b.dataset.p; save(); renderAll(); }));
+  host.appendChild(pr);
+  
+  const sr=el(`<div class="crow"><div class="cl"><span class="cgi cgi-n"></span><span class="ct2">서포트 티켓<small>켜면 룰렛 +10 · 끄면 +0 (지역배틀)</small></span></div>
+    <div class="setsw" role="group" aria-label="서포트 티켓">`+['켜기','끄기'].map((t,i)=>`<button data-sup="${1-i}" aria-pressed="${+chance.sup===1-i}">${t}</button>`).join('')+`</div></div>`);
+  sr.querySelectorAll('[data-sup]').forEach(b=>b.addEventListener('click',()=>{ chance.sup=+b.dataset.sup; save(); renderAll(); }));
+  host.appendChild(sr);
+  ['Z기술'].forEach(k=>{
     const ic = GIMICON[k] ? `<i class="cgi ${GK[k]}"></i>` : `<span class="cgi cgi-n"></span>`;
-    const row=el(`<div class="crow"><div class="cl">${ic}<span class="ct2">${k}<small>${meta[k]}</small></span></div>
+    const row=el(`<div class="crow"><div class="cl">${ic}<span class="ct2">${k}<small>Z기술 · 기술 입력 판정 · 평균값</small></span></div>
       <div class="step"><button data-d="-5" aria-label="${k} 감소">−</button>
         <span class="val">+${chance[k]}</span>
         <button data-d="5" aria-label="${k} 증가">+</button></div></div>`);
@@ -9493,7 +9606,7 @@ function renderChance(){
     host.appendChild(row);
   });
   document.getElementById('vXct').textContent=
-    `${chance['일반']}/${chance['메가진화']}/${chance['다이맥스']}/${chance['Z기술']}`;
+    ROU_POS[chance.pos]+' · Z '+chance['Z기술']+(chance.sup?' · 서포트':'');
 }
 
 
