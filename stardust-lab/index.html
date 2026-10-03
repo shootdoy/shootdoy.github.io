@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.118.0">
+<meta name="version" content="3.119.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -2116,6 +2116,8 @@ footer .fver{margin:15px 0 0}
     </div>
     <div class="card" id="trnPlan"></div>
     <p class="tab-note">기믹(Z기술·다이맥스·메가진화)은 트레이너 한쪽 세 장마다 종류별로 한 번 씁니다 · 버팀은 상대 두 장에게 매 턴 맞는다고 본 값입니다 · 겟 타임 기록은 준비 중입니다.</p>
+    
+    <p class="tab-note" id="tbNote" hidden>선발 셋 중 한 장이 쓰러지면 그 자리에 추가 태그가 들어옵니다 · 느려도 선공찬스로 먼저 친다고 봅니다 · 상대가 나오는 순서는 판마다 다를 수 있습니다 · 서포트 티켓은 설정을 따릅니다(켜기면 룰렛 +10 · Z기술 제외) · 모의전의 승패는 추정이며 점수가 아닙니다.</p>
   </section>
 
 
@@ -3590,6 +3592,17 @@ const TRAINERS=[{id:'gayoung-jinyoung',n:'가영 & 진영',
     {n:'추천F',s:["1-2-턱지충이","2-2-톱치","1-5-거대코뿌리","1-2-턱지충이","1-2-골비람","1-5-거대코뿌리"]}]}];
 
 
+
+
+
+
+const TBATTLE=[{id:'junior-junhyeok',n:'주니어 트레이너 준혁',ar:'480/204',   
+  start:['2-5-갈가부기','1-4-님피아','2-6-잠만보'], rep:'2-5-루카리오',
+  vd:[{n:'A',s:['공통-R-루카리오','2-3-동탁군','1-5-거대코뿌리'],score:175197},
+    
+    {n:'B',s:['2-2-톱치','2-2-캐이시','2-5-초염몽'],score:253260}]}];
+
+
 const GIMICON={
 "메가진화":"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",
 "Z기술":"UklGRhAEAABXRUJQVlA4WAoAAAAQAAAALwAALwAAQUxQSFwBAAABgFtbe9vmY9YGzlWqlQfiYaUd8gIqtURaQqVj6Rk0AAUC5OdIQL9jGREM3DZS1OweM7TzBtQSA1f95oaaH9DcNPtXQAxH/Agn6Y5WdukJIh+OLG5ZGVPV6ONV3C7gghdj9kSqilYqRT7NEHu23sCQLAydMAU5RMPSQoxpSjpTGo4R1irAhJoHoTlBUL8H8+owVTlrdvACDB3O5nSyIYIPzY8mNBTAcPL5/bOkCCXxThQvlZTUMo6QYM6CQhScIwlvttpIyejtTYgB9xRjzwH8zCg5KZP5Pa0piNa9C8qKFxuWkiq5oThavv93KL/5jhWfhb9DzUvx77wn/h815f9TeR+Q9xl5HxP3SXEflvd5+RwRzynpHLTk7IQ8YLIiJwjtOZ7T9YMxmrk9x+H5SJakcviGlSKXCXzPtQ6h0fV1iDbk7QKuRDhKM1rJ0iNEzi0G0G3V11GtLmx1FABWUDggjgIAAJANAJ0BKjAAMAA+MRaGQqIhDHcygBABglqAJ0zXvoPw/JS+++nDm/kDeW+YDzuvQf5zPUAbw8v4prqA7+cf5zoIc3KoH5QAu0IdxUkU+91bdE2+hA04VgDdPBNBFk3PKeVcwalCbF1hPUzpslFn3JrAk8t1AAD+/Z5znOFrVgYCvKzzSu+jDwhHlN30GXx6nQPKjrTBn18xy7CJ/wDP+2PLMzvWPswledXQ+mEsJ03Y8OMI9tozr8GfJSrz8MBjSaeB1VK8P2K/4vwmL4fxn9TY5F6FP9HR7ddRweAOscIhzQy3zvGcuxBAgYi5ah/o/6Ag/fIfoNP/O3Dfz79f+OQPTWMGlQMLfKUrtuD42pI18WETWjX2RYJVqLNA1bCjvoOUbmiyIW/hU2ElnVmeFUbhObnRvDghkiwjuDx9bzfDIl3t99zBmBXRk/sU2+r0JxDprBYBOo016tMcBk08FS2XbNLYb/quuxwGbYu3z/PmpDKtQj5jyblhBNiJQvsZAnHof4kIkXdDVtGQrdy7biChtPukHDfWrHKGLfZnvFstmLufphhwzW3crf0Zhf5CFFnHVbUcLbfrFxfThvLL/OX/xhEzbz1c95qCk/bLqUkSkzLFzJAbFcmSJ8iCsPDIK0R4l7H8WJRY0q9WtKSA/P/VfCQiYiz567RvBUZ63f5j7VgslOxt9srIQojeKEw4YO+iSSUezeHvpjFfGICNUJHzE9cqMnXd+nyjv44C6HWf5KvYWNrYdFm6K53hi0okTOUY65bpZyUw9M7NgHOvdyMFfntkBJXdU49J174AX7+o82gP7GY4MMmkEiEiD5+3avYgHsFKJsxfsmiObz6a/f0miXC1s7V3fs7ZdQQAAA==",
@@ -3696,8 +3709,8 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.118.0';
-const BUILT='2026-10-01';
+const VERSION='3.119.0';
+const BUILT='2026-10-03';
 
 
 
@@ -3708,7 +3721,7 @@ const BUILT='2026-10-01';
 
 
 
-const WHATSNEW='지역배틀 하이스코어태그 추천이 서브 두 장을 넣으면 3턴 배틀을 따라가 보고 고릅니다.';
+const WHATSNEW='스페셜모드에서 트레이너 배틀을 고를 수 있습니다. 주니어 트레이너 준혁과의 4vs3 배틀 덱을 추천합니다.';
 
 
 
@@ -3940,13 +3953,16 @@ let cabinetMode='일반';
 
 
 
-const CABINET_LOCKED=['지역','다맥'];
+const CABINET_LOCKED=['다맥'];
 
 
 
 
 const trainerMode=()=>cabinetMode==='스페셜';
-const cabinetLock=()=>{ if(cabinetMode==='스페셜'&&CABINET_LOCKED.includes(mode)) mode='스페셜'; };
+
+const tbMode=()=>trainerMode()&&mode==='지역';
+
+const cabinetLock=()=>{ if(cabinetMode==='스페셜'&&CABINET_LOCKED.includes(mode)) mode='지역'; };
 
 
 
@@ -4768,6 +4784,97 @@ function trnPlanB(T,L,ln,sd=[]){
   for(const a of A[0]) for(const b of A[1]) put([...a.q,...b.q]);
   return {T,s:best?best.s:L.map(()=>null)};
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const tbLane=(c,f,gk=null)=>{
+  const ms=gk==='메가진화' ? c.mv.filter(x=>!x.tagx).map(x=>evalMove(c,f,x,true))
+    : gk ? c.mv.filter(x=>x.tagx===gk).map(x=>evalMove(c,f,x)) : c.mv.filter(x=>!x.tagx).map(x=>evalMove(c,f,x));
+  const m=ms.sort((a,b)=>b.dmg-a.dmg)[0]; if(!m) return null;
+  const sup=m.move.tagx==='Z기술'?0:hsSup(), h=hsMatchMetrics({c,m:m.move,mult:m.mult,mega:m.mega},f);
+  
+  return {...m,f,gk,au:m.atk+sup,p:m.dmg*(m.atk+sup)/m.atk*KHP*2.4/f.hp,hs:h,rou:(h.roulette||0)+sup};
+};
+
+const tbSim=(s,t,ln,FC)=>{ const F=[...t.start.map(i=>SUBBY.get(i)),SUBBY.get(t.rep)], at=[0,1,2], fh=[1,1,1,0], fg=[0,0,0,0], ko=[0,0,0,0],
+    mh=s.map(r=>r?1:0), gu=s.map(()=>0), events=[];
+  let rs=-1, rt=0;   
+  const nx=(ok,t)=>{ for(let d=0;d<3;d++){ const x=(t+d)%3; if(ok(x)) return x; } return -1; };
+  
+  const up=n=>{ for(let x=0;x<3;x++){ const j=at[x]; if(fh[j]<=0&&!ko[j]){ ko[j]=n; if(rs<0){ rs=x; rt=n; at[x]=3; fh[3]=1; } } } };
+  for(let t=0;t<3;t++){
+    const fx=nx(x=>fh[at[x]]>0,t), mx=nx(i=>mh[i]>0,t); if(fx<0||mx<0) break;
+    const j=at[fx], f=F[j], r=s[mx], first=true;   
+    const hit=()=>{ if(mh[mx]<=0||fh[j]<=0) return;
+      const l=r.gk&&!gu[mx]?(gu[mx]=1,tbLane(r.c,f,r.gk)):ln(r.c,f); if(!l) return;
+      const ev={turn:t+1,card:r.c.n,foe:f.n,energy:r.c.e,foeEnergy:f.e,gap:f.e-r.c.e,low:r.c.e<f.e,weak:l.mult>=2,
+        post:!!fg[j]&&/다이|메가/.test(f.g||''),rou:l.rou,gk:l.gk,first,direct:Math.min(fh[j],l.p),splash:0};
+      fh[j]-=l.p;
+      at.forEach((k,x)=>{ if(x!==fx&&fh[k]>0){ const g=F[k], sd=.6*l.pw*l.au/(l.move.k==='물리'?g.d:g.sd)*eff(l.move.t,g.t)*KHP/g.hp;
+        ev.splash+=Math.min(fh[k],sd); fh[k]-=sd; } });
+      events.push(ev); up(t+1); };
+    
+    const foeHit=()=>{ if(fh[j]<=0) return; const m=mh[mx]>0?mx:mh.findIndex(h=>h>0); if(m<0) return;
+      mh[m]-=trnFH(FC,f,s[m].c,!fg[j]); s.forEach((q,i)=>{ if(q&&i!==m&&mh[i]>0) mh[i]-=.6*trnFH(FC,f,q.c,false); }); fg[j]=1; };
+    if(first){ hit(); foeHit(); } else { foeHit(); hit(); } }
+  return {win:ko.every(Boolean)&&mh.some(x=>x>=0.3), mh, ko, rs, rt, events,
+    rem:fh.reduce((a,x,i)=>a+(i===3&&rs<0?1:Math.max(0,x)),0)}; };
+
+
+
+
+const tbCount=R=>{ const v={lw:0,low:0,att:0,post:0,gap:0,weak:0,dd:0};
+  R.events.forEach(e=>{ v.lw+=+(e.low&&e.weak); v.low+=+e.low; v.att+=+(e.direct>0); v.post+=+e.post; v.gap+=Math.max(0,e.gap); v.weak+=+e.weak; v.dd+=e.direct; });
+  return v; };
+const tbKey={
+  bal:R=>{ const v=tbCount(R); return [+R.win,-R.rem,v.lw,v.low,v.att,v.post,v.gap,v.weak,v.dd]; },
+  exp:R=>{ const v=tbCount(R); return [v.lw,v.low,v.gap,v.att,v.post,v.weak,+R.win,-R.rem,v.dd]; }};
+
+const tbRows=c=>[{c,gk:null},...trnGk(c).map(g=>({c,gk:g}))];
+
+const tbOk=(q,pn=[])=>{ const g=q.map(r=>r.gk).filter(Boolean), id=q.filter((r,i)=>!pn[i]).map(r=>r.c.id); return new Set(g).size===g.length&&new Set(id).size===id.length&&!q.some((r,i)=>!pn[i]&&q.some((x,j)=>pn[j]&&x.c.id===r.c.id)); };
+
+function tbDeck(t,ids){ const FC=new Map(), LC=new Map(), ln=(c,f)=>{ const x=c.id+'|'+f.id; if(!LC.has(x)) LC.set(x,tbLane(c,f)); return LC.get(x); };
+  const C=ids.map(i=>MYBY.get(i)); if(C.some(c=>!c)) return null; let best=null;
+  for(const a of tbRows(C[0])) for(const b of tbRows(C[1])) for(const d of tbRows(C[2])){ const q=[a,b,d]; if(!tbOk(q,[1,1,1])) continue;   
+    const R=tbSim(q,t,ln,FC), k=tbKey.bal(R); if(!best||hsMatchCmpSpecial(k,best.k)<0) best={s:q,R,k}; }
+  return best; }
+
+
+
+const TB_TOP=6, tbMemo=new Map();
+
+function tbPlan(t,src,pins=[]){
+  const pn=[0,1,2].map(i=>pins[i]&&MYBY.get(pins[i])||null);
+  const mk=[t.id,src,tagClass,chance.sup,chance.pos,chance['Z기술'],dmaxLv,megaTier,src==='own'?owned.ids().join(','):'',pn.map(c=>c&&c.id)].join('§');
+  if(tbMemo.has(mk)) return tbMemo.get(mk);
+  const T=t.start.map(i=>SUBBY.get(i)), R=SUBBY.get(t.rep), pool=classPool().filter(p=>src==='all'||owned.has(p.id));
+  const FC=new Map(), LC=new Map(), ln=(c,f)=>{ const x=c.id+'|'+f.id; if(!LC.has(x)) LC.set(x,tbLane(c,f)); return LC.get(x); };
+  const tk=pool.map(c=>[c,[...T,R].reduce((a,f)=>a+hitAny(c,f),0)]).sort((x,y)=>x[1]-y[1]).slice(0,4).map(x=>x[0]);   
+  const cand=T.map((f,i)=>{ if(pn[i]) return tbRows(pn[i]); const o=pool.map(c=>({c,a:ln(c,f),b:ln(c,R)})).filter(x=>x.a);
+    const hs=x=>[+x.a.hs.lowWeak+ +(x.b&&x.b.hs.lowWeak), +x.a.hs.low+ +(x.b&&x.b.hs.low), Math.min(1,x.a.p)],
+      pw=x=>[Math.min(1,x.a.p), x.b?Math.min(1,x.b.p):0];
+    const top=g=>[...o].sort((x,y)=>hsMatchCmpSpecial(g(x),g(y))).slice(0,TB_TOP).map(x=>x.c);
+    return [...new Set([...top(hs),...top(pw),...tk])].flatMap(tbRows); });
+  const best={bal:null,exp:null};
+  for(const a of cand[0]) for(const b of cand[1]) for(const d of cand[2]){ const q=[a,b,d]; if(!tbOk(q,pn)) continue;
+    const Rs=tbSim(q,t,ln,FC);
+    for(const p of ['bal','exp']){ const k=tbKey[p](Rs); if(!best[p]||hsMatchCmpSpecial(k,best[p].k)<0) best[p]={s:q,R:Rs,k}; } }
+  if(tbMemo.size>20) tbMemo.clear();
+  tbMemo.set(mk,best); return best; }
 
 const el=h=>{const d=document.createElement('div');d.innerHTML=h.trim();return d.firstElementChild};
 
@@ -5683,6 +5790,69 @@ function renderBossGuide(){
   a.hidden=false; a.href=bossURL(b);
   a.textContent=b.n+' 공략 글 보기 ↗';
 }
+
+
+
+
+
+let tbPick='v0';
+
+
+const TBKEY=KEY+':tbdeck';
+let tbUdecks=(()=>{ try{ return JSON.parse(localStorage.getItem(TBKEY))||{}; }catch(e){ return {}; } })();
+function renderTB(tpn){
+  
+  
+
+  const hs=tagClass==='B', pk=hs?tbPick:'own';
+  
+  const pins=[0,1,2].map(i=>myPin['j'+i]||null), chg=pins.some(Boolean);
+  const t=TBATTLE[0], T=t.start.map(i=>SUBBY.get(i)), R=SUBBY.get(t.rep), O=tbPlan(t,'own',pk==='own'?pins:[]), P=hs?tbPlan(t,'all',pk==='bal'||pk==='exp'?pins:[]):O,
+    UD=tbUdecks[t.id]||[], ui=pk[0]==='u'?+pk.slice(1):-1, uids=ui>=0&&(UD[ui]||[null,null,null]).map((id,i)=>pins[i]||id),
+    vi=pk[0]==='v'?+pk.slice(1):-1, D=vi>=0?tbDeck(t,t.vd[vi].s.map((id,i)=>pins[i]||id))
+      : ui>=0?(uids.every(Boolean)?tbDeck(t,uids):{s:uids.map(id=>id&&{c:MYBY.get(id),gk:null}),R:null})   
+      : pk==='own'?O.bal:P[pk], s=D?D.s:[null,null,null], M=D&&D.R;
+  const ds=document.getElementById('trnDeckSw');
+  const eSum=d=>d?'에너지 '+d.s.reduce((a,r)=>a+r.c.e,0):'없음';
+  if(ds){ ds.hidden=!hs; if(hs){
+    ds.innerHTML=`<button class="own" data-k="own" aria-pressed="${pk==='own'}">★ 내 태그로 추천 <small>보유 ${owned.size}장에서</small></button>`
+      +t.vd.map((v,j)=>`<button data-k="v${j}" aria-pressed="${pk==='v'+j}">실전 검증 ${v.n} <small>${v.score.toLocaleString()}점</small></button>`).join('')
+      +[['bal','C'],['exp','D']].map(   
+        ([k,n])=>`<button data-k="${k}" aria-pressed="${pk===k}">계산 추천 ${n} <small>${eSum(P[k])}</small></button>`).join('')
+      +[0,1,2,3,4,5].map(j=>`<button class="u" data-k="u${j}" aria-pressed="${pk==='u'+j}">유저${'ABCDEF'[j]} <small>${UD[j]?'에너지 '+UD[j].reduce((a,id)=>a+(id?MYBY.get(id).e:0),0):'비어 있음'}</small></button>`).join('');
+    ds.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ tbPick=b.dataset.k; for(let x=0;x<3;x++) delete myPin['j'+x]; renderAll(); })); } }   
+  
+  trnLast={dk:!hs?null:(pk==='own'?'내 태그':ui>=0?'유저'+'ABCDEF'[ui]:vi>=0?'실전 검증 '+t.vd[vi].n:'계산 추천 '+(pk==='bal'?'C':'D'))+(chg?'*':''), my:s.map(r=>r&&{n:r.c.n,r:r.c.r})};
+  
+  const cell=(r,f,i)=>{ const q='j'+i; if(!r) return meEmpty(0,q);
+    const l=(r.gk&&tbLane(r.c,f,r.gk))||tbLane(r.c,f), n=tbLane(r.c,R);
+    return `<div class="fl-cell ${artCls(r.c)}${owned.has(r.c.id)?'':' miss'}"${meAttr(q)}>${meTag(q)}${art(r.c,0,1)}${meName(r.c,l.move,r.gk?`<i class="gi fl-gi ${GK[r.gk]} use" title="${r.gk} 사용"></i>`:'')}${mvLine(l.move,l.mult)}`
+      +`<span class="fl-r">${r.c.sp>f.sp?'선공':'선공찬스'} · ${R.n} ${n&&n.mult!==1?'공×'+n.mult:'보통'}</span></div>`; };
+  
+  const fc=f=>`<div class="fl-cell foe set ${artCls(f)}">${art(f)}${foeInfo(f)}</div>`;
+  const v=M&&tbCount(M), sk=ui>=0?ui:[0,1,2,3,4,5].find(j=>!UD[j])??0;
+  const tusl=j=>'유저'+'ABCDEF'[j]+(UD[j]?' · 덮어쓰기':' · 비어 있음');
+  tpn.innerHTML=`<div class="fl-h">${t.n}<span>아래 낼 태그 ▲ 위 상대</span></div><div class="fl-grid">`
+    +T.map(fc).join('')
+    +T.map(()=>'<div class="fl-link">▲</div>').join('')
+    +s.map((r,i)=>cell(r,T[i],i)).join('')+'</div>'+eS(s.map(r=>r&&r.c),T)
+    +`<div class="fl-h">↓ 1장 기절 시 그 자리에 ${R.n} ${rlab(R.r)} 등장<span>에너지 ${R.e}</span></div><div class="fl-grid"><div></div>${fc(R)}<div></div></div>`
+    +(M?`<p class="tab-note"><b>${vi>=0?'실전 '+t.vd[vi].score.toLocaleString()+'점 · ':pk==='exp'?'점수 실험 · 승리 안정성 낮음 · ':''}모의전 ${M.win?'승':'패'}</b>`
+      +`${M.win?'':` (남은 상대 HP ${Math.round(M.rem*100)}%)`} · 저에너지 공격 ${v.low} · 약점 ${v.weak} · 변신 뒤 공격 ${v.post} · 에너지 차이 합 ${v.gap}`
+      +`${M.rs>=0?` · ${R.n} ${M.rt}턴째 ${M.rs+1}번 자리`:''}</p>`
+:'')
+      
+      
+      +(hs&&chg?`<div class="trnsave"><label class="mini tsl"><span>${tusl(sk)} ▾</span><select id="tbSaveTo" aria-label="유저 덱" onchange="this.previousSibling.textContent=this.selectedOptions[0].text+' ▾'">${[0,1,2,3,4,5].map(j=>`<option value="${j}"${j===sk?' selected':''}>${tusl(j)}</option>`).join('')}</select></label><button class="mini" id="tbSave">에 저장</button></div>`:'')
+      +planDet(tpn, s.map((r,i)=>{ const f=T[i], l=r&&((r.gk&&tbLane(r.c,f,r.gk))||tbLane(r.c,f));
+        return mSlot(l&&{...l,spd:r.c.sp-f.sp,ch:r.c.sp<=f.sp,inc:hitAny(r.c,f)},f,(i+1)+'턴',0,l&&M?`<b class="fl-b ${M.mh[i]>0?'ok">남음 '+Math.round(M.mh[i]*100)+'%':'bad">기절'}</b>`:''); }).join(''));
+  bindMe(tpn);   
+  
+  const sv=document.getElementById('tbSave');
+  if(sv) sv.addEventListener('click',()=>{ const to=document.getElementById('tbSaveTo'), k=to&&to.value?+to.value:sk;
+    (tbUdecks[t.id]=tbUdecks[t.id]||[])[k]=s.map(r=>r&&r.c.id); try{ localStorage.setItem(TBKEY,JSON.stringify(tbUdecks)); }catch(e){}
+    tbPick='u'+k; for(let x=0;x<3;x++) delete myPin['j'+x]; renderAll(); });
+}
 function renderBosses(){
   
 
@@ -5772,7 +5942,7 @@ function renderBosses(){
     b.setAttribute('aria-pressed', String(b.dataset.s===setView)));
   document.querySelectorAll('#trRankSw button').forEach(b=>
     b.setAttribute('aria-pressed', String(b.dataset.r===bossRank)));
-  const special=cabinetMode==='스페셜',ml=special?{지역:['트레이너 배틀','3vs3'],다맥:['이벤트 배틀','1vs3'],스페셜:['이벤트 태그 배틀','6vs6']}:{지역:['지역배틀','3vs3'],다맥:['다이맥스 포켓몬','1vs3'],스페셜:['스페셜태그배틀','1vs6']};
+  const special=cabinetMode==='스페셜',ml=special?{지역:['트레이너 배틀','4vs3'],다맥:['이벤트 배틀','1vs3'],스페셜:['이벤트 태그 배틀','6vs6']}:{지역:['지역배틀','3vs3'],다맥:['다이맥스 포켓몬','1vs3'],스페셜:['스페셜태그배틀','1vs6']};
   document.querySelectorAll('.modesw button').forEach(b=>{b.setAttribute('aria-pressed',b.dataset.mode===mode);
     const x=ml[b.dataset.mode],off=special&&CABINET_LOCKED.includes(b.dataset.mode);b.disabled=off;
     b.innerHTML=x[0]+'<i>'+(off?'준비 중':x[1])+'</i>'});
@@ -5780,7 +5950,7 @@ function renderBosses(){
   if(mh) mh.textContent=special?'설정한 배틀 모드를 입력하세요.':'시작할 때 랜덤으로 정해집니다';
   const mn=document.getElementById('modeNote');
   
-  const cn={지역:'트레이너와 배틀 합니다.',스페셜:'스타 트레이너들과 6vs6 배틀을 진행합니다.'};
+  const cn={지역:'트레이너와 4vs3 배틀을 진행합니다.',스페셜:'스타 트레이너들과 6vs6 배틀을 진행합니다.'};
   if(mn) mn.innerHTML=special&&cn[mode]||MODES[mode].note;
   ['6','5','R'].forEach(r=>document.getElementById('sr'+r).setAttribute('aria-pressed',bossRank===r));
   const lab = isR ? '레귤러' : `${setView}탄 ★${bossRank}`;
@@ -5804,19 +5974,24 @@ function renderBosses(){
   if(trn){
     if(sw) sw.hidden=true; if(rw) rw.hidden=true;
     g.innerHTML='';
-    TRAINERS.forEach(t=>{
+    
+    (tbMode()?TBATTLE:TRAINERS).forEach(t=>{
       const n=el(`<button class="btag trnr" aria-pressed="true">
-        <span class="face" style="background:linear-gradient(to top,rgba(8,5,22,.9) 0%,rgba(8,5,22,.35) 38%,transparent 60%),url(trainer/${t.id}.webp) center/cover">
+        <span class="face" style="background:linear-gradient(to top,rgba(8,5,22,.9) 0%,rgba(8,5,22,.35) 38%,transparent 60%),url(trainer/${t.id}.webp) center/cover${t.ar?';aspect-ratio:'+t.ar:''}">
           <span class="nm">${t.n.replace('&','&amp;')}</span>
         </span></button>`);
       g.appendChild(n); });
-    const bn=document.getElementById('bossHint'); if(bn) bn.textContent=`스타 트레이너 ${TRAINERS.length}팀`;
+    const bn=document.getElementById('bossHint'); if(bn) bn.textContent=tbMode()?`트레이너 ${TBATTLE.length}명`:`스타 트레이너 ${TRAINERS.length}팀`;
   }
   
 
   const usl=j=>'유저'+'ABCDEF'[j]+(udecks[j]?' · 덮어쓰기':' · 비어 있음');
-  const tpn=document.getElementById('trnPlan');
-  if(tpn&&trn){ { const t=TRAINERS[0], DK=tagClass==='B'&&t.decks, D=DK&&(trnDeck<0?{n:'내 태그',own:1}:trnDk(t,trnDeck)), P=trnPlan(t,[0,1,2,3,4,5].map(x=>myPin['t'+x]||null),D); let i=0;
+  const tpn=document.getElementById('trnPlan'), tb=tbMode();
+  
+  { const h=document.querySelector('#sTrn .hint'), a=[...document.querySelectorAll('#sTrn>p.tab-note')].find(p=>!p.id), b=document.getElementById('tbNote');
+    if(h) h.textContent=tb?'트레이너 배틀 4vs3':'스타 트레이너 6vs6'; if(a) a.hidden=tb; if(b) b.hidden=!tb; }
+  if(tpn&&tb) renderTB(tpn);
+  if(tpn&&trn&&!tb){ { const t=TRAINERS[0], DK=tagClass==='B'&&t.decks, D=DK&&(trnDeck<0?{n:'내 태그',own:1}:trnDk(t,trnDeck)), P=trnPlan(t,[0,1,2,3,4,5].map(x=>myPin['t'+x]||null),D); let i=0;
     
     const ds=document.getElementById('trnDeckSw'), chg=P.s.some((r,j)=>myPin['t'+j]),
       sk=trnDeck<0?[0,1,2,3,4,5].find(i=>!udecks[i])??0:trnDeck%t.decks.length;   
@@ -6685,7 +6860,7 @@ document.querySelectorAll('#foeSetsSw button').forEach(b=>
 document.querySelectorAll('#cabinetModeSw button').forEach(b=>
   
 
-  b.addEventListener('click',()=>{const to=b.dataset.cm;if(to==='일반'&&cabinetMode!=='일반')mode='지역';cabinetMode=to;cabinetLock();hAutoSync();save();renderAll()}));
+  b.addEventListener('click',()=>{const to=b.dataset.cm;if(to==='일반'&&cabinetMode!=='일반')mode='지역';if(to==='스페셜'&&cabinetMode!=='스페셜')mode='지역';cabinetMode=to;cabinetLock();hAutoSync();save();renderAll()}));
 document.querySelectorAll('.seg button').forEach(b=>
   b.addEventListener('click',()=>{detail=Number(b.dataset.lv); save(); renderDetail()}));
 
@@ -7562,7 +7737,7 @@ function hRoulClose(){ const m=hRoulM(); if(m) m.hidden=true; hRoulAt=null; }
       return;
     }
     hist.push({m:mode,got:null,ball:null,ts:Date.now(),gver:gverStr(),tid:tidCur,g:null,s1:null,b:null,s2:null,
-               tr:TRAINERS[0].n,score:pts,roul:hRoulDraft,dk:trnLast&&trnLast.dk,my:trnLast&&trnLast.my});
+               tr:(tbMode()?TBATTLE:TRAINERS)[0].n,score:pts,roul:hRoulDraft,dk:trnLast&&trnLast.dk,my:trnLast&&trnLast.my});
     track('rec_save'); hStore(); renderHList(); si.value=''; hRoulDraft=null; renderHCur();
     if(sn) sn.textContent=hist.length+'배틀째로 기록했습니다 · 점수 '+pts.toLocaleString();
   }); }
@@ -9589,7 +9764,7 @@ function renderChance(){
   pr.querySelectorAll('[data-p]').forEach(b=>b.addEventListener('click',()=>{ chance.pos=+b.dataset.p; save(); renderAll(); }));
   host.appendChild(pr);
   
-  const sr=el(`<div class="crow"><div class="cl"><span class="cgi cgi-n"></span><span class="ct2">서포트 티켓<small>켜면 룰렛 +10 · 끄면 +0 (지역배틀)</small></span></div>
+  const sr=el(`<div class="crow"><div class="cl"><span class="cgi cgi-n"></span><span class="ct2">서포트 티켓<small>켜면 룰렛 +10 · 끄면 +0 (지역배틀 · 트레이너 배틀)</small></span></div>
     <div class="setsw" role="group" aria-label="서포트 티켓">`+['켜기','끄기'].map((t,i)=>`<button data-sup="${1-i}" aria-pressed="${+chance.sup===1-i}">${t}</button>`).join('')+`</div></div>`);
   sr.querySelectorAll('[data-sup]').forEach(b=>b.addEventListener('click',()=>{ chance.sup=+b.dataset.sup; save(); renderAll(); }));
   host.appendChild(sr);
