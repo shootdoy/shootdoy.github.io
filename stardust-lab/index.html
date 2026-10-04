@@ -5970,7 +5970,9 @@ function renderBosses(){
   const db=document.querySelector('.dock [data-go="sBoss"] span'); if(db) db.textContent=trn?'트레이너':'보스';
   const tsn=document.getElementById('sTrn'); if(tsn) tsn.hidden=!trn;   
   
-  ['sRot','sSup'].forEach(i=>{const e=document.getElementById(i);if(e)e.hidden=trn});
+  
+  { const r=document.getElementById('sRot'); if(r) r.hidden=trn;
+    const s=document.getElementById('sSup'); if(s) s.hidden=trn&&!tbMode(); }
   if(trn){
     if(sw) sw.hidden=true; if(rw) rw.hidden=true;
     g.innerHTML='';
@@ -5980,6 +5982,7 @@ function renderBosses(){
         <span class="face" style="background:linear-gradient(to top,rgba(8,5,22,.9) 0%,rgba(8,5,22,.35) 38%,transparent 60%),url(trainer/${t.id}.webp) center/cover${t.ar?';aspect-ratio:'+t.ar:''}">
           <span class="nm">${t.n.replace('&','&amp;')}</span>
         </span></button>`);
+      if(tbMode()) n.addEventListener('click',()=>goSection('sSup'));   
       g.appendChild(n); });
     const bn=document.getElementById('bossHint'); if(bn) bn.textContent=tbMode()?`트레이너 ${TBATTLE.length}명`:`스타 트레이너 ${TRAINERS.length}팀`;
   }
@@ -6572,35 +6575,29 @@ function closeQR(){const m=document.getElementById('qrModal'); if(m) m.hidden=tr
 
 function renderSupport(){
   const host=document.getElementById('sup'); if(!host)return;
-  const boss=POOL.find(p=>p.id===bossId);
-  const list=SUPPORT.map(s=>({...s,x:eff(s.t,boss.t)})).sort((a,b)=>b.x-a.x);
-  const top=list[0].x, low=list[list.length-1].x;
-  const flat=(top===low);                       
-  const best=list.filter(s=>s.x===top);
+  const tb=tbMode(), boss=POOL.find(p=>p.id===bossId),
+    foes=tb?[...TBATTLE[0].start.map(id=>SUBBY.get(id)),SUBBY.get(TBATTLE[0].rep)]:null,
+    list=SUPPORT.map(s=>({...s,x:tb?foes.filter(f=>eff(s.t,f.t)>1).length:eff(s.t,boss.t)})).sort((a,b)=>b.x-a.x),
+    top=list[0].x, low=list[list.length-1].x, flat=!tb&&top===low, best=list.filter(s=>s.x===top);
   host.innerHTML='';
   list.forEach(s=>{
-    const bg=SUPIMG[s.n]?`var(--art) center/cover`
-                :`linear-gradient(135deg,${COLOR[s.t]}CC,rgba(12,7,34,.9))`;
-    const n=el(`<div class="sline${!flat&&s.x===top?' best':''} ${SK[s.n]||''}" role="button" tabindex="0">
-      <span class="sth" style="background:${bg}">
-        <i class="si ${TK[s.t]}" title="${s.t}"></i>
-      </span>
-      <span class="sn"><b>${s.n}</b><span>${s.mv} · ${s.t}</span></span>
-      <span class="sx ${mc(s.x)}">×${s.x}<small>주는 피해</small></span>
-    </div>`);
+    const bg=SUPIMG[s.n]?`var(--art) center/cover`:`linear-gradient(135deg,${COLOR[s.t]}CC,rgba(12,7,34,.9))`,
+      val=tb?`${s.x}/4<small>3+1 약점</small>`:`×${s.x}<small>주는 피해</small>`,
+      n=el(`<div class="sline${(!flat&&s.x===top)?' best':''} ${SK[s.n]||''}" role="button" tabindex="0">
+        <span class="sth" style="background:${bg}"><i class="si ${TK[s.t]}" title="${s.t}"></i></span>
+        <span class="sn"><b>${s.n}</b><span>${s.mv} · ${s.t}</span></span>
+        <span class="sx ${tb?(s.x?'t2':''):mc(s.x)}">${val}</span></div>`);
     n.addEventListener('click',()=>openQR(s));
     n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openQR(s)}});
     host.appendChild(n);
   });
-  const raw=best.map(s=>s.n).join(' · ');
-  const wrap=t=>`<b style="color:var(--ink)">${raw}</b>${t}`;
-  const n=document.getElementById('supNote');
-  if(!n) return;
-  n.innerHTML =
-    flat ? `세 장 모두 ×${top}입니다. ${top>1?'어느 것을 써도 약점을 찌릅니다.':top===1?'아무거나 써도 차이가 없습니다.':'어느 것을 써도 반감됩니다.'}`
-    : top>1  ? `${wrap(bat(raw)?'이':'가')} 약점을 찌릅니다. 티켓이 있으면 이걸 쓰세요.`
-    : top===1? `약점을 찌르는 티켓은 없습니다. 그나마 반감되지 않는 ${wrap(bat(raw)?'을':'를')} 쓰세요.`
-    :          `세 장 다 반감됩니다. 그중 덜 깎이는 ${wrap(bat(raw)?'이':'가')} 낫습니다.`;
+  const raw=best.map(s=>s.n).join(' · '), wrap=t=>`<b style="color:var(--ink)">${raw}</b>${t}`,
+    n=document.getElementById('supNote'); if(!n)return;
+  if(tb){n.innerHTML=`상대 3+1 기준 ${wrap(bat(raw)?'이':'가')} 가장 유리합니다.`;return}
+  n.innerHTML=flat?`세 장 모두 ×${top}입니다. ${top>1?'어느 것을 써도 약점을 찌릅니다.':top===1?'아무거나 써도 차이가 없습니다.':'어느 것을 써도 반감됩니다.'}`
+    :top>1?`${wrap(bat(raw)?'이':'가')} 약점을 찌릅니다. 티켓이 있으면 이걸 쓰세요.`
+    :top===1?`약점을 찌르는 티켓은 없습니다. 그나마 반감되지 않는 ${wrap(bat(raw)?'을':'를')} 쓰세요.`
+    :`세 장 다 반감됩니다. 그중 덜 깎이는 ${wrap(bat(raw)?'이':'가')} 낫습니다.`;
 }
 
 
