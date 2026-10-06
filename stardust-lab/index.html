@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.120.4">
+<meta name="version" content="3.121.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -3729,7 +3729,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.120.4';
+const VERSION='3.121.0';
 const BUILT='2026-10-06';
 
 
@@ -3741,7 +3741,7 @@ const BUILT='2026-10-06';
 
 
 
-const WHATSNEW='다이맥스 포켓몬과 스페셜태그배틀도 상대 정보 아래에서 요약을 볼 수 있어요.';
+const WHATSNEW='하이스코어 추천 실패 시 보유 화력태그를 포함해 다시 계산해요.';
 
 
 
@@ -4475,7 +4475,8 @@ const RANDOM={c:{id:'__rand',n:'랜덤 태그',s:'랜덤',r:'?',t:[],mv:[],g:nul
 
 
 
-function spareOf(boss, seq){
+function spareOf(boss, seq,mixed=false){
+  if(seq.mixed&&!mixed)return withMixedOwned(()=>spareOf(boss,seq,true));
   const uniq=[...new Map(seq.filter(r=>!r.rand).map(r=>[r.c.id,r])).values()];
   const pool0=ranked(boss).filter(r=>!uniq.some(u=>u.c.id===r.c.id));
   const poolSafe=pool0.filter(r=>survives3(r.c,boss));
@@ -4496,9 +4497,15 @@ function spareOf(boss, seq){
 
 
 
-function buildSeq(boss,force){
+
+function withMixedOwned(fn){
+  const prev=owned, bag=new Bag(ownedSets.B);
+  ownedSets.A.ids().forEach(id=>bag.set(id,Math.max(bag.cnt(id),ownedSets.A.cnt(id))));
+  owned=bag;try{return fn.call(null)}finally{owned=prev}
+}
+function buildSeq(boss,force,mixed=false){
   const all=classPool().filter(p=>owned.has(p.id)&&p.id!==boss.id);
-  if(!all.length) return [];
+  if(!all.length){if(tagClass==='B'&&!mixed&&ownedSets.A.size)return withMixedOwned(()=>buildSeq(boss,force,true));const out=[];out.failed=tagClass==='B';out.mixed=mixed;return out;}
   const F = force && all.some(p=>p.id===force) ? force : null;
   const hasF = l => !F || l.some(p=>p.id===F);
 
@@ -4538,6 +4545,8 @@ function buildSeq(boss,force){
     }
     const out=best?best.slice():[RANDOM,RANDOM,RANDOM];
     out.ko2=!!best && koIn2(best[0].dmg+best[1].dmg,boss); out.risky=s3.length<3; out.forced=F; out.score=true;
+    out.failed=!best||!hsKoTurn(best.map(r=>r.dmg),boss);out.mixed=mixed;
+    if(out.failed&&!mixed&&ownedSets.A.size)return withMixedOwned(()=>buildSeq(boss,force,true));
     return out;
   }
 
@@ -5170,7 +5179,7 @@ function cmpCand(a,b,isBoss){
 
 
 
-function assignPlans(cols, foeOf, boss, force, pins){
+function assignPlans(cols, foeOf, boss, force, pins,mixed=false){
   const bi=cols.indexOf('B');
   
 
@@ -5284,7 +5293,13 @@ return [hsv,-bkt,-eligible,-lowWeak,-low,-gap,-known,-roulette,-type,tier,-dmg,-
   if(!sel) sel=run(null);
   if(sel) sel.forcedOK=forcedOK;
   
-  if(!sel){ const l=build(null); return cols.map((at,i)=> l[i]&&l[i][0] || null); }
+  if(!sel){ const l=build(null); sel=cols.map((at,i)=> l[i]&&l[i][0] || null); }
+  if(tagClass==='B'&&mode==='지역'){
+    const known=cols.every(foeOf),none=cols.every(at=>at==='B'||!foeOf(at));
+    const failed=known?hsLocalSim(sel,cols,foeOf,boss)[0]!==0:none?!hsKoTurn(sel.map(r=>r?r.dmg:0),boss):false;
+    if(failed&&!mixed&&ownedSets.A.size)return withMixedOwned(()=>assignPlans(cols,foeOf,boss,force,pins,true));
+    sel.failed=failed;sel.mixed=mixed;
+  }
   return sel;
 }
 
@@ -5578,6 +5593,7 @@ function renderFoes(){
   const pk=pickUsable(boss);
   if(myPinBoss!==bossId){ Object.keys(myPin).forEach(k=>{ if(k[0]==='r') delete myPin[k]; }); myPinBoss=bossId; }
   const assigned = assignPlans(cols, foeOf, boss, pk?pk.id:null, cols.map(at=>myPin['r'+at]||null));
+  const info=document.getElementById('foePlans');if(info){info.dataset.mixed=assigned.mixed?'1':'';info.dataset.failed=assigned.failed?'1':'';}
   const plan=(at)=> assigned[cols.indexOf(at)] || null;
 
   
@@ -6064,6 +6080,11 @@ function renderNow(){
     box.appendChild(row);
   });
   if(!box.children.length)box.textContent='추천 태그 없음';
+  if(h.dataset.mixed==='1'||h.dataset.failed==='1'){
+    const status=el('<p class=fl-now-action></p>');
+    status.textContent=(h.dataset.mixed==='1'?'혼합 하이스코어 추천 · 화력태그 + 하이스코어태그. ':'')+(h.dataset.failed==='1'?'보유 태그로 3턴 처치 가능한 조합을 찾지 못했습니다.':'');
+    box.appendChild(status);
+  }
   n.appendChild(box);
 }
 
@@ -6194,14 +6215,16 @@ function renderRotation(){
   if(mode==='지역') return;
   const boss=POOL.find(p=>p.id===bossId);
   const rot=document.getElementById('rot'), note=document.getElementById('rotNote');
+  rot.dataset.mixed='';rot.dataset.failed='';
   const base=ranked(boss);
-  if(!base.length){
+  if(!base.length&&!(tagClass==='B'&&ownedSets.A.size)){
     rot.innerHTML=`<p class="empty">켜진 태그가 없습니다.<br>상단의 <b>컬렉션</b> 탭에서 가진 것을 켜 주세요.</p>`;
     note.textContent=''; return;
   }
   
   const rotPick=pickUsable(boss);
   const seq=buildSeq(boss, rotPick?rotPick.id:null);
+  rot.dataset.mixed=seq.mixed?'1':'';rot.dataset.failed=seq.failed?'1':'';
 
   const reuse=seq.length===3 && !seq[0].rand && seq[0].c.id===seq[2].c.id;
   const gims=[...new Set(seq.map(r=>(r.move&&r.move.tagx)||(r.mega?'메가진화':null)).filter(Boolean))];
@@ -6288,13 +6311,12 @@ function renderRotation(){
          2턴에 끝나면 보스 공격을 두 번만 맞습니다.`
       : `2턴에 잡기는 어려운 보스라 <b style="color:var(--ink)">3턴 합계</b>로 짰습니다.
          필드 3장 모두 보스 공격 3대를 버팁니다.`;
-  note.innerHTML = lead ? `${lead} ${gtxt}` : `${surv} ${gtxt}`;
+  note.innerHTML = (seq.mixed?'혼합 하이스코어 추천 · 화력태그 + 하이스코어태그. ':'')+(seq.failed?'보유 태그로 3턴 처치 가능한 조합을 찾지 못했습니다. ':lead ? `${lead} ${gtxt}` : `${surv} ${gtxt}`);
 }
 
 
 const bat=w=>{const c=w.charCodeAt(w.length-1);
   return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28!==0};      
-
 
 
 
