@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.121.0">
+<meta name="version" content="3.121.1">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -3729,7 +3729,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.121.0';
+const VERSION='3.121.1';
 const BUILT='2026-10-06';
 
 
@@ -3741,7 +3741,7 @@ const BUILT='2026-10-06';
 
 
 
-const WHATSNEW='하이스코어 추천 실패 시 보유 화력태그를 포함해 다시 계산해요.';
+const WHATSNEW='하이스코어 추천에서 공격이 무효인 조합을 제외하고, 공격 순서에 맞춰 생존을 확인해요.';
 
 
 
@@ -4530,8 +4530,9 @@ function buildSeq(boss,force,mixed=false){
 
 
   if(tagClass==='B' && typeof hsMatchMetrics==='function'){
-    const s3=all.filter(c=>survivesN(c,boss,3)), b3=s3.length?s3:all;
-    const cards=hasF(b3)?b3:[...b3, all.find(p=>p.id===F)];
+    const s3=all.filter(c=>survivesN(c,boss,3));
+    
+    const cards=all;
     const M=new Map(cards.map(c=>[c.id,movesOf(c).map(o=>({...o,h:hsMatchMetrics({c:o.c,m:o.m,mult:o.r.mult,mega:o.gk==='메가진화'},boss)}))]));
     let best=null, bk=null;
     for(const X of cards) for(const Y of cards){
@@ -4540,12 +4541,16 @@ function buildSeq(boss,force,mixed=false){
       for(const a of M.get(X.id)) for(const b of M.get(Y.id)) for(const c2 of M.get(X.id)){
         if(clash(a,b,c2)) continue;
         const k=hsRotationKeyNormal([a,b,c2],boss);
+        const rows=[a,b,c2],kt=k[0];
+        if(rows.some(o=>o.r.dmg<=0))continue;
+        
+        if(kt&&rows.slice(0,kt).some((o,i)=>{const n=i+(o.c.sp>boss.sp?0:1);return n>0&&!survivesN(o.c,boss,n)}))k[0]=0;
         if(!bk || hsCompare(k,bk)>0){ bk=k; best=[a.r,b.r,c2.r]; }
       }
     }
     const out=best?best.slice():[RANDOM,RANDOM,RANDOM];
     out.ko2=!!best && koIn2(best[0].dmg+best[1].dmg,boss); out.risky=s3.length<3; out.forced=F; out.score=true;
-    out.failed=!best||!hsKoTurn(best.map(r=>r.dmg),boss);out.mixed=mixed;
+    out.failed=!best||!bk[0];out.mixed=mixed;
     if(out.failed&&!mixed&&ownedSets.A.size)return withMixedOwned(()=>buildSeq(boss,force,true));
     return out;
   }
@@ -6067,7 +6072,7 @@ function renderNow(){
   const host=document.getElementById(trainerMode()?'nowHome':mode==='지역'?'nowLocal':'nowSolo');if(host&&n.parentNode!==host)host.appendChild(n);
   const old=n.querySelector('.fl-now-plans');if(old&&old.remove)old.remove();
   const box=el('<div class=fl-now-plans></div>');
-  const slots=[...h.querySelectorAll('.slot')];
+  const slots=h.dataset.failed==='1'?[]:[...h.querySelectorAll('.slot')];
   slots.forEach(slot=>{
     const name=slot.querySelector('.who .n');if(!name)return;
     const copy=name.cloneNode(true);copy.querySelectorAll('.badge,.gi,.fl-b').forEach(x=>x.remove());
@@ -6225,6 +6230,7 @@ function renderRotation(){
   const rotPick=pickUsable(boss);
   const seq=buildSeq(boss, rotPick?rotPick.id:null);
   rot.dataset.mixed=seq.mixed?'1':'';rot.dataset.failed=seq.failed?'1':'';
+  if(seq.failed){rot.innerHTML='<p class="empty">처치 가능한 추천 조합 없음</p>';note.textContent=(seq.mixed?'화력태그 + 하이스코어태그를 함께 계산했습니다. ':'')+'보유 태그로 3턴 처치 가능한 조합을 찾지 못했습니다.';return;}
 
   const reuse=seq.length===3 && !seq[0].rand && seq[0].c.id===seq[2].c.id;
   const gims=[...new Set(seq.map(r=>(r.move&&r.move.tagx)||(r.mega?'메가진화':null)).filter(Boolean))];
