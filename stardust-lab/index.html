@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.121.3">
+<meta name="version" content="3.121.5">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -3729,8 +3729,8 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.121.3';
-const BUILT='2026-10-06';
+const VERSION='3.121.5';
+const BUILT='2026-10-07';
 
 
 
@@ -3741,7 +3741,7 @@ const BUILT='2026-10-06';
 
 
 
-const WHATSNEW='하이스코어 추천에서 안정형과 하이스코어형 두 조합을 한 번에 보여줘요.';
+const WHATSNEW='3턴째에도 세 번째 태그를 자유롭게 공격에 쓸 수 있게 추천을 고쳤어요.';
 
 
 
@@ -4449,6 +4449,11 @@ const RANDOM={c:{id:'__rand',n:'랜덤 태그',s:'랜덤',r:'?',t:[],mv:[],g:nul
   move:null,mult:1,d:1,dmg:0,pw:0,bonus:0,raw:0,atk:0,def:0,s:0,rand:true};
 
 
+const seqCanFollow=(a,b,bag=owned)=>a.id!==b.id||bag.cnt(a.id)>=2;
+const seqCan3=(a,b,c,bag=owned)=>seqCanFollow(a,b,bag)&&seqCanFollow(b,c,bag);
+
+
+
 
 
 
@@ -4503,9 +4508,9 @@ function withMixedOwned(fn){
   ownedSets.A.ids().forEach(id=>bag.set(id,Math.max(bag.cnt(id),ownedSets.A.cnt(id))));
   owned=bag;try{return fn.call(null)}finally{owned=prev}
 }
-function buildSeq(boss,force,mixed=false,preferSafe=true){
+function buildSeq(boss,force,mixed=false,preferSafe=true,scoreOnly=false,avoid=null){
   const all=classPool().filter(p=>owned.has(p.id)&&p.id!==boss.id);
-  if(!all.length){if(tagClass==='B'&&!mixed&&ownedSets.A.size)return withMixedOwned(()=>buildSeq(boss,force,true,preferSafe));const out=[];out.failed=tagClass==='B';out.mixed=mixed;return out;}
+  if(!all.length){if(tagClass==='B'&&!mixed&&!scoreOnly&&ownedSets.A.size)return withMixedOwned(()=>buildSeq(boss,force,true,preferSafe,false,avoid));const out=[];out.failed=tagClass==='B';out.mixed=mixed;out.scoreOnly=scoreOnly;return out;}
   const F = force && all.some(p=>p.id===force) ? force : null;
   const hasF = l => !F || l.some(p=>p.id===F);
 
@@ -4534,31 +4539,90 @@ function buildSeq(boss,force,mixed=false,preferSafe=true){
     
     const cards=all;
     const M=new Map(cards.map(c=>[c.id,movesOf(c).map(o=>({...o,h:hsMatchMetrics({c:o.c,m:o.m,mult:o.r.mult,mega:o.gk==='메가진화'},boss)}))]));
-    let best=null, bk=null, bestSafe=false;
-    for(const X of cards) for(const Y of cards){
-      if(X.id===Y.id && owned.cnt(X.id)<2) continue;
-      if(F && X.id!==F && Y.id!==F) continue;
-      for(const a of M.get(X.id)) for(const b of M.get(Y.id)) for(const c2 of M.get(X.id)){
-        if(clash(a,b,c2)) continue;
-        const k=hsRotationKeyNormal([a,b,c2],boss);
-        const rows=[a,b,c2],safeTurn=k[0];
-        if(!safeTurn)k[0]=hsKoTurn(rows.map(o=>o.r.dmg),boss,false);
-        const kt=k[0];
-        if(rows.some(o=>o.r.dmg<=0))continue;
-        
-        if(kt&&rows.slice(0,kt).some((o,i)=>{const n=i+(o.c.sp>boss.sp?0:1);return n>0&&!survivesN(o.c,boss,n)}))k[0]=0;
-        const safeOk=!!safeTurn&&!!k[0];
-        k.unshift(preferSafe&&safeOk?1:0);
-        if(!bk || hsCompare(k,bk)>0){ bk=k; best=[a.r,b.r,c2.r]; bestSafe=safeOk; }
+    let best=null, bk=null, bestSafe=false, bestActual=0;
+    const samePlan=(rows,p)=>p&&rows.length===p.length&&rows.every((o,i)=>{
+      const q=p[i]; return q&&!o.rand&&!q.rand&&o.c.id===q.c.id&&o.m.n===(q.move&&q.move.n)&&!!o.r.mega===!!q.mega;
+    });
+    
+
+
+    const rowKey=o=>[+o.h.eligible,+o.h.lowWeak,+o.h.low,o.h.gap,+o.h.rouletteKnown,o.h.roulette||0,o.h.typeMultiplier,o.r.dmg],
+      rows=[...M.values()].flat().filter(o=>o.r.dmg>0);
+    rows.forEach(o=>o.hk=rowKey(o));
+    const thirdOrder=rows.slice().sort((a,b)=>hsCompare(b.hk,a.hk)),
+      safeD=modeHp(boss)*KO_SAFE/KHP, actualD=modeHp(boss)/KHP, thirdCache=new Map();
+    function gbit(o){return o.gk==='메가진화'?1:o.gk==='Z기술'?2:o.gk==='다이맥스'?4:0}
+    
+    const thirdList=(prev,mask,survive,forceOnly)=>{
+      const key=prev.id+'|'+mask+'|'+ +survive+'|'+ +forceOnly;
+      if(thirdCache.has(key))return thirdCache.get(key);
+      const l=thirdOrder.filter(o=>seqCanFollow(prev,o.c)&&!(mask&gbit(o))
+        &&(!forceOnly||o.c.id===F)
+        &&(!survive||survivesN(o.c,boss,2+(o.c.sp>boss.sp?0:1)))),
+        mx=[],mn=[]; let hi=-Infinity,lo=Infinity;
+      l.forEach((o,i)=>{hi=Math.max(hi,o.r.dmg);lo=Math.min(lo,o.r.dmg);mx[i]=hi;mn[i]=lo;});
+      const v={l,mx,mn};thirdCache.set(key,v);return v;
+    };
+    function pickThird(rec,minD,maxD,a,b){
+      const {l,mx}=rec;if(!l.length)return null;
+      let lo=0;
+      if(minD>-Infinity){
+        let x=0,y=mx.length-1,ans=-1;
+        while(x<=y){const m=(x+y)>>1;if(mx[m]>=minD){ans=m;y=m-1}else x=m+1}
+        if(ans<0)return null;lo=ans;
       }
+      for(let i=lo;i<l.length;i++){const c=l[i],d=c.r.dmg;
+        if(d<minD||d>=maxD)continue;
+        if(scoreOnly&&samePlan([a,b,c],avoid))continue;
+        return c;
+      }
+      return null;
+    }
+    const pairSurvives=(base,need)=>base.slice(0,Math.min(need,2)).every((o,i)=>{
+      const n=i+(o.c.sp>boss.sp?0:1);return n<=0||survivesN(o.c,boss,n);
+    });
+    
+    for(const a of rows) for(const b of rows){
+      if(!seqCanFollow(a.c,b.c)||clash(a,b))continue;
+      const base=[a,b],forceOnly=!!(F&&a.c.id!==F&&b.c.id!==F),mask=gbit(a)|gbit(b),
+        sum2=a.r.dmg+b.r.dmg,safeAB=hsKoTurn(base.map(o=>o.r.dmg),boss),
+        actualAB=hsKoTurn(base.map(o=>o.r.dmg),boss,false),
+        normal=thirdList(b.c,mask,false,forceOnly),live=thirdList(b.c,mask,true,forceOnly);
+      let c2=null;
+      if(scoreOnly)c2=pickThird(normal,-Infinity,Infinity,a,b);
+      else if(preferSafe){
+        if(safeAB&&pairSurvives(base,safeAB))c2=pickThird(normal,-Infinity,Infinity,a,b);
+        else if(!safeAB){
+          if(pairSurvives(base,3))c2=pickThird(live,safeD-sum2,Infinity,a,b);
+          if(!c2&&actualAB&&pairSurvives(base,actualAB))
+            c2=pickThird(normal,-Infinity,safeD-sum2,a,b);
+          if(!c2&&!actualAB&&pairSurvives(base,3))
+            c2=pickThird(live,actualD-sum2,safeD-sum2,a,b);
+          if(!c2&&!actualAB)c2=pickThird(normal,-Infinity,actualD-sum2,a,b);
+        }
+      }else{
+        if(actualAB&&pairSurvives(base,actualAB))c2=pickThird(normal,-Infinity,Infinity,a,b);
+        else if(!actualAB){
+          if(pairSurvives(base,3))c2=pickThird(live,actualD-sum2,Infinity,a,b);
+          if(!c2)c2=pickThird(normal,-Infinity,actualD-sum2,a,b);
+        }
+      }
+      if(!c2)continue;
+      const rr=[a,b,c2],cand=rr.map(o=>o.r),k=hsRotationKeyNormal(rr,boss),
+        safeTurn=k[0],actualTurn=hsKoTurn(cand.map(o=>o.dmg),boss,false),safeOk=!!safeTurn;
+      if(scoreOnly){k[0]=0;k.push(actualTurn);k.unshift(0);}
+      else{k[0]=preferSafe?(safeTurn||actualTurn):actualTurn;k.unshift(preferSafe&&safeOk?1:0);}
+      if(!bk||hsCompare(k,bk)>0){bk=k;best=cand;bestSafe=safeOk;bestActual=actualTurn;}
     }
     const out=best?best.slice():[RANDOM,RANDOM,RANDOM];
-    out.ko2=!!best && koIn2(best[0].dmg+best[1].dmg,boss); out.risky=s3.length<3; out.forced=F; out.score=true;
-    out.failed=!best||!bk[1];out.mixed=mixed;out.tight=!!best&&!out.failed&&!bestSafe;out.preferSafe=preferSafe;
-    if(out.failed&&!mixed&&ownedSets.A.size)return withMixedOwned(()=>buildSeq(boss,force,true,preferSafe));
+    out.ko2=!!best && bestActual>0 && bestActual<=2; out.risky=s3.length<3; out.forced=F; out.score=true;
+    out.failed=!best||(!scoreOnly&&!bestActual);out.mixed=mixed;out.tight=!!best&&!out.failed&&!bestSafe;out.preferSafe=preferSafe;
+    out.scoreOnly=scoreOnly;out.koMiss=!!best&&!bestActual;
+    if(out.failed&&!mixed&&!scoreOnly&&ownedSets.A.size)return withMixedOwned(()=>buildSeq(boss,force,true,preferSafe,false,avoid));
     return out;
   }
 
+  
   
   const safe2=all.filter(c=>survivesN(c,boss,2));
   let two=null;
@@ -4567,7 +4631,7 @@ function buildSeq(boss,force,mixed=false,preferSafe=true){
   if(safe2.length && hasF(safe2)){
     const M2=new Map(safe2.map(c=>[c.id,movesOf(c)]));
     for(const X of safe2) for(const Y of safe2){
-      if(X.id===Y.id && owned.cnt(X.id)<2) continue;   
+      if(!seqCanFollow(X,Y)) continue;                    
       if(F && X.id!==F && Y.id!==F) continue;          
       for(const a of M2.get(X.id)) for(const b of M2.get(Y.id)){
         if(clash(a,b)) continue;
@@ -4580,11 +4644,12 @@ function buildSeq(boss,force,mixed=false,preferSafe=true){
     
 
 
+
     const a0=two.rows[0], b0=two.rows[1];
     const usedG=new Set([a0.move&&a0.move.tagx, a0.mega&&'메가진화',
                          b0.move&&b0.move.tagx, b0.mega&&'메가진화'].filter(Boolean));
     let third=null;
-    all.filter(c=>c.id!==b0.c.id && survivesN(c,boss,3)).forEach(c=>{
+    all.filter(c=>seqCanFollow(b0.c,c) && survivesN(c,boss,3)).forEach(c=>{
       movesOf(c).forEach(o=>{
         if(o.gk && usedG.has(o.gk)) return;
         if(!third || o.r.dmg>third.dmg) third=o.r;
@@ -4604,13 +4669,13 @@ function buildSeq(boss,force,mixed=false,preferSafe=true){
   const cards = hasF(base3) ? base3 : [...base3, all.find(p=>p.id===F)];
   const M3=new Map(cards.map(c=>[c.id,movesOf(c)]));
   let best=null, bestVal=-1, bestTie=-1;
-  for(const X of cards) for(const Y of cards){
-    if(X.id===Y.id && owned.cnt(X.id)<2) continue;
-    if(F && X.id!==F && Y.id!==F) continue;            
-    for(const a of M3.get(X.id)) for(const b of M3.get(Y.id)) for(const c2 of M3.get(X.id)){
+  for(const X of cards) for(const Y of cards) for(const Z of cards){
+    if(!seqCan3(X,Y,Z)) continue;
+    if(F && X.id!==F && Y.id!==F && Z.id!==F) continue; 
+    for(const a of M3.get(X.id)) for(const b of M3.get(Y.id)) for(const c2 of M3.get(Z.id)){
       if(clash(a,b,c2)) continue;
       const v=a.r.dmg+b.r.dmg+c2.r.dmg;
-      const tie=a.r.dmg*2+b.r.dmg;             
+      const tie=a.r.dmg*3+b.r.dmg*2+c2.r.dmg;   
       if(v>bestVal+1e-9 || (Math.abs(v-bestVal)<=1e-9 && tie>bestTie)){
         bestVal=v; bestTie=tie; best=[a.r,b.r,c2.r];
       }
@@ -5105,7 +5170,7 @@ const splashRate=(pw,atk,mult)=>
 const GIMX=['Z기술','다이맥스'];
 
 
-function foeCands(foe,boss,isBoss,waiters,gimOK){
+function foeCands(foe,boss,isBoss,waiters,gimOK,scoreOnly=false){
   const mine=classPool().filter(p=>owned.has(p.id)&&p.id!==boss.id);
   if(!mine.length||!foe) return [];
   const rows=[];
@@ -5138,11 +5203,11 @@ function foeCands(foe,boss,isBoss,waiters,gimOK){
       if(tagClass==='B') row.hs=hsMatchMetrics(row,foe);
       const k = isBoss ? '' : (m.tagx||'');
       const cur=best.get(k);
-      if(!cur||cmpCand(row,cur,isBoss)<0) best.set(k,row);
+      if(!cur||cmpCand(row,cur,isBoss,scoreOnly)<0) best.set(k,row);
     });
     best.forEach(r=>rows.push(r));
   });
-  return rows.sort((a,b)=>cmpCand(a,b,isBoss));
+  return rows.sort((a,b)=>cmpCand(a,b,isBoss,scoreOnly));
 }
 
 
@@ -5155,8 +5220,8 @@ function foeCands(foe,boss,isBoss,waiters,gimOK){
 
 
 
-function cmpCand(a,b,isBoss){
-  if(tagClass==='B') return hsMatchCmpNormal(a,b,isBoss);
+function cmpCand(a,b,isBoss,scoreOnly=false){
+  if(tagClass==='B') return scoreOnly?hsMatchCmpScore(a,b,isBoss):hsMatchCmpNormal(a,b,isBoss);
   
 
 
@@ -5188,7 +5253,7 @@ function cmpCand(a,b,isBoss){
 
 
 
-function assignPlans(cols, foeOf, boss, force, pins,mixed=false){
+function assignPlans(cols, foeOf, boss, force, pins,mixed=false,scoreOnly=false,avoid=null){
   const bi=cols.indexOf('B');
   
 
@@ -5206,7 +5271,7 @@ function assignPlans(cols, foeOf, boss, force, pins,mixed=false){
     
 
     const waiters = cols.map(foeOf).filter(x=>x && x!==f);
-    const L=foeCands(f,boss,aimB(at),waiters,gimOK); let out=L.slice(0,16);
+    const L=foeCands(f,boss,aimB(at),waiters,gimOK,scoreOnly); let out=L.slice(0,16);
     
 
     if(force && !out.some(r=>r.c.id===force)){
@@ -5241,17 +5306,22 @@ function assignPlans(cols, foeOf, boss, force, pins,mixed=false){
 
     
     if(tagClass==='B'&&mode==='지역'&&bi>=0&&cols.every(foeOf)){ let hsv=0; sel.forEach(r=>{ if(r) hsv+=r.sv; });
-      return [...hsLocalSim(sel,cols,foeOf,boss),hsv,tier,-dmg,-bdmg,-sp,inc]; }
+      return [...hsLocalSim(sel,cols,foeOf,boss,!scoreOnly,scoreOnly),hsv,tier,-dmg,-bdmg,-sp,inc]; }
     if(tagClass==='B'){
       let hsv=0,eligible=0,lowWeak=0,low=0,gap=0,known=0,roulette=0,type=0;
       sel.forEach(r=>{if(!r)return;const h=r.hs||hsMatchMetrics(r,r.foe);
        hsv+=r.sv;eligible+=+h.eligible;lowWeak+=+h.lowWeak;low+=+h.low;gap+=Math.max(0,h.gap);
        known+=+h.rouletteKnown;roulette+=h.roulette||0;type+=h.typeMultiplier});
-return [hsv,-bkt,-eligible,-lowWeak,-low,-gap,-known,-roulette,-type,tier,-dmg,-bdmg,-sp,inc];   
+      return scoreOnly
+        ? [-eligible,-lowWeak,-low,-gap,-known,-roulette,-type,hsv,-bkt,tier,-dmg,-bdmg,-sp,inc]
+        : [hsv,-bkt,-eligible,-lowWeak,-low,-gap,-known,-roulette,-type,tier,-dmg,-bdmg,-sp,inc];
     }
     return [bsv,tier,-dmg,-bdmg,-sp,inc];
   };
   const better=(a,b)=>{ for(let i=0;i<a.length;i++){ if(a[i]!==b[i]) return a[i]<b[i]; } return false; };
+  const sameSel=(a,b)=>!!a&&!!b&&a.length===b.length&&a.every((r,i)=>{
+    const q=b[i]; return (!r&&!q)||(r&&q&&r.c.id===q.c.id&&(r.m&&r.m.n)===(q.m&&q.m.n));
+  });
   const n=cols.length;
   
   const solve=(lists0,pinB,need)=>{
@@ -5264,6 +5334,7 @@ return [hsv,-bkt,-eligible,-lowWeak,-low,-gap,-known,-roulette,-type,tier,-dmg,-
 
 
         if(need && !(bi>=0 && sel[bi] && sel[bi].c.id===need)) return;
+        if(scoreOnly&&avoid&&sameSel(sel,avoid)) return;
         const k=key(sel);
         if(!bestKey||better(k,bestKey)){ bestKey=k; bestSel=sel.slice(); }
         return;
@@ -5300,14 +5371,17 @@ return [hsv,-bkt,-eligible,-lowWeak,-low,-gap,-known,-roulette,-type,tier,-dmg,-
 
   const forcedOK = force ? !!sel : null;
   if(!sel) sel=run(null);
+  
+  if(!sel&&scoreOnly&&avoid)return assignPlans(cols,foeOf,boss,force,pins,mixed,true,null);
   if(sel) sel.forcedOK=forcedOK;
   
   if(!sel){ const l=build(null); sel=cols.map((at,i)=> l[i]&&l[i][0] || null); }
   if(tagClass==='B'&&mode==='지역'){
     const known=cols.every(foeOf),none=cols.every(at=>at==='B'||!foeOf(at));
-    const failed=known?hsLocalSim(sel,cols,foeOf,boss)[0]!==0:none?!hsKoTurn(sel.map(r=>r?r.dmg:0),boss):false;
-    if(failed&&!mixed&&ownedSets.A.size)return withMixedOwned(()=>assignPlans(cols,foeOf,boss,force,pins,true));
-    sel.failed=failed;sel.mixed=mixed;
+    const failed=known?hsLocalSim(sel,cols,foeOf,boss,!scoreOnly,scoreOnly)[0]!==0
+      :none?!hsKoTurn(sel.map(r=>r?r.dmg:0),boss,!scoreOnly):false;
+    if(failed&&!mixed&&!scoreOnly&&ownedSets.A.size)return withMixedOwned(()=>assignPlans(cols,foeOf,boss,force,pins,true,false,avoid));
+    sel.failed=failed;sel.mixed=mixed;sel.scoreOnly=scoreOnly;
   }
   return sel;
 }
@@ -5495,8 +5569,8 @@ const planDet=(host,h)=>`<details class="mdet" open><summary class="mplans-l">�
 
 
 
-function mSlot(p,f,lab,isB,tag){
-    const shell=(inner)=>`<div class="slot mslot${isB?' mid':''}">
+function mSlot(p,f,lab,isB,tag,planName=''){
+    const shell=(inner)=>`<div class="slot mslot${isB?' mid':''}"${planName?` data-plan="${planName}"`:''}>
       <div class="head"><span class="thumb rthumb"><span class="turn${isB?'':' sp'}">${lab}</span>
         <span class="qm">?</span></span>
       <span class="who"><span class="n">${inner}</span></span></div></div>`;
@@ -5511,7 +5585,7 @@ function mSlot(p,f,lab,isB,tag){
     const gimx = p.move&&p.move.tagx ? gm(p.move.tagx)
       : (c.g?`<i class="gi mgi ${GK[c.g]}" title="${c.g} 보유 · 이 매치에서는 안 씀"></i>`:'');
     const q=zseq(p.move);
-    return `<div class="slot mslot${isB?' mid':''} ${artCls(c)}">
+    return `<div class="slot mslot${isB?' mid':''} ${artCls(c)}"${planName?` data-plan="${planName}"`:''}>
       <div class="head">
         <span class="thumb" style="background:${tb}">
           <span class="turn${isB?'':' sp'}">${lab}</span>
@@ -5601,17 +5675,23 @@ function renderFoes(){
   
   const pk=pickUsable(boss);
   if(myPinBoss!==bossId){ Object.keys(myPin).forEach(k=>{ if(k[0]==='r') delete myPin[k]; }); myPinBoss=bossId; }
-  const assigned = assignPlans(cols, foeOf, boss, pk?pk.id:null, cols.map(at=>myPin['r'+at]||null));
-  const info=document.getElementById('foePlans');if(info){info.dataset.mixed=assigned.mixed?'1':'';info.dataset.failed=assigned.failed?'1':'';}
-  const plan=(at)=> assigned[cols.indexOf(at)] || null;
+  const pins=cols.map(at=>myPin['r'+at]||null),
+    assigned=assignPlans(cols,foeOf,boss,pk?pk.id:null,pins),
+    scoreAssigned=tagClass==='B'?assignPlans(cols,foeOf,boss,pk?pk.id:null,pins,false,true,assigned):null,
+    sameAssigned=!!scoreAssigned&&assigned.length===scoreAssigned.length&&assigned.every((r,i)=>r&&scoreAssigned[i]&&r.c.id===scoreAssigned[i].c.id&&(r.m&&r.m.n)===(scoreAssigned[i].m&&scoreAssigned[i].m.n));
+  const info=document.getElementById('foePlans');if(info){
+    info.dataset.mixed=assigned.mixed?'1':'';info.dataset.failed=assigned.failed?'1':'';
+    info.dataset.scoreFailed=scoreAssigned&&scoreAssigned.failed?'1':'';
+  }
+  const plan=(at,set=assigned)=> set&&set[cols.indexOf(at)] || null;
 
   
-  const meCell=(at)=>{
+  const meCell=(at,set=assigned)=>{
     const isB=at==='B', f=target(at), kind=isB?true:(aimB(at)?'aim':false);
     
 
     const head='';
-    const p=plan(at);
+    const p=plan(at,set);
     if(!p) return meEmpty(isB,'r'+at);
     const sp = p.spd>0?`선공 +${p.spd}`: p.spd===0?'동속':`후공 ${p.spd}`;
     const tag = verdictTag(p,kind,f);
@@ -5631,34 +5711,36 @@ function renderFoes(){
   
 
 
-  const planSlot=(at)=>{ const isB=at==='B', f=target(at), p=plan(at);
+  const planSlot=(at,set=assigned,name='')=>{ const isB=at==='B', f=target(at), p=plan(at,set);
     
-    return mSlot(p,f,isB?'보스':'서브 '+(at===0?1:2),isB,p&&verdictTag(p,isB?true:(aimB(at)?'aim':false),f)); };
+    return mSlot(p,f,isB?'보스':'서브 '+(at===0?1:2),isB,p&&verdictTag(p,isB?true:(aimB(at)?'aim':false),f),name); };
 
   wrap.className='fl-grid';
   
-  wrap.innerHTML = cols.map(foeCell).join('')
-    
-
-
-
-
-
-
-
-    + cols.map(at=>{
-        if(at==='B'){ const l=aimB(0), r=aimB(1);
-          return `<div class="fl-link mid${l||r?' toB':''}${l?' ml':''}${r?' mr':''}">▲</div>`; }
-        
-
-
-        return `<div class="fl-link${aimB(at)?' toB '+(at===0?'jl':'jr'):''}">${aimB(at)?'':'▲'}</div>`;
-      }).join('')
-    + cols.map(meCell).join('')
-    
-    + eS(cols.map(at=>{ const p=plan(at); return p&&p.c; }), cols.map(foeOf));
+  const links=()=>cols.map(at=>{
+    if(at==='B'){ const l=aimB(0), r=aimB(1);
+      return `<div class="fl-link mid${l||r?' toB':''}${l?' ml':''}${r?' mr':''}">▲</div>`; }
+    return `<div class="fl-link${aimB(at)?' toB '+(at===0?'jl':'jr'):''}">${aimB(at)?'':'▲'}</div>`;
+  }).join('');
+  const gridPlan=(set,name,desc)=>`<p class="tab-note" style="grid-column:1/-1"><b>${name}</b> · ${desc}</p>`
+    +cols.map(foeCell).join('')+links()+cols.map(at=>meCell(at,set)).join('')
+    +eS(cols.map(at=>{ const p=plan(at,set); return p&&p.c; }),cols.map(foeOf));
+  wrap.innerHTML = scoreAssigned
+    ? gridPlan(assigned,'① 안정형','격파 안정성과 15% 여유를 우선합니다.')
+      +gridPlan(scoreAssigned,'② 하이스코어형',scoreAssigned.failed
+        ? '3턴 동시 격파·저에너지·약점·룰렛을 우선합니다 · 실제 HP 격파 미달'
+        : '3턴 동시 격파·저에너지·약점·룰렛을 우선합니다.')
+    : cols.map(foeCell).join('')+links()+cols.map(at=>meCell(at,assigned)).join('')
+      +eS(cols.map(at=>{ const p=plan(at,assigned); return p&&p.c; }),cols.map(foeOf));
   
-  const fp=document.getElementById('foePlans'); fp.innerHTML = planDet(fp, cols.map(planSlot).join(''));
+  const fp=document.getElementById('foePlans');
+  const details=scoreAssigned
+    ? `<p class="tab-note"><b>① 안정형</b> · 격파 안정성과 15% 여유 우선</p>`
+      +cols.map(at=>planSlot(at,assigned,'안정형')).join('')
+      +`<p class="tab-note"><b>② 하이스코어형</b> · 3턴 동시 격파·저에너지·약점·룰렛 우선${scoreAssigned.failed?' · 실제 HP 격파 미달':''}${sameAssigned?' · 지정 조건상 같은 조합':''}</p>`
+      +cols.map(at=>planSlot(at,scoreAssigned,'하이스코어형')).join('')
+    : cols.map(at=>planSlot(at,assigned)).join('');
+  fp.innerHTML = planDet(fp,details);
   bindMe(wrap);
 
   wrap.querySelectorAll('.fl-cell.foe[data-at]').forEach(n=>{
@@ -5795,7 +5877,9 @@ function renderFoes(){
     ? `서브 ${k}장 반영. 아래 칸은 <b>바로 위 상대가 활성일 때 낼 태그</b>입니다 — 서브는 «선공 + 원턴킬»이면 `
       +`그 턴 피해가 0 이고 그 장은 배틀에서 빠집니다.`
     : '서브를 모르는 칸은 <b>보스에 화력을 모읍니다</b> — 위 서브 칸을 눌러 상대를 넣으면 그 칸만 대응 태그로 바뀝니다.')
-    + svNote + spdNote;
+    + svNote + spdNote
+    + (scoreAssigned&&scoreAssigned.failed?' <b style="color:var(--star)">하이스코어형은 점수 조건을 우선해 실제 HP 격파가 부족합니다.</b>':'')
+    + (sameAssigned?' <b style="color:var(--dim)">직접 지정 조건 때문에 두 추천이 같습니다.</b>':'');
 }
 
 
@@ -6089,9 +6173,9 @@ function renderNow(){
     box.appendChild(row);
   });
   if(!box.children.length)box.textContent='추천 태그 없음';
-  if(h.dataset.mixed==='1'||h.dataset.failed==='1'||h.dataset.tight==='1'){
+  if(h.dataset.mixed==='1'||h.dataset.failed==='1'||h.dataset.tight==='1'||h.dataset.scoreFailed==='1'){
     const status=el('<p class=fl-now-action></p>');
-    status.textContent=(h.dataset.mixed==='1'?'혼합 하이스코어 추천 · 화력태그 + 하이스코어태그. ':'')+(h.dataset.failed==='1'?'보유 태그로 3턴 처치 가능한 조합을 찾지 못했습니다.':'')+(h.dataset.tight==='1'?'계산상 처치 가능 · 15% 여유 피해를 확보하지 못한 조합입니다.':'');
+    status.textContent=(h.dataset.mixed==='1'?'혼합 하이스코어 추천 · 화력태그 + 하이스코어태그. ':'')+(h.dataset.failed==='1'?'보유 태그로 3턴 처치 가능한 조합을 찾지 못했습니다. ':'')+(h.dataset.tight==='1'?'계산상 처치 가능 · 15% 여유 피해를 확보하지 못한 조합입니다. ':'')+(h.dataset.scoreFailed==='1'?'하이스코어형은 실제 HP 격파 미달입니다.':'');
     box.appendChild(status);
   }
   n.appendChild(box);
@@ -6233,7 +6317,7 @@ function renderRotation(){
   
   const rotPick=pickUsable(boss);
   const seq=buildSeq(boss, rotPick?rotPick.id:null, false, true),
-    scoreSeq=tagClass==='B'?buildSeq(boss, rotPick?rotPick.id:null, false, false):null;
+    scoreSeq=tagClass==='B'?buildSeq(boss, rotPick?rotPick.id:null, false, false, true, seq):null;
   rot.dataset.mixed=seq.mixed?'1':'';rot.dataset.failed=seq.failed?'1':'';
   rot.dataset.tight=seq.tight?'1':'';
   if(seq.failed){rot.innerHTML='<p class="empty">처치 가능한 추천 조합 없음</p>';note.textContent=(seq.mixed?'화력태그 + 하이스코어태그를 함께 계산했습니다. ':'')+'보유 태그로 3턴 처치 가능한 조합을 찾지 못했습니다.';return;}
@@ -6262,10 +6346,10 @@ function renderRotation(){
     plan.forEach((r,i)=>{const n=el(slotHTML(r,i,i===2&&reuse,boss));if(name)n.dataset.plan=name;rot.appendChild(n)});
     const field=[...uniq.map(r=>r.c),...spare.map(r=>r.c)], minHit=field.length?Math.min(...field.map(holdOut)):0,
       need=plan.ko2?2:3, t2=Math.round((plan[0]?plan[0].dmg:0)+(plan[1]?plan[1].dmg:0)), holdTxt=minHit>=9?'끄떡없음':minHit+'대까지';
-    rot.appendChild(el(`<div class="total"><div class="tsum on"><span class="tl">${plan.ko2?'2턴 격파':'3턴 필요'}</span><b>${plan.ko2?t2:sum(plan)}</b><span class="tl2">${plan.ko2?'1·2턴 피해 합':'3턴 피해 합'} · 최대 받는 ×${worst(plan)}${plan.tight?' · 15% 여유 없음':''}</span></div><div class="tsum"><span class="tl">필드 내구</span><b>${holdTxt}</b><span class="tl2">${plan.risky?'버티는 태그가 모자랍니다':`이번 계획에서 <b style="color:var(--ink)">${need}대</b>를 맞습니다`}</span></div></div>`));
+    rot.appendChild(el(`<div class="total"><div class="tsum on"><span class="tl">${plan.koMiss?'단독 격파 미달':plan.ko2?'2턴 격파':'3턴 격파'}</span><b>${plan.ko2?t2:sum(plan)}</b><span class="tl2">${plan.ko2?'1·2턴 피해 합':'3턴 피해 합'} · 최대 받는 ×${worst(plan)}${plan.tight&&!plan.scoreOnly?' · 15% 여유 없음':''}</span></div><div class="tsum"><span class="tl">필드 내구</span><b>${holdTxt}</b><span class="tl2">${plan.risky?'버티는 태그가 모자랍니다':`이번 계획에서 <b style="color:var(--ink)">${need}대</b>를 맞습니다`}</span></div></div>`));
   };
   drawPlan(seq,tagClass==='B'?'안정형':null,'15% 여유 피해를 우선합니다.');
-  if(scoreSeq&&!scoreSeq.failed)drawPlan(scoreSeq,'하이스코어형','실제 격파선 안에서 낮은 에너지·약점·룰렛 조건을 우선합니다.');
+  if(scoreSeq&&!scoreSeq.failed)drawPlan(scoreSeq,'하이스코어형',scoreSeq.koMiss?'낮은 에너지·약점·룰렛을 우선합니다. 이 3장만으로는 단독 격파가 부족합니다.':'낮은 에너지·약점·룰렛을 우선한 별도 조합입니다.');
 
   const nr=seq.filter(r=>r.rand).length;
   const gtxt = (gims.length
@@ -9677,6 +9761,15 @@ function hsMatchCmpNormal(a,b,isBoss){
 }
 
 
+function hsMatchCmpScore(a,b,isBoss){
+ const x=a.hs||hsMatchMetrics(a,a.foe),y=b.hs||hsMatchMetrics(b,b.foe);
+ return +y.eligible-+x.eligible||+y.lowWeak-+x.lowWeak||+y.low-+x.low||y.gap-x.gap
+ ||hsRouletteTier(y)-hsRouletteTier(x)||+y.rouletteKnown-+x.rouletteKnown||(y.roulette||0)-(x.roulette||0)
+ ||y.typeMultiplier-x.typeMultiplier||a.sv-b.sv||(isBoss?hsBossTurn(b)-hsBossTurn(a):0)
+ ||b.dmg-a.dmg||b.splash-a.splash;
+}
+
+
 
 function hsRotationKeyNormal(rows,boss){ const k=[0,0,0,0,0,0,0,0,0];
   k[0]=hsKoTurn(rows.map(o=>o.r.dmg),boss);
@@ -9710,19 +9803,24 @@ const hsKoTurn=(dmgs,boss,safe=true)=>{ let s=0; for(let i=0;i<dmgs.length;i++){
 const HS_SUP=10;
 const hsSup=()=>chance.sup?HS_SUP:0;
 const hsSimBonus=r=>r.m.tagx==='Z기술'?r.bonus:(q=>q.known?q.max:r.bonus)(hsRouletteOf(r.m,!!r.mega))+hsSup();
-function hsLocalSim(sel,cols,foeOf,boss){
+function hsLocalSim(sel,cols,foeOf,boss,safe=true,scoreFirst=false){
   const bi=cols.indexOf('B'), F=cols.map(at=>foeOf(at)||boss), sb=[0,1,2].filter(i=>i!==bi); let W=null;
   for(const o of [[sb[0],sb[1],bi],[sb[1],sb[0],bi]]){
-    const fh=F.map(f=>f===boss?modeHp(boss)*KO_SAFE/boss.hp:1), mh=sel.map(r=>r?1:0), A=[], ko=[0,0,0]; let kt=0;
+    const fh=F.map(f=>f===boss?modeHp(boss)*(safe?KO_SAFE:1)/boss.hp:1), mh=sel.map(r=>r?1:0), A=[], ko=[0,0,0]; let kt=0;
     for(let t=0;t<3&&!kt;t++){ const x=o[t], f=F[x], r=sel[x];
       const hit=()=>{ if(kt||!r||mh[x]<=0||fh[x]<=0) return; const au=r.atk-r.bonus+hsSimBonus(r); A.push(r); fh[x]-=r.dmg*au/r.atk*KHP/f.hp;
           F.forEach((g,i)=>{ if(i!==x&&fh[i]>0) fh[i]-=splashRate(r.pw,au,eff(r.m.t,g.t)); }); fh.forEach((h,i)=>{ if(h<=0&&!ko[i]) ko[i]=t+1; }); if(fh[bi]<=0) kt=t+1; };
       const foeHit=()=>{ if(kt||fh[x]<=0) return; const m=mh[x]>0?x:mh.findIndex(h=>h>0);
           sel.forEach((q,i)=>{ if(q&&mh[i]>0) mh[i]-=i===m?hitAny(q.c,f):.6*hitNorm(q.c,f); }); };
       if(r&&r.c.sp>f.sp){ hit(); foeHit(); } else { foeHit(); hit(); } }
-    const k=[+!kt,kt?0:fh[bi],-kt,-ko.filter(v=>v===3).length,0,0,0,0,0,0,0];
-    A.forEach(r=>{ const h=r.hs||hsMatchMetrics(r,r.foe); const rr=(h.roulette||0)+(r.m.tagx==='Z기술'?0:hsSup()); k[4]-=h.lowWeak&&rr>=HS_THRESHOLD; k[5]-=h.lowWeak; k[6]-=h.low; k[7]-=Math.max(0,h.gap);
-      k[8]-=h.rouletteKnown; k[9]-=rr; k[10]-=h.typeMultiplier; });
+    const hs=[0,0,0,0,0,0,0];
+    A.forEach(r=>{ const h=r.hs||hsMatchMetrics(r,r.foe); const rr=(h.roulette||0)+(r.m.tagx==='Z기술'?0:hsSup()); hs[0]-=h.lowWeak&&rr>=HS_THRESHOLD; hs[1]-=h.lowWeak; hs[2]-=h.low; hs[3]-=Math.max(0,h.gap);
+      hs[4]-=h.rouletteKnown; hs[5]-=rr; hs[6]-=h.typeMultiplier; });
+    
+
+    const k=scoreFirst
+      ? [+!kt,-ko.filter(v=>v===3).length,...hs,kt?0:fh[bi],-kt]
+      : [+!kt,kt?0:fh[bi],-kt,-ko.filter(v=>v===3).length,...hs];
     if(!W||hsCompare(k,W)>0) W=k; }
   return W; }
 
