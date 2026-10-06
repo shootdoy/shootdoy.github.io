@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.121.1">
+<meta name="version" content="3.121.2">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -3729,7 +3729,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.121.1';
+const VERSION='3.121.2';
 const BUILT='2026-10-06';
 
 
@@ -3741,7 +3741,7 @@ const BUILT='2026-10-06';
 
 
 
-const WHATSNEW='하이스코어 추천에서 공격이 무효인 조합을 제외하고, 공격 순서에 맞춰 생존을 확인해요.';
+const WHATSNEW='처치 가능하지만 여유 피해가 부족한 하이스코어 조합도 구분해 추천해요.';
 
 
 
@@ -4541,16 +4541,19 @@ function buildSeq(boss,force,mixed=false){
       for(const a of M.get(X.id)) for(const b of M.get(Y.id)) for(const c2 of M.get(X.id)){
         if(clash(a,b,c2)) continue;
         const k=hsRotationKeyNormal([a,b,c2],boss);
-        const rows=[a,b,c2],kt=k[0];
+        const rows=[a,b,c2],safeTurn=k[0];
+        if(!safeTurn)k[0]=hsKoTurn(rows.map(o=>o.r.dmg),boss,false);
+        const kt=k[0];
         if(rows.some(o=>o.r.dmg<=0))continue;
         
         if(kt&&rows.slice(0,kt).some((o,i)=>{const n=i+(o.c.sp>boss.sp?0:1);return n>0&&!survivesN(o.c,boss,n)}))k[0]=0;
+        k.unshift(k[0]?+!!safeTurn:0);
         if(!bk || hsCompare(k,bk)>0){ bk=k; best=[a.r,b.r,c2.r]; }
       }
     }
     const out=best?best.slice():[RANDOM,RANDOM,RANDOM];
     out.ko2=!!best && koIn2(best[0].dmg+best[1].dmg,boss); out.risky=s3.length<3; out.forced=F; out.score=true;
-    out.failed=!best||!bk[0];out.mixed=mixed;
+    out.failed=!best||!bk[1];out.mixed=mixed;out.tight=!!best&&!out.failed&&!bk[0];
     if(out.failed&&!mixed&&ownedSets.A.size)return withMixedOwned(()=>buildSeq(boss,force,true));
     return out;
   }
@@ -6085,9 +6088,9 @@ function renderNow(){
     box.appendChild(row);
   });
   if(!box.children.length)box.textContent='추천 태그 없음';
-  if(h.dataset.mixed==='1'||h.dataset.failed==='1'){
+  if(h.dataset.mixed==='1'||h.dataset.failed==='1'||h.dataset.tight==='1'){
     const status=el('<p class=fl-now-action></p>');
-    status.textContent=(h.dataset.mixed==='1'?'혼합 하이스코어 추천 · 화력태그 + 하이스코어태그. ':'')+(h.dataset.failed==='1'?'보유 태그로 3턴 처치 가능한 조합을 찾지 못했습니다.':'');
+    status.textContent=(h.dataset.mixed==='1'?'혼합 하이스코어 추천 · 화력태그 + 하이스코어태그. ':'')+(h.dataset.failed==='1'?'보유 태그로 3턴 처치 가능한 조합을 찾지 못했습니다.':'')+(h.dataset.tight==='1'?'계산상 처치 가능 · 15% 여유 피해를 확보하지 못한 조합입니다.':'');
     box.appendChild(status);
   }
   n.appendChild(box);
@@ -6220,7 +6223,7 @@ function renderRotation(){
   if(mode==='지역') return;
   const boss=POOL.find(p=>p.id===bossId);
   const rot=document.getElementById('rot'), note=document.getElementById('rotNote');
-  rot.dataset.mixed='';rot.dataset.failed='';
+  rot.dataset.mixed='';rot.dataset.failed='';rot.dataset.tight='';
   const base=ranked(boss);
   if(!base.length&&!(tagClass==='B'&&ownedSets.A.size)){
     rot.innerHTML=`<p class="empty">켜진 태그가 없습니다.<br>상단의 <b>컬렉션</b> 탭에서 가진 것을 켜 주세요.</p>`;
@@ -6230,6 +6233,7 @@ function renderRotation(){
   const rotPick=pickUsable(boss);
   const seq=buildSeq(boss, rotPick?rotPick.id:null);
   rot.dataset.mixed=seq.mixed?'1':'';rot.dataset.failed=seq.failed?'1':'';
+  rot.dataset.tight=seq.tight?'1':'';
   if(seq.failed){rot.innerHTML='<p class="empty">처치 가능한 추천 조합 없음</p>';note.textContent=(seq.mixed?'화력태그 + 하이스코어태그를 함께 계산했습니다. ':'')+'보유 태그로 3턴 처치 가능한 조합을 찾지 못했습니다.';return;}
 
   const reuse=seq.length===3 && !seq[0].rand && seq[0].c.id===seq[2].c.id;
@@ -6317,7 +6321,7 @@ function renderRotation(){
          2턴에 끝나면 보스 공격을 두 번만 맞습니다.`
       : `2턴에 잡기는 어려운 보스라 <b style="color:var(--ink)">3턴 합계</b>로 짰습니다.
          필드 3장 모두 보스 공격 3대를 버팁니다.`;
-  note.innerHTML = (seq.mixed?'혼합 하이스코어 추천 · 화력태그 + 하이스코어태그. ':'')+(seq.failed?'보유 태그로 3턴 처치 가능한 조합을 찾지 못했습니다. ':lead ? `${lead} ${gtxt}` : `${surv} ${gtxt}`);
+  note.innerHTML = (seq.mixed?'혼합 하이스코어 추천 · 화력태그 + 하이스코어태그. ':'')+(seq.tight?'계산상 처치 가능 · 15% 여유 피해를 확보하지 못한 조합입니다. ':'')+(seq.failed?'보유 태그로 3턴 처치 가능한 조합을 찾지 못했습니다. ':lead ? `${lead} ${gtxt}` : `${surv} ${gtxt}`);
 }
 
 
@@ -9722,7 +9726,7 @@ function hsRotationKeyNormal(rows,boss){ const k=[0,0,0,0,0,0,0,0,0];
 
 
 
-const hsKoTurn=(dmgs,boss)=>{ let s=0; for(let i=0;i<dmgs.length;i++){ s+=dmgs[i]; if(koIn2(s,boss)) return i+1; } return 0; };
+const hsKoTurn=(dmgs,boss,safe=true)=>{ let s=0; for(let i=0;i<dmgs.length;i++){ s+=dmgs[i]; if(safe?koIn2(s,boss):s*KHP>=modeHp(boss)) return i+1; } return 0; };
 
 
 
