@@ -5932,7 +5932,8 @@ function renderBosses(){
         n.addEventListener('click',()=>{ if(!setBoss(b.id,rec)){ if(rec) hAutoAgain(); } renderAll(); goSection(goTo) });
         g2.appendChild(n);
       }); }); };
-  fill(g,'sSup',true);
+  
+  fill(g,spc?'sRot':'sSup',true);
   fill(document.getElementById('trBossGrid'),'sTrCmp',false);
   document.getElementById('sw1').setAttribute('aria-pressed',setView==='1');
   document.getElementById('sw2').setAttribute('aria-pressed',setView==='2');
@@ -5971,7 +5972,7 @@ function renderBosses(){
   
   
   { const r=document.getElementById('sRot'); if(r) r.hidden=trn;
-    const s=document.getElementById('sSup'); if(s) s.hidden=trn&&!tbMode(); }
+    const s=document.getElementById('sSup'); if(s) s.hidden=spc||(trn&&!tbMode()); }
   if(trn){
     if(sw) sw.hidden=true; if(rw) rw.hidden=true;
     g.innerHTML='';
