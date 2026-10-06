@@ -5446,8 +5446,7 @@ function renderMePick(){
     g.appendChild(b); });
   pickMore(g);
 }
-const planDet=(host,h)=>{ const o=!!(host.querySelector('.mdet')||{}).open;
-  return `<details class="mdet"${o?' open':''}><summary class="mplans-l">낼 태그 자세히</summary><div class="mplans">${h}</div></details>`; };
+const planDet=(host,h)=>`<details class="mdet" open><summary class="mplans-l">낼 태그 자세히</summary><div class="mplans">${h}</div></details>`;
 
 
 
