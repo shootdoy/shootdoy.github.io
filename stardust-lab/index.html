@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.121.2">
+<meta name="version" content="3.121.3">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -3729,7 +3729,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.121.2';
+const VERSION='3.121.3';
 const BUILT='2026-10-06';
 
 
@@ -3741,7 +3741,7 @@ const BUILT='2026-10-06';
 
 
 
-const WHATSNEW='처치 가능하지만 여유 피해가 부족한 하이스코어 조합도 구분해 추천해요.';
+const WHATSNEW='하이스코어 추천에서 안정형과 하이스코어형 두 조합을 한 번에 보여줘요.';
 
 
 
@@ -4503,9 +4503,9 @@ function withMixedOwned(fn){
   ownedSets.A.ids().forEach(id=>bag.set(id,Math.max(bag.cnt(id),ownedSets.A.cnt(id))));
   owned=bag;try{return fn.call(null)}finally{owned=prev}
 }
-function buildSeq(boss,force,mixed=false){
+function buildSeq(boss,force,mixed=false,preferSafe=true){
   const all=classPool().filter(p=>owned.has(p.id)&&p.id!==boss.id);
-  if(!all.length){if(tagClass==='B'&&!mixed&&ownedSets.A.size)return withMixedOwned(()=>buildSeq(boss,force,true));const out=[];out.failed=tagClass==='B';out.mixed=mixed;return out;}
+  if(!all.length){if(tagClass==='B'&&!mixed&&ownedSets.A.size)return withMixedOwned(()=>buildSeq(boss,force,true,preferSafe));const out=[];out.failed=tagClass==='B';out.mixed=mixed;return out;}
   const F = force && all.some(p=>p.id===force) ? force : null;
   const hasF = l => !F || l.some(p=>p.id===F);
 
@@ -4534,7 +4534,7 @@ function buildSeq(boss,force,mixed=false){
     
     const cards=all;
     const M=new Map(cards.map(c=>[c.id,movesOf(c).map(o=>({...o,h:hsMatchMetrics({c:o.c,m:o.m,mult:o.r.mult,mega:o.gk==='메가진화'},boss)}))]));
-    let best=null, bk=null;
+    let best=null, bk=null, bestSafe=false;
     for(const X of cards) for(const Y of cards){
       if(X.id===Y.id && owned.cnt(X.id)<2) continue;
       if(F && X.id!==F && Y.id!==F) continue;
@@ -4547,14 +4547,15 @@ function buildSeq(boss,force,mixed=false){
         if(rows.some(o=>o.r.dmg<=0))continue;
         
         if(kt&&rows.slice(0,kt).some((o,i)=>{const n=i+(o.c.sp>boss.sp?0:1);return n>0&&!survivesN(o.c,boss,n)}))k[0]=0;
-        k.unshift(k[0]?+!!safeTurn:0);
-        if(!bk || hsCompare(k,bk)>0){ bk=k; best=[a.r,b.r,c2.r]; }
+        const safeOk=!!safeTurn&&!!k[0];
+        k.unshift(preferSafe&&safeOk?1:0);
+        if(!bk || hsCompare(k,bk)>0){ bk=k; best=[a.r,b.r,c2.r]; bestSafe=safeOk; }
       }
     }
     const out=best?best.slice():[RANDOM,RANDOM,RANDOM];
     out.ko2=!!best && koIn2(best[0].dmg+best[1].dmg,boss); out.risky=s3.length<3; out.forced=F; out.score=true;
-    out.failed=!best||!bk[1];out.mixed=mixed;out.tight=!!best&&!out.failed&&!bk[0];
-    if(out.failed&&!mixed&&ownedSets.A.size)return withMixedOwned(()=>buildSeq(boss,force,true));
+    out.failed=!best||!bk[1];out.mixed=mixed;out.tight=!!best&&!out.failed&&!bestSafe;out.preferSafe=preferSafe;
+    if(out.failed&&!mixed&&ownedSets.A.size)return withMixedOwned(()=>buildSeq(boss,force,true,preferSafe));
     return out;
   }
 
@@ -6079,9 +6080,9 @@ function renderNow(){
   slots.forEach(slot=>{
     const name=slot.querySelector('.who .n');if(!name)return;
     const copy=name.cloneNode(true);copy.querySelectorAll('.badge,.gi,.fl-b').forEach(x=>x.remove());
-    const max=slot.classList.contains('mid'),label=slot.querySelector('.turn'),badge=slot.querySelector('.fl-b'),gim=slot.querySelector('.b-gim');
+    const max=slot.classList.contains('mid'),label=slot.querySelector('.turn'),badge=slot.querySelector('.fl-b'),gim=slot.querySelector('.b-gim'),plan=slot.dataset.plan||'';
     const row=el(`<div class="fl-now-plan${max?' max':''}"><span class=fl-now-label></span><b></b><span class=fl-now-action></span></div>`);
-    row.querySelector('.fl-now-label').textContent=max?'MAX · 보스':label?label.textContent.trim():'추천';
+    row.querySelector('.fl-now-label').textContent=(plan?plan+' · ':'')+(max?'MAX · 보스':label?label.textContent.trim():'추천');
     row.querySelector('b').textContent=copy.textContent.trim().replace(/\s+/g,' ');
     row.querySelector('.fl-now-action').textContent=[gim&&gim.textContent.trim(),badge&&badge.textContent.trim()].filter(Boolean).join(' · ')||'상세에서 행동 확인';
     if(badge)row.querySelector('.fl-now-action').title=badge.title;
@@ -6231,79 +6232,40 @@ function renderRotation(){
   }
   
   const rotPick=pickUsable(boss);
-  const seq=buildSeq(boss, rotPick?rotPick.id:null);
+  const seq=buildSeq(boss, rotPick?rotPick.id:null, false, true),
+    scoreSeq=tagClass==='B'?buildSeq(boss, rotPick?rotPick.id:null, false, false):null;
   rot.dataset.mixed=seq.mixed?'1':'';rot.dataset.failed=seq.failed?'1':'';
   rot.dataset.tight=seq.tight?'1':'';
   if(seq.failed){rot.innerHTML='<p class="empty">처치 가능한 추천 조합 없음</p>';note.textContent=(seq.mixed?'화력태그 + 하이스코어태그를 함께 계산했습니다. ':'')+'보유 태그로 3턴 처치 가능한 조합을 찾지 못했습니다.';return;}
 
-  const reuse=seq.length===3 && !seq[0].rand && seq[0].c.id===seq[2].c.id;
   const gims=[...new Set(seq.map(r=>(r.move&&r.move.tagx)||(r.mega?'메가진화':null)).filter(Boolean))];
-
   rot.innerHTML='';
 
   
-  const uniq=[...new Map(seq.filter(r=>!r.rand).map(r=>[r.c.id,r])).values()];
-  
-  
-
-  const sp=spareOf(boss,seq);
-  const spare=sp.rows, spareSlow=sp.slow;
-  const nRand=uniq.length?3-uniq.length-spare.length:0;
-
-  
-  
-  
-  if(uniq.length && mode!=='지역'){
-    const cell=(r,kind)=>{
-      const art=r?tagArt(r.c):null;
-      const bg=r
-        ? (art?`var(--art) center/cover`
-              :`linear-gradient(135deg,${COLOR[r.c.t[0]]}CC,rgba(12,7,34,.9))`)
-        : 'repeating-linear-gradient(135deg,rgba(74,47,156,.45) 0 7px,rgba(30,19,73,.45) 7px 14px)';
-      const turns=r?seq.map((x,i)=>!x.rand&&x.c.id===r.c.id?i+1:0).filter(Boolean):[];
-      const tag = kind==='spare' ? '<span class="lt sp">예비</span>'
-                : kind==='rand'  ? '<span class="lt rd">랜덤</span>'
-                : `<span class="lt">${turns.join('·')}턴</span>`;
-      return `<div class="lane-c${kind==='use'?'':' dim'} ${r?artCls(r.c):''}">
-        <span class="lane-f"><span class="lane-i" style="background:${bg}"></span></span>
-        <span class="lane-t"><span class="ln">${r?r.c.n:'—'}</span>${tag}</span></div>`;
-    };
-    rot.appendChild(el(`<div class="lane">
-      <span class="lane-h">레인 배치 <i>기기 슬롯 3칸</i></span>
-      <div class="lane-g">
-        ${uniq.map(r=>cell(r,'use')).join('')}
-        ${spare.map(r=>cell(r,'spare')).join('')}
-        ${Array.from({length:nRand},()=>cell(null,'rand')).join('')}
-      </div>
-      ${(spare.length||nRand)?`<p class="sparen">쓰는 건 ${uniq.length}장이지만 슬롯이 3칸이라 예비까지 올려 둡니다.
-        ${spare.length?(spareSlow
-          ? '<b style="color:var(--bad)">보스보다 빠른 태그가 없어 후공 예비입니다.</b>'
-          : '3턴까지 끌리면 에너지가 바닥이라 <b style="color:var(--ink)">선공</b>이 되는 것으로 골랐습니다.'):''}
-        ${nRand?`<b style="color:var(--ink)">${nRand}칸</b>은 켠 태그가 모자라 기기가 랜덤으로 채웁니다.`:''}</p>`:''}
-    </div>`));
-  }
-
-  seq.forEach((r,i)=>rot.appendChild(el(slotHTML(r,i,i===2&&reuse,boss))));
-
-  const real=l=>l.filter(r=>!r.rand);          
-  const sum=l=>Math.round(l.reduce((a,r)=>a+(r.dmg||0),0));
-  const worst=l=>{const v=real(l).map(r=>r.d); return v.length?Math.max(...v):0};
-  const field=[...uniq.map(r=>r.c), ...spare.map(r=>r.c)];
-  const holdOut=c=>{ let n=0; while(n<9 && survivesN(c,boss,n+1)) n++; return n; };
-  const minHit=field.length?Math.min(...field.map(holdOut)):0;
-  const need=seq.ko2?2:3;
-  const t2=Math.round((seq[0]?seq[0].dmg:0)+(seq[1]?seq[1].dmg:0));
-  const holdTxt=minHit>=9?'끄떡없음':minHit+'대까지';
-  rot.appendChild(el(`<div class="total">
-    <div class="tsum on">
-      <span class="tl">${seq.ko2?'2턴 격파':'3턴 필요'}</span><b>${seq.ko2?t2:sum(seq)}</b>
-      <span class="tl2">${seq.ko2?'1·2턴 피해 합':'3턴 피해 합'} · 최대 받는 ×${worst(seq)}</span></div>
-    <div class="tsum">
-      <span class="tl">필드 내구</span><b>${holdTxt}</b>
-      <span class="tl2">${seq.risky
-        ? '버티는 태그가 모자랍니다'
-        : `이번 계획에서 <b style="color:var(--ink)">${need}대</b>를 맞습니다`}</span></div>
-  </div>`));
+  const real=l=>l.filter(r=>!r.rand), sum=l=>Math.round(l.reduce((a,r)=>a+(r.dmg||0),0));
+  const worst=l=>{const v=real(l).map(r=>r.d);return v.length?Math.max(...v):0};
+  const holdOut=c=>{let n=0;while(n<9&&survivesN(c,boss,n+1))n++;return n};
+  const cell=(r,kind,plan)=>{
+    const art=r?tagArt(r.c):null, bg=r
+      ?(art?'var(--art) center/cover':`linear-gradient(135deg,${COLOR[r.c.t[0]]}CC,rgba(12,7,34,.9))`)
+      :'repeating-linear-gradient(135deg,rgba(74,47,156,.45) 0 7px,rgba(30,19,73,.45) 7px 14px)',
+      turns=r?plan.map((x,i)=>!x.rand&&x.c.id===r.c.id?i+1:0).filter(Boolean):[],
+      tag=kind==='spare'?'<span class="lt sp">예비</span>':kind==='rand'?'<span class="lt rd">랜덤</span>':`<span class="lt">${turns.join('·')}턴</span>`;
+    return `<div class="lane-c${kind==='use'?'':' dim'} ${r?artCls(r.c):''}"><span class="lane-f"><span class="lane-i" style="background:${bg}"></span></span><span class="lane-t"><span class="ln">${r?r.c.n:'—'}</span>${tag}</span></div>`;
+  };
+  const drawPlan=(plan,name,desc)=>{
+    const reuse=plan.length===3&&!plan[0].rand&&plan[0].c.id===plan[2].c.id,
+      uniq=[...new Map(plan.filter(r=>!r.rand).map(r=>[r.c.id,r])).values()], sp=spareOf(boss,plan),
+      spare=sp.rows, nRand=uniq.length?3-uniq.length-spare.length:0;
+    if(name)rot.appendChild(el(`<p class="tab-note"><b>${name==='안정형'?'①':'②'} ${name}</b> · ${desc}</p>`));
+    if(uniq.length&&mode!=='지역')rot.appendChild(el(`<div class="lane"><span class="lane-h">레인 배치 <i>기기 슬롯 3칸</i></span><div class="lane-g">${uniq.map(r=>cell(r,'use',plan)).join('')}${spare.map(r=>cell(r,'spare',plan)).join('')}${Array.from({length:nRand},()=>cell(null,'rand',plan)).join('')}</div>${(spare.length||nRand)?`<p class="sparen">쓰는 건 ${uniq.length}장이지만 슬롯이 3칸이라 예비까지 올려 둡니다. ${spare.length?(sp.slow?'<b style="color:var(--bad)">보스보다 빠른 태그가 없어 후공 예비입니다.</b>':'3턴까지 끌리면 에너지가 바닥이라 <b style="color:var(--ink)">선공</b>이 되는 것으로 골랐습니다.'):''} ${nRand?`<b style="color:var(--ink)">${nRand}칸</b>은 켠 태그가 모자라 기기가 랜덤으로 채웁니다.`:''}</p>`:''}</div>`));
+    plan.forEach((r,i)=>{const n=el(slotHTML(r,i,i===2&&reuse,boss));if(name)n.dataset.plan=name;rot.appendChild(n)});
+    const field=[...uniq.map(r=>r.c),...spare.map(r=>r.c)], minHit=field.length?Math.min(...field.map(holdOut)):0,
+      need=plan.ko2?2:3, t2=Math.round((plan[0]?plan[0].dmg:0)+(plan[1]?plan[1].dmg:0)), holdTxt=minHit>=9?'끄떡없음':minHit+'대까지';
+    rot.appendChild(el(`<div class="total"><div class="tsum on"><span class="tl">${plan.ko2?'2턴 격파':'3턴 필요'}</span><b>${plan.ko2?t2:sum(plan)}</b><span class="tl2">${plan.ko2?'1·2턴 피해 합':'3턴 피해 합'} · 최대 받는 ×${worst(plan)}${plan.tight?' · 15% 여유 없음':''}</span></div><div class="tsum"><span class="tl">필드 내구</span><b>${holdTxt}</b><span class="tl2">${plan.risky?'버티는 태그가 모자랍니다':`이번 계획에서 <b style="color:var(--ink)">${need}대</b>를 맞습니다`}</span></div></div>`));
+  };
+  drawPlan(seq,tagClass==='B'?'안정형':null,'15% 여유 피해를 우선합니다.');
+  if(scoreSeq&&!scoreSeq.failed)drawPlan(scoreSeq,'하이스코어형','실제 격파선 안에서 낮은 에너지·약점·룰렛 조건을 우선합니다.');
 
   const nr=seq.filter(r=>r.rand).length;
   const gtxt = (gims.length
