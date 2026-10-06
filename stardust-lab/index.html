@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.119.0">
+<meta name="version" content="3.120.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -2107,6 +2107,9 @@ footer .fver{margin:15px 0 0}
   </section>
 
 
+  <section><div class=card id=now></div></section>
+
+
   <section id="sTrn" hidden>
     <div class="sec-head"><h2>상대별 매치</h2><span class="hint">스타 트레이너 6vs6</span></div>
     
@@ -3709,8 +3712,8 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.119.0';
-const BUILT='2026-10-03';
+const VERSION='3.120.0';
+const BUILT='2026-10-06';
 
 
 
@@ -3721,7 +3724,7 @@ const BUILT='2026-10-03';
 
 
 
-const WHATSNEW='스페셜모드에서 트레이너 배틀을 고를 수 있습니다. 주니어 트레이너 준혁과의 4vs3 배틀 덱을 추천합니다.';
+const WHATSNEW='이번 판 요약';
 
 
 
@@ -6021,6 +6024,7 @@ function renderBosses(){
       udecks[k]=P.s.map(r=>r&&r.c.id); try{ localStorage.setItem(UKEY,JSON.stringify(udecks)); }catch(e){}
       trnDeck=t.decks.length+k; for(let x=0;x<6;x++) delete myPin['t'+x]; renderAll(); });
     bindMe(tpn); } }
+  {const n=document.getElementById('now'),t=g.querySelector('[aria-pressed=true] .nm');if(n)n.textContent='이번 판 · '+cabinetMode+' · '+ml[mode][0]+' · '+t.textContent+' · '+CLASSES[tagClass].label+(spc||trn&&!tbMode()?'':' · 서포트'+(chance.sup?'ON':'OFF'))}
 }
 
 
