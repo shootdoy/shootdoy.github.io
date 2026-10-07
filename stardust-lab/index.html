@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.123.0">
+<meta name="version" content="3.123.1">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -3631,8 +3631,8 @@ const TBATTLE=[{id:'junior-junhyeok',n:'주니어 트레이너 준혁',ar:'480/2
 
 
 const EBATTLE=[
-  {id:'star-chanju',n:'스타 트레이너 찬주',start:['2-5-님피아','1-5-플라이곤','1-5-피죤투'],rep:'1-4-인텔리레온',vd:[]},
-  {id:'junior-jeongwon',n:'주니어 트레이너 정원',start:['2-5-리피아','2-5-엠페르트','1-5-거대코뿌리'],rep:'2-5-메타그로스',vd:[]}
+  {id:'star-chanju',n:'스타 트레이너 찬주',img:'star-chanju.jpeg',ar:'1759/758',start:['2-5-님피아','1-5-플라이곤','1-5-피죤투'],rep:'1-4-인텔리레온',vd:[]},
+  {id:'junior-jeongwon',n:'주니어 트레이너 정원',img:'junior-jeongwon.jpeg',ar:'1793/774',start:['2-5-리피아','2-5-엠페르트','1-5-거대코뿌리'],rep:'2-5-메타그로스',vd:[]}
 ];
 
 
@@ -3742,7 +3742,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.123.0';
+const VERSION='3.123.1';
 const BUILT='2026-10-08';
 
 
@@ -3754,7 +3754,7 @@ const BUILT='2026-10-08';
 
 
 
-const WHATSNEW='이벤트 배틀에서 찬주와 정원을 선택하면 상대 포켓몬과 추천이 함께 바뀝니다.';
+const WHATSNEW='이벤트 배틀의 찬주와 정원 선택 버튼에 트레이너 사진을 넣었어요.';
 
 
 
@@ -6136,7 +6136,7 @@ function renderBosses(){
     
     (tbMode()?tbTrainers():TRAINERS).forEach(t=>{
       const n=el(`<button class="btag trnr" data-trainer="${t.id}" aria-pressed="${!tbMode()||t.id===tbTrainer().id}">
-        <span class="face" style="background:linear-gradient(to top,rgba(8,5,22,.9) 0%,rgba(8,5,22,.35) 38%,transparent 60%),${EBATTLE.includes(t)?'var(--void)':'url(trainer/'+t.id+'.webp) center/cover'}${t.ar?';aspect-ratio:'+t.ar:''}">
+        <span class="face" style="background:linear-gradient(to top,rgba(8,5,22,.9) 0%,rgba(8,5,22,.35) 38%,transparent 60%),url(trainer/${t.img||t.id+'.webp'}) center/cover${t.ar?';aspect-ratio:'+t.ar:''}">
           <span class="nm">${t.n.replace('&','&amp;')}</span>
         </span></button>`);
       if(tbMode()) n.addEventListener('click',()=>{ if(t.id!==tbTrainer().id){ eventTrainerId=t.id; tbPick=t.vd.length?'v0':'bal'; for(let x=0;x<3;x++) delete myPin['j'+x]; save(); renderAll(); } goSection('sSup'); });   
