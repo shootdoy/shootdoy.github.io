@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.122.3">
+<meta name="version" content="3.122.4">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -806,6 +806,14 @@ section:first-child{margin-top:0}
 
 
 .fl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;align-items:stretch}
+.fl-plan{grid-column:1/-1;margin:6px 0 0;border:1px solid var(--rim);border-radius:var(--r-md);
+  background:rgba(30,19,73,.34);overflow:hidden}
+.fl-plan>summary{min-height:var(--tap);padding:10px 12px;font-size:12px;line-height:1.45;color:var(--ink-dim)}
+.fl-plan>summary span{min-width:0}
+.fl-plan>summary b{color:var(--ink)}
+.fl-plan>summary::after{content:'▾';margin-left:auto;font-size:13px;transition:transform .2s}
+.fl-plan[open]>summary::after{transform:rotate(180deg)}
+.fl-plan>.fl-grid{padding:0 6px 8px}
 .fl-cell{position:relative;display:flex;flex-direction:column;gap:2px;min-width:0;
   padding:5px 5px 7px;border-radius:var(--r-sm);background:rgba(0,0,0,.22);
   border:1px solid rgba(255,255,255,.09);text-align:center;align-items:center;justify-content:flex-start}
@@ -3720,7 +3728,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.122.3';
+const VERSION='3.122.4';
 const BUILT='2026-10-07';
 
 
@@ -3732,7 +3740,7 @@ const BUILT='2026-10-07';
 
 
 
-const WHATSNEW='2탄 스페셜태그배틀 하이스코어 추천에 같은 태그 2장 보유를 반영했어요.';
+const WHATSNEW='지역배틀의 하이스코어태그 추천에서 안정형은 펼쳐 두고, 하이스코어형은 접어서 시작해요.';
 
 
 
@@ -5714,14 +5722,16 @@ function renderFoes(){
       return `<div class="fl-link mid${l||r?' toB':''}${l?' ml':''}${r?' mr':''}">▲</div>`; }
     return `<div class="fl-link${aimB(at)?' toB '+(at===0?'jl':'jr'):''}">${aimB(at)?'':'▲'}</div>`;
   }).join('');
-  const gridPlan=(set,name,desc)=>`<p class="tab-note" style="grid-column:1/-1"><b>${name}</b> · ${desc}</p>`
+  const gridPlan=(set,name,desc,open)=>`<details class="fl-plan"${open?' open':''}>
+      <summary><span><b>${name}</b> · ${desc}</span></summary><div class="fl-grid">`
     +cols.map(foeCell).join('')+links()+cols.map(at=>meCell(at,set)).join('')
-    +eS(cols.map(at=>{ const p=plan(at,set); return p&&p.c; }),cols.map(foeOf));
+    +eS(cols.map(at=>{ const p=plan(at,set); return p&&p.c; }),cols.map(foeOf))
+    +'</div></details>';
   wrap.innerHTML = scoreAssigned
-    ? gridPlan(assigned,'① 안정형','격파 안정성과 15% 여유를 우선합니다.')
+    ? gridPlan(assigned,'① 안정형','격파 안정성과 15% 여유를 우선합니다.',true)
       +gridPlan(scoreAssigned,'② 하이스코어형',scoreAssigned.failed
         ? '3턴 동시 격파·저에너지·약점·룰렛을 우선합니다 · 실제 HP 격파 미달'
-        : '3턴 동시 격파·저에너지·약점·룰렛을 우선합니다.')
+        : '3턴 동시 격파·저에너지·약점·룰렛을 우선합니다.',false)
     : cols.map(foeCell).join('')+links()+cols.map(at=>meCell(at,assigned)).join('')
       +eS(cols.map(at=>{ const p=plan(at,assigned); return p&&p.c; }),cols.map(foeOf));
   
