@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.122.1">
+<meta name="version" content="3.122.2">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -647,7 +647,7 @@ section:first-child{margin-top:0}
 
 
 .viewsw{position:sticky;top:var(--tktop);z-index:92;
-  display:flex;gap:6px;padding:6px 8px 10px;margin:2px -8px 8px;border-radius:var(--r-lg);
+  display:flex;flex-wrap:wrap;gap:6px;padding:6px 8px 10px;margin:2px -8px 8px;border-radius:var(--r-lg);
   
 
 
@@ -1994,19 +1994,11 @@ footer .fver{margin:15px 0 0}
 
 
 
+.top-now{flex:0 0 100%;min-width:0;padding:0 2px}
+.top-now:empty{display:none}
 .fl-now-meta{display:flex;flex-wrap:wrap;gap:5px;font-size:11px;color:var(--ink-dim)}
 .fl-now-meta span{padding:3px 7px;border:1px solid var(--rim);border-radius:var(--r-sm)}
 .fl-now-meta span:first-child{color:var(--ink);font-weight:700}
-.fl-now-plans{display:grid;gap:7px;margin-top:12px}
-.fl-now-plan{display:grid;grid-template-columns:auto 1fr;gap:3px 9px;padding:9px 11px;background:var(--void);border:1px solid var(--rim);border-radius:var(--r-sm)}
-.fl-now-label{grid-row:1/3;align-self:center;font-size:11px;color:var(--cyan);font-weight:700}
-.fl-now-plan b{font-size:14px;line-height:1.4;overflow-wrap:anywhere}
-.fl-now-action{font-size:11.5px;color:var(--ink-dim);line-height:1.4}
-.fl-now-plan.max{border-color:var(--star)}
-.fl-now-plan.max .fl-now-label{color:var(--star)}
-
-#nowHome:empty{display:none}
-#nowLocal:not(:empty){margin-top:12px}
 </style>
 </head>
 
@@ -2060,6 +2052,8 @@ footer .fver{margin:15px 0 0}
 
   <button id="vT" aria-pressed="false" aria-label="태그 연구소"></button>
   <button id="vX" aria-pressed="false" aria-label="설정"></button>
+  
+  <div id="now" class="top-now" aria-label="현재 배틀 정보"></div>
 </div>
 
 
@@ -2122,9 +2116,6 @@ footer .fver{margin:15px 0 0}
   </section>
 
 
-  <section id="nowHome"><div class=card id=now></div></section>
-
-
   <section id="sTrn" hidden>
     <div class="sec-head"><h2>상대별 매치</h2><span class="hint">스타 트레이너 6vs6</span></div>
     
@@ -2164,7 +2155,6 @@ footer .fver{margin:15px 0 0}
 
       <div class="fl-h">상대 파티<span>가운데가 보스 · 아래 낼 태그 ▲ 위 상대</span></div>
       <div class="fl-grid" id="foeLanes"></div>
-      <div id="nowLocal"></div>
       
 
       
@@ -2172,7 +2162,6 @@ footer .fver{margin:15px 0 0}
       <p class="tab-note" id="foeNote"></p>
     </div>
     <div class="card" id="readout"></div>
-    <div id="nowSolo"></div>
     <div class="card" id="rotBox">
       <div class="seg" role="group" aria-label="표시 단계">
         <button data-lv="0" aria-pressed="true">태그</button>
@@ -3731,7 +3720,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.122.1';
+const VERSION='3.122.2';
 const BUILT='2026-10-07';
 
 
@@ -3743,7 +3732,7 @@ const BUILT='2026-10-07';
 
 
 
-const WHATSNEW='스페셜태그배틀 하이스코어 6장 추천을 더 넓게 계산해 낮은 에너지 조합을 더 잘 찾아요.';
+const WHATSNEW='현재 배틀 정보는 상단 Dock 아이콘 바로 아래에서 항상 확인할 수 있어요.';
 
 
 
@@ -6154,33 +6143,6 @@ function renderBosses(){
       trnDeck=t.decks.length+k; for(let x=0;x<6;x++) delete myPin['t'+x]; renderAll(); });
     bindMe(tpn); } }
   {const n=document.getElementById('now'),t=g.querySelector('[aria-pressed=true] .nm');if(n){n.textContent='';const meta=el('<div class=fl-now-meta></div>');['이번 배틀',cabinetMode,ml[mode][0],t.textContent,CLASSES[tagClass].label,...(spc||trn&&!tbMode()?[]:['서포트 '+(chance.sup?'ON':'OFF')])].forEach(v=>{const b=el('<span></span>');b.textContent=v;meta.appendChild(b)});n.appendChild(meta)}}
-}
-
-
-function renderNow(){
-  const n=document.getElementById('now'),h=document.getElementById(trainerMode()?'trnPlan':mode==='지역'?'foePlans':'rot');if(!n||!h)return;
-  const host=document.getElementById(trainerMode()?'nowHome':mode==='지역'?'nowLocal':'nowSolo');if(host&&n.parentNode!==host)host.appendChild(n);
-  const old=n.querySelector('.fl-now-plans');if(old&&old.remove)old.remove();
-  const box=el('<div class=fl-now-plans></div>');
-  const slots=h.dataset.failed==='1'?[]:[...h.querySelectorAll('.slot')];
-  slots.forEach(slot=>{
-    const name=slot.querySelector('.who .n');if(!name)return;
-    const copy=name.cloneNode(true);copy.querySelectorAll('.badge,.gi,.fl-b').forEach(x=>x.remove());
-    const max=slot.classList.contains('mid'),label=slot.querySelector('.turn'),badge=slot.querySelector('.fl-b'),gim=slot.querySelector('.b-gim'),plan=slot.dataset.plan||'';
-    const row=el(`<div class="fl-now-plan${max?' max':''}"><span class=fl-now-label></span><b></b><span class=fl-now-action></span></div>`);
-    row.querySelector('.fl-now-label').textContent=(plan?plan+' · ':'')+(max?'MAX · 보스':label?label.textContent.trim():'추천');
-    row.querySelector('b').textContent=copy.textContent.trim().replace(/\s+/g,' ');
-    row.querySelector('.fl-now-action').textContent=[gim&&gim.textContent.trim(),badge&&badge.textContent.trim()].filter(Boolean).join(' · ')||'상세에서 행동 확인';
-    if(badge)row.querySelector('.fl-now-action').title=badge.title;
-    box.appendChild(row);
-  });
-  if(!box.children.length)box.textContent='추천 태그 없음';
-  if(h.dataset.mixed==='1'||h.dataset.failed==='1'||h.dataset.tight==='1'||h.dataset.scoreFailed==='1'){
-    const status=el('<p class=fl-now-action></p>');
-    status.textContent=(h.dataset.mixed==='1'?'혼합 하이스코어 추천 · 화력태그 + 하이스코어태그. ':'')+(h.dataset.failed==='1'?'보유 태그로 3턴 처치 가능한 조합을 찾지 못했습니다. ':'')+(h.dataset.tight==='1'?'계산상 처치 가능 · 15% 여유 피해를 확보하지 못한 조합입니다. ':'')+(h.dataset.scoreFailed==='1'?'하이스코어형은 실제 HP 격파 미달입니다.':'');
-    box.appendChild(status);
-  }
-  n.appendChild(box);
 }
 
 
@@ -9968,7 +9930,7 @@ function renderChance(){
 function renderAll(){
   
 
-  renderTagClass();renderFoeSets();renderBosses();renderBossGuide();renderFoes();renderReadout();renderRotation();renderSupport();renderRoster();renderDex();renderMyQR();renderTidSet();renderBackend();renderChance();renderCam();renderDmax();renderMega();renderGuide();renderDetail();renderHCur();renderDock();renderTrain();renderNow();
+  renderTagClass();renderFoeSets();renderBosses();renderBossGuide();renderFoes();renderReadout();renderRotation();renderSupport();renderRoster();renderDex();renderMyQR();renderTidSet();renderBackend();renderChance();renderCam();renderDmax();renderMega();renderGuide();renderDetail();renderHCur();renderDock();renderTrain();
   
 
   hsRender();
