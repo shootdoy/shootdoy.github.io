@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.122.6">
+<meta name="version" content="3.123.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -3630,6 +3630,12 @@ const TBATTLE=[{id:'junior-junhyeok',n:'주니어 트레이너 준혁',ar:'480/2
     {n:'B',s:['2-2-톱치','2-2-캐이시','2-5-초염몽'],score:253260}]}];
 
 
+const EBATTLE=[
+  {id:'star-chanju',n:'스타 트레이너 찬주',start:['2-5-님피아','1-5-플라이곤','1-5-피죤투'],rep:'1-4-인텔리레온',vd:[]},
+  {id:'junior-jeongwon',n:'주니어 트레이너 정원',start:['2-5-리피아','2-5-엠페르트','1-5-거대코뿌리'],rep:'2-5-메타그로스',vd:[]}
+];
+
+
 const GIMICON={
 "메가진화":"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",
 "Z기술":"UklGRhAEAABXRUJQVlA4WAoAAAAQAAAALwAALwAAQUxQSFwBAAABgFtbe9vmY9YGzlWqlQfiYaUd8gIqtURaQqVj6Rk0AAUC5OdIQL9jGREM3DZS1OweM7TzBtQSA1f95oaaH9DcNPtXQAxH/Agn6Y5WdukJIh+OLG5ZGVPV6ONV3C7gghdj9kSqilYqRT7NEHu23sCQLAydMAU5RMPSQoxpSjpTGo4R1irAhJoHoTlBUL8H8+owVTlrdvACDB3O5nSyIYIPzY8mNBTAcPL5/bOkCCXxThQvlZTUMo6QYM6CQhScIwlvttpIyejtTYgB9xRjzwH8zCg5KZP5Pa0piNa9C8qKFxuWkiq5oThavv93KL/5jhWfhb9DzUvx77wn/h815f9TeR+Q9xl5HxP3SXEflvd5+RwRzynpHLTk7IQ8YLIiJwjtOZ7T9YMxmrk9x+H5SJakcviGlSKXCXzPtQ6h0fV1iDbk7QKuRDhKM1rJ0iNEzi0G0G3V11GtLmx1FABWUDggjgIAAJANAJ0BKjAAMAA+MRaGQqIhDHcygBABglqAJ0zXvoPw/JS+++nDm/kDeW+YDzuvQf5zPUAbw8v4prqA7+cf5zoIc3KoH5QAu0IdxUkU+91bdE2+hA04VgDdPBNBFk3PKeVcwalCbF1hPUzpslFn3JrAk8t1AAD+/Z5znOFrVgYCvKzzSu+jDwhHlN30GXx6nQPKjrTBn18xy7CJ/wDP+2PLMzvWPswledXQ+mEsJ03Y8OMI9tozr8GfJSrz8MBjSaeB1VK8P2K/4vwmL4fxn9TY5F6FP9HR7ddRweAOscIhzQy3zvGcuxBAgYi5ah/o/6Ag/fIfoNP/O3Dfz79f+OQPTWMGlQMLfKUrtuD42pI18WETWjX2RYJVqLNA1bCjvoOUbmiyIW/hU2ElnVmeFUbhObnRvDghkiwjuDx9bzfDIl3t99zBmBXRk/sU2+r0JxDprBYBOo016tMcBk08FS2XbNLYb/quuxwGbYu3z/PmpDKtQj5jyblhBNiJQvsZAnHof4kIkXdDVtGQrdy7biChtPukHDfWrHKGLfZnvFstmLufphhwzW3crf0Zhf5CFFnHVbUcLbfrFxfThvLL/OX/xhEzbz1c95qCk/bLqUkSkzLFzJAbFcmSJ8iCsPDIK0R4l7H8WJRY0q9WtKSA/P/VfCQiYiz567RvBUZ63f5j7VgslOxt9srIQojeKEw4YO+iSSUezeHvpjFfGICNUJHzE9cqMnXd+nyjv44C6HWf5KvYWNrYdFm6K53hi0okTOUY65bpZyUw9M7NgHOvdyMFfntkBJXdU49J174AX7+o82gP7GY4MMmkEiEiD5+3avYgHsFKJsxfsmiObz6a/f0miXC1s7V3fs7ZdQQAAA==",
@@ -3736,8 +3742,8 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.122.6';
-const BUILT='2026-10-07';
+const VERSION='3.123.0';
+const BUILT='2026-10-08';
 
 
 
@@ -3748,7 +3754,7 @@ const BUILT='2026-10-07';
 
 
 
-const WHATSNEW='Trainer ID, 서포트 티켓, 지역배틀 추천 영역이 빈 카드로 남는 문제를 수정했어요.';
+const WHATSNEW='이벤트 배틀에서 찬주와 정원을 선택하면 상대 포켓몬과 추천이 함께 바뀝니다.';
 
 
 
@@ -3981,14 +3987,17 @@ let cabinetMode='일반';
 
 
 
-const CABINET_LOCKED=['다맥'];
+const CABINET_LOCKED=[];
+let eventTrainerId='star-chanju';
 
 
 
 
 const trainerMode=()=>cabinetMode==='스페셜';
 
-const tbMode=()=>trainerMode()&&mode==='지역';
+const tbMode=()=>trainerMode()&&(mode==='지역'||mode==='다맥');
+const tbTrainers=()=>mode==='다맥'?EBATTLE:TBATTLE;
+const tbTrainer=()=>tbTrainers().find(t=>t.id===eventTrainerId)||tbTrainers()[0];
 
 const cabinetLock=()=>{ if(cabinetMode==='스페셜'&&CABINET_LOCKED.includes(mode)) mode='지역'; };
 
@@ -4082,6 +4091,7 @@ async function load(){
     if(saved&&saved.dmaxLv!=null) dmaxLv=saved.dmaxLv;
     if(saved&&saved.foeSets) foeSets={'1':saved.foeSets['1']!==false,'2':saved.foeSets['2']!==false};
     if(saved&&['일반','스페셜'].includes(saved.cabinetMode)) cabinetMode=saved.cabinetMode;
+    if(saved&&EBATTLE.some(t=>t.id===saved.eventTrainerId)) eventTrainerId=saved.eventTrainerId;
     if(saved&&saved.tagClass==='C'){ tagClass='B'; ownedMigrated=true; useClass(); }
     else if(saved&&CLASSES[saved.tagClass]){ tagClass=saved.tagClass; useClass(); }
     if(saved&&saved.megaTier) megaTier=saved.megaTier;
@@ -4113,6 +4123,7 @@ async function load(){
       if(saved&&saved.dmaxLv!=null) dmaxLv=saved.dmaxLv;
     if(saved&&saved.foeSets) foeSets={'1':saved.foeSets['1']!==false,'2':saved.foeSets['2']!==false};
     if(saved&&['일반','스페셜'].includes(saved.cabinetMode)) cabinetMode=saved.cabinetMode;
+    if(saved&&EBATTLE.some(t=>t.id===saved.eventTrainerId)) eventTrainerId=saved.eventTrainerId;
     if(saved&&saved.tagClass==='C'){ tagClass='B'; ownedMigrated=true; useClass(); }
     else if(saved&&CLASSES[saved.tagClass]){ tagClass=saved.tagClass; useClass(); }
       if(saved&&saved.megaTier) megaTier=saved.megaTier;
@@ -4144,7 +4155,7 @@ function saveFail(where,e){
   backend='memory'; renderBackend();
   try{ console.error('[스타더스트] 저장 실패:',where,e) }catch(_){}
 }
-const savePayload=()=>JSON.stringify({classModel:'power-score',ownedA:bagArr(ownedSets.A),ownedB:bagArr(ownedSets.B),chance,guideHidden,detail,bossRank,dmaxLv,megaTier,mode,foes,foeSets,cabinetMode,tagClass,dex:bagArr(dex),gver,picks,camOff:!camOn,camHits});
+const savePayload=()=>JSON.stringify({classModel:'power-score',ownedA:bagArr(ownedSets.A),ownedB:bagArr(ownedSets.B),chance,guideHidden,detail,bossRank,dmaxLv,megaTier,mode,foes,foeSets,cabinetMode,eventTrainerId,tagClass,dex:bagArr(dex),gver,picks,camOff:!camOn,camHits});
 async function saveWrite(){
   let p;
   try{ p=savePayload() }catch(e){ saveFail('값 만들기',e); return }
@@ -4170,6 +4181,7 @@ function renderBackend(){
   const err = saveErr ? ' · 저장 실패 — ' + saveErr : '';
   n.innerHTML=`<b>${a}</b><span>${b}${note}${err}</span>`;
 }
+
 
 
 const POWER={
@@ -5946,10 +5958,11 @@ function renderTB(tpn){
   
   
 
+  if(tbPick[0]==='v'&&!tbTrainer().vd[+tbPick.slice(1)]) tbPick='bal';
   const hs=tagClass==='B', pk=hs?tbPick:'own';
   
   const pins=[0,1,2].map(i=>myPin['j'+i]||null), chg=pins.some(Boolean);
-  const t=TBATTLE[0], T=t.start.map(i=>SUBBY.get(i)), R=SUBBY.get(t.rep), O=tbPlan(t,'own',pk==='own'?pins:[]), P=hs?tbPlan(t,'all',pk==='bal'||pk==='exp'?pins:[]):O,
+  const t=tbTrainer(), T=t.start.map(i=>SUBBY.get(i)), R=SUBBY.get(t.rep), O=tbPlan(t,'own',pk==='own'?pins:[]), P=hs?tbPlan(t,'all',pk==='bal'||pk==='exp'?pins:[]):O,
     UD=tbUdecks[t.id]||[], ui=pk[0]==='u'?+pk.slice(1):-1, uids=ui>=0&&(UD[ui]||[null,null,null]).map((id,i)=>pins[i]||id),
     vi=pk[0]==='v'?+pk.slice(1):-1, D=vi>=0?tbDeck(t,t.vd[vi].s.map((id,i)=>pins[i]||id))
       : ui>=0?(uids.every(Boolean)?tbDeck(t,uids):{s:uids.map(id=>id&&{c:MYBY.get(id),gk:null}),R:null})   
@@ -6085,7 +6098,7 @@ function renderBosses(){
     b.setAttribute('aria-pressed', String(b.dataset.s===setView)));
   document.querySelectorAll('#trRankSw button').forEach(b=>
     b.setAttribute('aria-pressed', String(b.dataset.r===bossRank)));
-  const special=cabinetMode==='스페셜',ml=special?{지역:['트레이너 배틀','4vs3'],다맥:['이벤트 배틀','1vs3'],스페셜:['이벤트 태그 배틀','6vs6']}:{지역:['지역배틀','3vs3'],다맥:['다이맥스 포켓몬','1vs3'],스페셜:['스페셜태그배틀','1vs6']};
+  const special=cabinetMode==='스페셜',ml=special?{지역:['트레이너 배틀','4vs3'],다맥:['이벤트 배틀','4vs3'],스페셜:['이벤트 태그 배틀','6vs6']}:{지역:['지역배틀','3vs3'],다맥:['다이맥스 포켓몬','1vs3'],스페셜:['스페셜태그배틀','1vs6']};
   document.querySelectorAll('.modesw button').forEach(b=>{b.setAttribute('aria-pressed',b.dataset.mode===mode);
     const x=ml[b.dataset.mode],off=special&&CABINET_LOCKED.includes(b.dataset.mode);b.disabled=off;
     b.innerHTML=x[0]+'<i>'+(off?'준비 중':x[1])+'</i>'});
@@ -6094,6 +6107,7 @@ function renderBosses(){
   const mn=document.getElementById('modeNote');
   
   const cn={지역:'트레이너와 4vs3 배틀을 진행합니다.',스페셜:'스타 트레이너들과 6vs6 배틀을 진행합니다.'};
+  cn.다맥=cn.지역;
   if(mn) mn.innerHTML=special&&cn[mode]||MODES[mode].note;
   ['6','5','R'].forEach(r=>document.getElementById('sr'+r).setAttribute('aria-pressed',bossRank===r));
   const lab = isR ? '레귤러' : `${setView}탄 ★${bossRank}`;
@@ -6115,19 +6129,19 @@ function renderBosses(){
   
   
   { const r=document.getElementById('sRot'); if(r) r.hidden=trn;
-    const s=document.getElementById('sSup'); if(s) s.hidden=spc||(trn&&!tbMode()); }
+    const s=document.getElementById('sSup'); if(s) s.hidden=trn?!tbMode():spc; }
   if(trn){
     if(sw) sw.hidden=true; if(rw) rw.hidden=true;
     g.innerHTML='';
     
-    (tbMode()?TBATTLE:TRAINERS).forEach(t=>{
-      const n=el(`<button class="btag trnr" aria-pressed="true">
-        <span class="face" style="background:linear-gradient(to top,rgba(8,5,22,.9) 0%,rgba(8,5,22,.35) 38%,transparent 60%),url(trainer/${t.id}.webp) center/cover${t.ar?';aspect-ratio:'+t.ar:''}">
+    (tbMode()?tbTrainers():TRAINERS).forEach(t=>{
+      const n=el(`<button class="btag trnr" data-trainer="${t.id}" aria-pressed="${!tbMode()||t.id===tbTrainer().id}">
+        <span class="face" style="background:linear-gradient(to top,rgba(8,5,22,.9) 0%,rgba(8,5,22,.35) 38%,transparent 60%),${EBATTLE.includes(t)?'var(--void)':'url(trainer/'+t.id+'.webp) center/cover'}${t.ar?';aspect-ratio:'+t.ar:''}">
           <span class="nm">${t.n.replace('&','&amp;')}</span>
         </span></button>`);
-      if(tbMode()) n.addEventListener('click',()=>goSection('sSup'));   
+      if(tbMode()) n.addEventListener('click',()=>{ if(t.id!==tbTrainer().id){ eventTrainerId=t.id; tbPick=t.vd.length?'v0':'bal'; for(let x=0;x<3;x++) delete myPin['j'+x]; save(); renderAll(); } goSection('sSup'); });   
       g.appendChild(n); });
-    const bn=document.getElementById('bossHint'); if(bn) bn.textContent=tbMode()?`트레이너 ${TBATTLE.length}명`:`스타 트레이너 ${TRAINERS.length}팀`;
+    const bn=document.getElementById('bossHint'); if(bn) bn.textContent=tbMode()?`트레이너 ${tbTrainers().length}명`:`스타 트레이너 ${TRAINERS.length}팀`;
   }
   
 
@@ -6135,7 +6149,7 @@ function renderBosses(){
   const tpn=document.getElementById('trnPlan'), tb=tbMode();
   
   { const h=document.querySelector('#sTrn .hint'), a=[...document.querySelectorAll('#sTrn>p.tab-note')].find(p=>!p.id), b=document.getElementById('tbNote');
-    if(h) h.textContent=tb?'트레이너 배틀 4vs3':'스타 트레이너 6vs6'; if(a) a.hidden=tb; if(b) b.hidden=!tb; }
+    if(h) h.textContent=tb?(mode==='다맥'?'이벤트 배틀 4vs3':'트레이너 배틀 4vs3'):'스타 트레이너 6vs6'; if(a) a.hidden=tb; if(b) b.hidden=!tb; }
   if(tpn&&tb) renderTB(tpn);
   if(tpn&&trn&&!tb){ { const t=TRAINERS[0], DK=tagClass==='B'&&t.decks, D=DK&&(trnDeck<0?{n:'내 태그',own:1}:trnDk(t,trnDeck)), P=trnPlan(t,[0,1,2,3,4,5].map(x=>myPin['t'+x]||null),D); let i=0;
     
@@ -6165,9 +6179,9 @@ function renderBosses(){
       trnDeck=t.decks.length+k; for(let x=0;x<6;x++) delete myPin['t'+x]; renderAll(); });
     bindMe(tpn); } }
   {const n=document.getElementById('now'), t=g.querySelector('[aria-pressed=true] .nm'),
-      stateName=trn?(tbMode()?(TBATTLE[0]&&TBATTLE[0].n):(TRAINERS[0]&&TRAINERS[0].n)):((BOSSES.find(b=>b.id===bossId)||{}).n),
+      stateName=trn?(tbMode()?tbTrainer().n:(TRAINERS[0]&&TRAINERS[0].n)):((BOSSES.find(b=>b.id===bossId)||{}).n),
       battleName=(t&&t.textContent)||stateName||'미선택';
-    if(n){n.textContent='';const meta=el('<div class=fl-now-meta></div>');['이번 배틀',cabinetMode,ml[mode][0],battleName,CLASSES[tagClass].label,...(spc||trn&&!tbMode()?[]:['서포트 '+(chance.sup?'ON':'OFF')])].forEach(v=>{const b=el('<span></span>');b.textContent=v;meta.appendChild(b)});n.appendChild(meta)}}
+    if(n){n.textContent='';const meta=el('<div class=fl-now-meta></div>');['이번 배틀',cabinetMode,ml[mode][0],battleName,CLASSES[tagClass].label,...((trn?!tbMode():spc)?[]:['서포트 '+(chance.sup?'ON':'OFF')])].forEach(v=>{const b=el('<span></span>');b.textContent=v;meta.appendChild(b)});n.appendChild(meta)}}
 }
 
 
@@ -6402,6 +6416,7 @@ function renderRotation(){
 
 const bat=w=>{const c=w.charCodeAt(w.length-1);
   return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28!==0};      
+
 
 
 
@@ -6728,7 +6743,7 @@ function closeQR(){const m=document.getElementById('qrModal'); if(m) m.hidden=tr
 function renderSupport(){
   const host=document.getElementById('sup'); if(!host)return;
   const tb=tbMode(), boss=POOL.find(p=>p.id===bossId),
-    foes=tb?[...TBATTLE[0].start.map(id=>SUBBY.get(id)),SUBBY.get(TBATTLE[0].rep)]:null,
+    foes=tb?[...tbTrainer().start.map(id=>SUBBY.get(id)),SUBBY.get(tbTrainer().rep)]:null,
     list=SUPPORT.map(s=>({...s,x:tb?foes.filter(f=>eff(s.t,f.t)>1).length:eff(s.t,boss.t)})).sort((a,b)=>b.x-a.x),
     top=list[0].x, low=list[list.length-1].x, flat=!tb&&top===low, best=list.filter(s=>s.x===top);
   host.innerHTML='';
@@ -7039,7 +7054,7 @@ function wipe(){
   
   ownedSets={A:DEFAULT_OWNED(), B:new Bag()}; useClass(); chance={...CHANCE_DEFAULTS};
   guideHidden=false; detail=0; bossRank='6';   
-  dmaxLv=5; megaTier='대성공'; mode='지역'; foes=[null,null]; foeSets={'1':true,'2':true}; cabinetMode='일반';
+  dmaxLv=5; megaTier='대성공'; mode='지역'; foes=[null,null]; foeSets={'1':true,'2':true}; cabinetMode='일반'; eventTrainerId='star-chanju';
   tagClass='A'; dex=new Bag(); gver={...GVER_DEFAULT};   
   picks={};                                              
   camOn=true;                                            
@@ -7266,7 +7281,7 @@ const preset=(st)=>{
   useClass(); save(); renderAll();
 };
 document.querySelectorAll('.modesw button').forEach(b=>
-  b.addEventListener('click',()=>{ if(b.disabled) return; mode=b.dataset.mode; hAutoSync(); save(); renderAll(); }));
+  b.addEventListener('click',()=>{ if(b.disabled) return; const prev=tbMode(); mode=b.dataset.mode; if(prev||tbMode()){ tbPick=tbTrainer().vd.length?'v0':'bal'; for(let x=0;x<3;x++) delete myPin['j'+x]; } hAutoSync(); save(); renderAll(); }));
 document.querySelectorAll('#foeRank button').forEach(b=>
   b.addEventListener('click',()=>{ if(mePickK){ meRank=b.dataset.r; renderMePick(); } else { foeRank=b.dataset.r; renderFoes(); } }));
 document.querySelectorAll('#foeSet button').forEach(b=>
@@ -7902,7 +7917,7 @@ function hRoulClose(){ const m=hRoulM(); if(m) m.hidden=true; hRoulAt=null; }
       return;
     }
     hist.push({m:mode,got:null,ball:null,ts:Date.now(),gver:gverStr(),tid:tidCur,g:null,s1:null,b:null,s2:null,
-               tr:(tbMode()?TBATTLE:TRAINERS)[0].n,score:pts,roul:hRoulDraft,dk:trnLast&&trnLast.dk,my:trnLast&&trnLast.my});
+               tr:tbMode()?tbTrainer().n:TRAINERS[0].n,score:pts,roul:hRoulDraft,dk:trnLast&&trnLast.dk,my:trnLast&&trnLast.my});
     track('rec_save'); hStore(); renderHList(); si.value=''; hRoulDraft=null; renderHCur();
     if(sn) sn.textContent=hist.length+'배틀째로 기록했습니다 · 점수 '+pts.toLocaleString();
   }); }
@@ -10247,4 +10262,5 @@ if(location.protocol==='https:' && 'serviceWorker' in navigator){
 </script>
 </body>
 </html>
+
 
