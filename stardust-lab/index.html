@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.121.5">
+<meta name="version" content="3.122.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -3598,6 +3598,8 @@ const addRouletteObs=c=>{ const dm=gimBoard(c.id,'다이맥스'), mg=gimBoard(c.
 
 const BOSSES=POOL.filter(p=>p.r==='6'||p.r==='5'||p.r==='R');
 
+const HS_BOSS_PRESETS={"dmax":{"1-6-마기라스":[[[[64,56,51],[[64,0,0],[56,0,0],[51,1,0]]],3],[[[64,10,51],[[64,0,0],[10,0,0],[51,1,0]]],3]],"1-6-메타그로스":[[[[17,109,21],[[17,1,0],[109,0,0],[21,0,0]]],3],[[[17,109,11],[[17,1,0],[109,0,0],[11,0,0]]],3]],"1-5-피카츄":[[[[143,132,43],[[143,0,0],[132,0,0],[143,0,0]]],3],[[[84,132,143],[[84,0,0],[132,0,0],[143,0,0]]],3]],"1-5-플라이곤":[[[[46,64,43],[[46,0,0],[64,0,0],[46,0,0]]],3],[[[46,64,48],[[46,0,0],[64,0,0],[48,0,0]]],3]],"2-6-잠만보":[[[[51,41,27],[[51,0,0],[41,1,0],[51,1,0]]],3],[[[39,41,51],[[39,0,0],[41,1,0],[51,1,0]]],3]],"2-6-짜랑고우거":[[[[64,14,43],[[64,0,0],[14,0,1],[64,0,0]]],3],[[[64,48,43],[[64,0,0],[48,0,0],[64,0,0]]],3]],"2-5-마기라스":[[[[64,56,51],[[64,0,0],[56,0,0],[51,1,0]]],3],[[[64,10,51],[[64,0,0],[10,0,0],[51,1,0]]],3]],"2-5-메타그로스":[[[[21,109,16],[[21,0,0],[109,0,0],[21,0,0]]],3],[[[15,109,21],[[15,0,0],[109,0,0],[21,0,0]]],3]]},"special":{"1-6-뮤츠":[[[[15,23,53],[[15,0,0],[23,0,0],[53,1,0]]],[[15,23,53],[[15,0,0],[23,0,0],[53,1,0]]],3],[[[15,23,53],[[15,0,0],[23,0,0],[53,1,0]]],[[15,53,65],[[15,0,0],[53,1,0],[65,0,0]]],3]],"1-6-뮤":[[[[15,69,53],[[15,0,0],[69,0,0],[53,1,0]]],[[15,69,53],[[15,0,0],[69,0,0],[53,1,0]]],3],[[[15,69,53],[[15,0,0],[69,0,0],[53,1,0]]],[[15,45,53],[[15,0,0],[45,1,0],[53,1,0]]],3]],"1-6-자시안":[[[[21,109,16],[[21,0,0],[109,0,0],[21,0,0]]],[[21,109,16],[[21,0,0],[109,0,0],[21,0,0]]],3],[[[21,109,16],[[21,0,0],[109,0,0],[21,0,0]]],[[17,109,21],[[17,1,0],[109,0,0],[21,0,0]]],3]],"1-6-자마젠타":[[[[17,109,51],[[17,1,0],[109,0,0],[51,1,0]]],[[17,109,51],[[17,1,0],[109,0,0],[51,1,0]]],3],[[[17,109,51],[[17,1,0],[109,0,0],[51,1,0]]],[[17,109,19],[[17,1,0],[109,0,0],[19,1,0]]],3]],"1-6-마기라스":[[[[64,56,51],[[64,0,0],[56,0,0],[51,1,0]]],[[64,56,51],[[64,0,0],[56,0,0],[51,1,0]]],3],[[[64,56,51],[[64,0,0],[56,0,0],[51,1,0]]],[[64,10,51],[[64,0,0],[10,0,0],[51,1,0]]],3]],"1-6-메타그로스":[[[[17,109,21],[[17,1,0],[109,0,0],[21,0,0]]],[[17,109,21],[[17,1,0],[109,0,0],[21,0,0]]],3],[[[17,109,21],[[17,1,0],[109,0,0],[21,0,0]]],[[17,109,11],[[17,1,0],[109,0,0],[11,0,0]]],3]],"1-6-미라이돈":[[[[17,64,2],[[17,0,0],[64,0,0],[17,1,0]]],[[17,64,2],[[17,0,0],[64,0,0],[17,1,0]]],3],[[[17,64,2],[[17,0,0],[64,0,0],[17,1,0]]],[[17,46,64],[[17,1,0],[46,0,0],[64,0,0]]],3]],"1-6-이상해꽃":[[[[109,16,43],[[109,0,0],[16,1,0],[109,0,0]]],[[14,109,21],[[14,0,1],[109,0,0],[21,0,0]]],3],[[[14,109,21],[[14,0,1],[109,0,0],[21,0,0]]],[[14,109,21],[[14,0,1],[109,0,0],[21,0,0]]],3]],"1-6-리자몽":[[[[18,61,28],[[18,0,0],[61,0,0],[18,1,0]]],[[18,61,28],[[18,0,0],[61,0,0],[18,1,0]]],3],[[[18,61,28],[[18,0,0],[61,0,0],[18,1,0]]],[[18,61,50],[[18,0,0],[61,0,0],[50,1,0]]],3]],"1-6-거북왕":[[[[61,18,33],[[61,0,0],[18,1,0],[61,0,0]]],[[61,18,33],[[61,0,0],[18,1,0],[61,0,0]]],3],[[[61,18,33],[[61,0,0],[18,1,0],[61,0,0]]],[[61,50,33],[[61,0,0],[50,1,0],[61,0,0]]],3]],"2-6-가이오가":[[[[18,54,33],[[18,1,0],[54,1,0],[33,0,0]]],[[18,54,33],[[18,1,0],[54,1,0],[33,0,0]]],3],[[[18,54,33],[[18,1,0],[54,1,0],[33,0,0]]],[[50,54,33],[[50,1,0],[54,1,0],[33,0,0]]],3]],"2-6-그란돈":[[[[56,13,34],[[56,0,0],[13,0,0],[56,0,0]]],[[56,13,34],[[56,0,0],[13,0,0],[56,0,0]]],3],[[[56,13,34],[[56,0,0],[13,0,0],[56,0,0]]],[[10,13,56],[[10,0,0],[13,0,0],[56,0,0]]],3]],"2-6-코라이돈":[[[[64,14,2],[[64,0,0],[14,0,1],[64,0,0]]],[[64,14,2],[[64,0,0],[14,0,1],[64,0,0]]],3],[[[64,14,2],[[64,0,0],[14,0,1],[64,0,0]]],[[64,48,2],[[64,0,0],[48,0,0],[64,0,0]]],3]],"2-6-피카츄":[[[[143,84,27],[[143,0,0],[84,0,0],[143,0,0]]],[[143,84,27],[[143,0,0],[84,0,0],[143,0,0]]],3],[[[143,84,27],[[143,0,0],[84,0,0],[143,0,0]]],[[143,132,27],[[143,0,0],[132,0,0],[143,0,0]]],3]],"2-6-잠만보":[[[[27,41,51],[[27,0,0],[41,1,0],[51,1,0]]],[[27,41,51],[[27,0,0],[41,1,0],[51,1,0]]],3],[[[27,41,51],[[27,0,0],[41,1,0],[51,1,0]]],[[41,104,27],[[41,1,0],[104,0,0],[27,0,0]]],3]],"2-6-짜랑고우거":[[[[64,14,43],[[64,0,0],[14,0,1],[64,0,0]]],[[64,14,43],[[64,0,0],[14,0,1],[64,0,0]]],3],[[[64,14,43],[[64,0,0],[14,0,1],[64,0,0]]],[[64,48,43],[[64,0,0],[48,0,0],[64,0,0]]],3]],"2-6-가디안":[[[[15,42,53],[[15,0,0],[42,0,0],[53,1,0]]],[[15,42,53],[[15,0,0],[42,0,0],[53,1,0]]],3],[[[15,42,53],[[15,0,0],[42,0,0],[53,1,0]]],[[53,42,2],[[53,0,0],[42,0,0],[53,1,0]]],3]],"2-6-레시라무":[[[[49,17,41],[[49,0,0],[17,0,0],[49,0,0]]],[[49,17,41],[[49,0,0],[17,0,0],[49,0,0]]],3],[[[49,17,41],[[49,0,0],[17,0,0],[49,0,0]]],[[49,19,41],[[49,0,0],[19,0,0],[49,0,0]]],3]],"2-6-제크로무":[[[[64,13,17],[[64,0,0],[13,0,0],[17,1,0]]],[[64,13,17],[[64,0,0],[13,0,0],[17,1,0]]],3],[[[64,13,17],[[64,0,0],[13,0,0],[17,1,0]]],[[64,19,17],[[64,0,0],[19,1,0],[17,1,0]]],3]],"2-6-큐레무":[[[[64,51,2],[[64,0,0],[51,1,0],[64,0,0]]],[[49,51,64],[[49,0,0],[51,1,0],[64,0,0]]],3],[[[51,64,2],[[51,0,0],[64,0,0],[51,1,0]]],[[51,64,2],[[51,0,0],[64,0,0],[51,1,0]]],3]]}};
+
 
 
 const TRAINERS=[{id:'gayoung-jinyoung',n:'가영 & 진영',   
@@ -3729,7 +3731,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.121.5';
+const VERSION='3.122.0';
 const BUILT='2026-10-07';
 
 
@@ -3741,7 +3743,7 @@ const BUILT='2026-10-07';
 
 
 
-const WHATSNEW='3턴째에도 세 번째 태그를 자유롭게 공격에 쓸 수 있게 추천을 고쳤어요.';
+const WHATSNEW='하이스코어 다이맥스는 3장×2세트, 스페셜태그배틀은 6장×2세트를 전체 태그 기준으로 미리 추천해요.';
 
 
 
@@ -4449,6 +4451,10 @@ const RANDOM={c:{id:'__rand',n:'랜덤 태그',s:'랜덤',r:'?',t:[],mv:[],g:nul
   move:null,mult:1,d:1,dmg:0,pw:0,bonus:0,raw:0,atk:0,def:0,s:0,rand:true};
 
 
+const tagComboKey=rows=>(rows||[]).map(r=>r&&r.c?r.c.id:'').sort().join('|');
+const sameTagCombo=(a,b)=>!!a&&!!b&&a.length===b.length&&tagComboKey(a)===tagComboKey(b);
+
+
 const seqCanFollow=(a,b,bag=owned)=>a.id!==b.id||bag.cnt(a.id)>=2;
 const seqCan3=(a,b,c,bag=owned)=>seqCanFollow(a,b,bag)&&seqCanFollow(b,c,bag);
 
@@ -4540,9 +4546,7 @@ function buildSeq(boss,force,mixed=false,preferSafe=true,scoreOnly=false,avoid=n
     const cards=all;
     const M=new Map(cards.map(c=>[c.id,movesOf(c).map(o=>({...o,h:hsMatchMetrics({c:o.c,m:o.m,mult:o.r.mult,mega:o.gk==='메가진화'},boss)}))]));
     let best=null, bk=null, bestSafe=false, bestActual=0;
-    const samePlan=(rows,p)=>p&&rows.length===p.length&&rows.every((o,i)=>{
-      const q=p[i]; return q&&!o.rand&&!q.rand&&o.c.id===q.c.id&&o.m.n===(q.move&&q.move.n)&&!!o.r.mega===!!q.mega;
-    });
+    const samePlan=(rows,p)=>p&&Array.isArray(p[0])?p.some(q=>sameTagCombo(rows,q)):sameTagCombo(rows,p);
     
 
 
@@ -4573,7 +4577,7 @@ function buildSeq(boss,force,mixed=false,preferSafe=true,scoreOnly=false,avoid=n
       }
       for(let i=lo;i<l.length;i++){const c=l[i],d=c.r.dmg;
         if(d<minD||d>=maxD)continue;
-        if(scoreOnly&&samePlan([a,b,c],avoid))continue;
+        if(avoid&&samePlan([a,b,c],avoid))continue;
         return c;
       }
       return null;
@@ -5319,9 +5323,7 @@ function assignPlans(cols, foeOf, boss, force, pins,mixed=false,scoreOnly=false,
     return [bsv,tier,-dmg,-bdmg,-sp,inc];
   };
   const better=(a,b)=>{ for(let i=0;i<a.length;i++){ if(a[i]!==b[i]) return a[i]<b[i]; } return false; };
-  const sameSel=(a,b)=>!!a&&!!b&&a.length===b.length&&a.every((r,i)=>{
-    const q=b[i]; return (!r&&!q)||(r&&q&&r.c.id===q.c.id&&(r.m&&r.m.n)===(q.m&&q.m.n));
-  });
+  const sameSel=(a,b)=>sameTagCombo(a,b);
   const n=cols.length;
   
   const solve=(lists0,pinB,need)=>{
@@ -5678,7 +5680,7 @@ function renderFoes(){
   const pins=cols.map(at=>myPin['r'+at]||null),
     assigned=assignPlans(cols,foeOf,boss,pk?pk.id:null,pins),
     scoreAssigned=tagClass==='B'?assignPlans(cols,foeOf,boss,pk?pk.id:null,pins,false,true,assigned):null,
-    sameAssigned=!!scoreAssigned&&assigned.length===scoreAssigned.length&&assigned.every((r,i)=>r&&scoreAssigned[i]&&r.c.id===scoreAssigned[i].c.id&&(r.m&&r.m.n)===(scoreAssigned[i].m&&scoreAssigned[i].m.n));
+    sameAssigned=!!scoreAssigned&&sameTagCombo(assigned,scoreAssigned);
   const info=document.getElementById('foePlans');if(info){
     info.dataset.mixed=assigned.mixed?'1':'';info.dataset.failed=assigned.failed?'1':'';
     info.dataset.scoreFailed=scoreAssigned&&scoreAssigned.failed?'1':'';
@@ -6299,6 +6301,43 @@ function slotHTML(r,i,reuse,boss,spare){
 }
 
 
+const hsPresetRow=(x,boss)=>{const c=x&&MYPOOL[x[0]],m=c&&c.mv[x[1]];if(!c||!m)return null;const pc=chance,pd=dmaxLv;chance={...CHANCE_DEFAULTS,pos:2,sup:mode==='다맥'?1:0,'Z기술':70};dmaxLv=5;try{return evalMove(c,boss,m,!!x[2])}finally{chance=pc;dmaxLv=pd}};
+function renderHsBossPreset(boss,rot,note){
+  const sets=mode==='다맥'?HS_BOSS_PRESETS.dmax[boss.id]:HS_BOSS_PRESETS.special[boss.id];
+  rot.dataset.mixed='';rot.dataset.failed='';rot.dataset.tight='';rot.innerHTML='';
+  if(!sets||sets.length!==2){
+    rot.dataset.failed='1';rot.innerHTML='<p class="empty">이 보스의 사전 추천 조합이 없습니다.</p>';
+    note.textContent='전체 태그 기준 사전 계산 데이터를 확인해 주세요.';return;
+  }
+  const laneCell=(ci,plan)=>{
+    const c=MYPOOL[ci],used=c&&plan.some(r=>r&&r.c.id===c.id),art=c&&tagArt(c),
+      bg=art?'var(--art) center/cover':c?'linear-gradient(135deg,'+COLOR[c.t[0]]+'CC,rgba(12,7,34,.9))':'rgba(30,19,73,.8)';
+    return '<div class="lane-c'+(used?'':' dim')+' '+(c?artCls(c):'')+'"><span class="lane-f"><span class="lane-i" style="background:'+bg+'"></span></span>'
+      +'<span class="lane-t"><span class="ln">'+(c?c.n:'—')+'</span><span class="lt'+(used?'':' sp')+'">'+(used?'공격':'예비')+'</span></span></div>';
+  };
+  const pack=(p,label,planLabel)=>{
+    const plan=p[1].map(x=>hsPresetRow(x,boss));if(plan.some(x=>!x))return null;
+    rot.appendChild(el('<div class="lane"><span class="lane-h">'+label+' <i>가져갈 태그 3장</i></span><div class="lane-g">'+p[0].map(ci=>laneCell(ci,plan)).join('')+'</div></div>'));
+    plan.forEach((r,i)=>{const n=el(slotHTML(r,i,i===2&&plan[0].c.id===r.c.id,boss));n.dataset.plan=planLabel;rot.appendChild(n)});
+    return plan;
+  };
+  sets.forEach((set,i)=>{
+    const no=i+1;
+    rot.appendChild(el('<p class="tab-note"><b>'+(no===1?'①':'②')+' 하이스코어 조합</b> · 전체 태그 기준 사전 계산</p>'));
+    if(mode==='다맥'){
+      const plan=pack(set[0],'3장 조합',no+'세트');
+      if(plan)rot.appendChild(el('<div class="total"><div class="tsum on"><span class="tl">'+(set[1]?set[1]+'턴 격파':'격파 미달')+'</span><b>'+Math.round(plan.reduce((a,r)=>a+(r.dmg||0),0))+'</b><span class="tl2">3턴 화력지수 합</span></div></div>'));
+    }else{
+      const a=pack(set[0],'1P · 3장',no+'세트 · 1P'),b=pack(set[1],'2P · 3장',no+'세트 · 2P');
+      if(a&&b)rot.appendChild(el('<div class="total"><div class="tsum on"><span class="tl">'+(set[2]?set[2]+'턴 격파':'격파 미달')+'</span><b>'+Math.round([...a,...b].reduce((v,r)=>v+(r.dmg||0),0))+'</b><span class="tl2">2인 6회 공격 화력지수 합</span></div></div>'));
+    }
+  });
+  note.innerHTML=mode==='다맥'
+    ?'보유 태그·지정 태그와 무관한 <b>전체 태그 기준 사전 계산</b>입니다. 룰렛 최대칸 · 서포트 티켓 사용 · 다이맥스 Lv5 기준입니다.'
+    :'보유 태그·지정 태그와 무관한 <b>전체 태그 기준 사전 계산</b>입니다. 1P 3장 + 2P 3장으로 보스 실제 HP ×2를 함께 공격하며, 룰렛 최대칸 · 서포트 티켓 없음 기준입니다.';
+}
+
+
 function renderRotation(){
   const box=document.getElementById('rotBox');
   
@@ -6308,6 +6347,9 @@ function renderRotation(){
   if(mode==='지역') return;
   const boss=POOL.find(p=>p.id===bossId);
   const rot=document.getElementById('rot'), note=document.getElementById('rotNote');
+  
+
+  if(tagClass==='B'&&!trainerMode()&&(mode==='다맥'||mode==='스페셜')){renderHsBossPreset(boss,rot,note);return;}
   rot.dataset.mixed='';rot.dataset.failed='';rot.dataset.tight='';
   const base=ranked(boss);
   if(!base.length&&!(tagClass==='B'&&ownedSets.A.size)){
@@ -8585,7 +8627,6 @@ document.getElementById('hWipeYes').addEventListener('click',()=>{
   hist=[]; hStore(); renderHList(); hWipeHide();
 });
 renderHRange(); renderHCur(); renderHList();
-
 
 
 
