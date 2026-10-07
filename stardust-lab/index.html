@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.122.5">
+<meta name="version" content="3.122.6">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -3736,7 +3736,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.122.5';
+const VERSION='3.122.6';
 const BUILT='2026-10-07';
 
 
@@ -3748,7 +3748,7 @@ const BUILT='2026-10-07';
 
 
 
-const WHATSNEW='지역배틀 하이스코어태그에서 안정형은 바로 보이고, 하이스코어형만 접어서 시작하도록 고쳤어요.';
+const WHATSNEW='Trainer ID, 서포트 티켓, 지역배틀 추천 영역이 빈 카드로 남는 문제를 수정했어요.';
 
 
 
@@ -6164,7 +6164,10 @@ function renderBosses(){
       udecks[k]=P.s.map(r=>r&&r.c.id); try{ localStorage.setItem(UKEY,JSON.stringify(udecks)); }catch(e){}
       trnDeck=t.decks.length+k; for(let x=0;x<6;x++) delete myPin['t'+x]; renderAll(); });
     bindMe(tpn); } }
-  {const n=document.getElementById('now'),t=g.querySelector('[aria-pressed=true] .nm');if(n){n.textContent='';const meta=el('<div class=fl-now-meta></div>');['이번 배틀',cabinetMode,ml[mode][0],t.textContent,CLASSES[tagClass].label,...(spc||trn&&!tbMode()?[]:['서포트 '+(chance.sup?'ON':'OFF')])].forEach(v=>{const b=el('<span></span>');b.textContent=v;meta.appendChild(b)});n.appendChild(meta)}}
+  {const n=document.getElementById('now'), t=g.querySelector('[aria-pressed=true] .nm'),
+      stateName=trn?(tbMode()?(TBATTLE[0]&&TBATTLE[0].n):(TRAINERS[0]&&TRAINERS[0].n)):((BOSSES.find(b=>b.id===bossId)||{}).n),
+      battleName=(t&&t.textContent)||stateName||'미선택';
+    if(n){n.textContent='';const meta=el('<div class=fl-now-meta></div>');['이번 배틀',cabinetMode,ml[mode][0],battleName,CLASSES[tagClass].label,...(spc||trn&&!tbMode()?[]:['서포트 '+(chance.sup?'ON':'OFF')])].forEach(v=>{const b=el('<span></span>');b.textContent=v;meta.appendChild(b)});n.appendChild(meta)}}
 }
 
 
