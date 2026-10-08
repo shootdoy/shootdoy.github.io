@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.123.1">
+<meta name="version" content="3.123.2">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -3631,7 +3631,7 @@ const TBATTLE=[{id:'junior-junhyeok',n:'주니어 트레이너 준혁',ar:'480/2
 
 
 const EBATTLE=[
-  {id:'star-chanju',n:'스타 트레이너 찬주',img:'star-chanju.jpeg',ar:'1759/758',start:['2-5-님피아','1-5-플라이곤','1-5-피죤투'],rep:'1-4-인텔리레온',vd:[]},
+  {id:'star-chanju',n:'스타 트레이너 찬주',img:'star-chanju.jpeg',ar:'1759/758',start:['2-5-님피아','1-5-플라이곤','1-5-피죤투'],rep:'1-4-인텔리레온',activeRoutes:[['1-5-플라이곤','1-4-인텔리레온','1-5-피죤투'],['1-5-플라이곤','1-4-인텔리레온','2-5-님피아']],vd:[]},
   {id:'junior-jeongwon',n:'주니어 트레이너 정원',img:'junior-jeongwon.jpeg',ar:'1793/774',start:['2-5-리피아','2-5-엠페르트','1-5-거대코뿌리'],rep:'2-5-메타그로스',vd:[]}
 ];
 
@@ -3742,7 +3742,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.123.1';
+const VERSION='3.123.2';
 const BUILT='2026-10-08';
 
 
@@ -3754,7 +3754,7 @@ const BUILT='2026-10-08';
 
 
 
-const WHATSNEW='이벤트 배틀의 찬주와 정원 선택 버튼에 트레이너 사진을 넣었어요.';
+const WHATSNEW='찬주전 추천이 플라이곤과 인텔리레온을 상대하는 순서를 우선 고려해요.';
 
 
 
@@ -4934,15 +4934,19 @@ const tbLane=(c,f,gk=null)=>{
   return {...m,f,gk,au:m.atk+sup,p:m.dmg*(m.atk+sup)/m.atk*KHP*2.4/f.hp,hs:h,rou:(h.roulette||0)+sup};
 };
 
-const tbSim=(s,t,ln,FC)=>{ const F=[...t.start.map(i=>SUBBY.get(i)),SUBBY.get(t.rep)], at=[0,1,2], fh=[1,1,1,0], fg=[0,0,0,0], ko=[0,0,0,0],
-    mh=s.map(r=>r?1:0), gu=s.map(()=>0), events=[];
+const tbSim=(s,trainer,ln,FC,opt={})=>{ const F=[...trainer.start.map(i=>SUBBY.get(i)),SUBBY.get(trainer.rep)], at=[0,1,2], fh=[1,1,1,0], fg=[0,0,0,0], ko=[0,0,0,0],
+    mh=s.map(r=>r?1:0), gu=s.map(()=>0), events=[], fainted=[];
   let rs=-1, rt=0;   
   const nx=(ok,t)=>{ for(let d=0;d<3;d++){ const x=(t+d)%3; if(ok(x)) return x; } return -1; };
   
   const up=n=>{ for(let x=0;x<3;x++){ const j=at[x]; if(fh[j]<=0&&!ko[j]){ ko[j]=n; if(rs<0){ rs=x; rt=n; at[x]=3; fh[3]=1; } } } };
   for(let t=0;t<3;t++){
-    const fx=nx(x=>fh[at[x]]>0,t), mx=nx(i=>mh[i]>0,t); if(fx<0||mx<0) break;
-    const j=at[fx], f=F[j], r=s[mx], first=true;   
+    const wanted=opt.route&&opt.route[t], targetSlot=wanted?at.findIndex(j=>F[j].id===wanted&&fh[j]>0):-1;
+    const flygonIndex=F.findIndex(f=>f.id==='1-5-플라이곤');
+    const remainingFlygon=at.findIndex(j=>j===flygonIndex&&fh[j]>0);
+    const fx=targetSlot>=0?targetSlot:(opt.route&&t===1&&remainingFlygon>=0?remainingFlygon:nx(x=>fh[at[x]]>0,t));
+    const mx=nx(i=>mh[i]>0,t); if(fx<0||mx<0) break;
+    const j=at[fx], f=F[j], r=s[mx], first=!(opt.enemyFirst||[]).includes(t+1);   
     const hit=()=>{ if(mh[mx]<=0||fh[j]<=0) return;
       const l=r.gk&&!gu[mx]?(gu[mx]=1,tbLane(r.c,f,r.gk)):ln(r.c,f); if(!l) return;
       const ev={turn:t+1,card:r.c.n,foe:f.n,energy:r.c.e,foeEnergy:f.e,gap:f.e-r.c.e,low:r.c.e<f.e,weak:l.mult>=2,
@@ -4953,9 +4957,11 @@ const tbSim=(s,t,ln,FC)=>{ const F=[...t.start.map(i=>SUBBY.get(i)),SUBBY.get(t.
       events.push(ev); up(t+1); };
     
     const foeHit=()=>{ if(fh[j]<=0) return; const m=mh[mx]>0?mx:mh.findIndex(h=>h>0); if(m<0) return;
-      mh[m]-=trnFH(FC,f,s[m].c,!fg[j]); s.forEach((q,i)=>{ if(q&&i!==m&&mh[i]>0) mh[i]-=.6*trnFH(FC,f,q.c,false); }); fg[j]=1; };
+      const before=mh.slice();
+      mh[m]-=trnFH(FC,f,s[m].c,!fg[j]); s.forEach((q,i)=>{ if(q&&i!==m&&mh[i]>0) mh[i]-=.6*trnFH(FC,f,q.c,false); }); fg[j]=1;
+      mh.forEach((h,i)=>{ if(s[i]&&before[i]>0&&h<=0) fainted.push({turn:t+1,tag:s[i].c.n,bench:i!==m,slot:i}); }); };
     if(first){ hit(); foeHit(); } else { foeHit(); hit(); } }
-  return {win:ko.every(Boolean)&&mh.some(x=>x>=0.3), mh, ko, rs, rt, events,
+  return {win:ko.every(Boolean)&&mh.some(x=>x>=0.3), mh, ko, rs, rt, events, fainted, needsReplacement:fainted.some(x=>x.bench),
     rem:fh.reduce((a,x,i)=>a+(i===3&&rs<0?1:Math.max(0,x)),0)}; };
 
 
@@ -4967,6 +4973,21 @@ const tbCount=R=>{ const v={lw:0,low:0,att:0,post:0,gap:0,weak:0,dd:0};
 const tbKey={
   bal:R=>{ const v=tbCount(R); return [+R.win,-R.rem,v.lw,v.low,v.att,v.post,v.gap,v.weak,v.dd]; },
   exp:R=>{ const v=tbCount(R); return [v.lw,v.low,v.gap,v.att,v.post,v.weak,+R.win,-R.rem,v.dd]; }};
+const tbScenarios=t=>t.activeRoutes?t.activeRoutes.flatMap((route,i)=>[
+  {label:(i?'님피아':'피죤투')+'·선공',route,enemyFirst:[]},
+  {label:(i?'님피아':'피죤투')+'·상대 선공',route,enemyFirst:[1,2]}
+]):[{}];
+const tbEval=(s,t,ln,FC)=>{
+  const runs=tbScenarios(t).map(opt=>({opt,R:tbSim(s,t,ln,FC,opt)}));
+  if(runs.length===1){ const R=runs[0].R; return {bal:{s,R,k:tbKey.bal(R)},exp:{s,R,k:tbKey.exp(R)}}; }
+  const allWin=runs.every(x=>x.R.win),anyWin=runs.some(x=>x.R.win);
+  const worst=runs.reduce((a,x)=>hsMatchCmpSpecial(tbKey.bal(a.R),tbKey.bal(x.R))<0?x:a);
+  const best=runs.reduce((a,x)=>hsMatchCmpSpecial(tbKey.exp(a.R),tbKey.exp(x.R))>0?x:a);
+  const detail=runs.map(x=>({name:x.opt.label,win:x.R.win,remaining:x.R.rem,benchFaints:x.R.fainted.filter(y=>y.bench).length}));
+  const enrich=x=>({...x.R,allWin,anyWin,scenarios:detail,scenarioName:x.opt.label,supportDamageUnmodeled:!!chance.sup});
+  return {bal:{s,R:enrich(worst),k:[+allWin,+anyWin,...tbKey.bal(worst.R)]},
+          exp:{s,R:enrich(best),k:[...tbKey.exp(best.R),+anyWin,+allWin]}};
+};
 
 const tbRows=c=>[{c,gk:null},...trnGk(c).map(g=>({c,gk:g}))];
 
@@ -4975,7 +4996,7 @@ const tbOk=(q,pn=[])=>{ const g=q.map(r=>r.gk).filter(Boolean), id=q.filter((r,i
 function tbDeck(t,ids){ const FC=new Map(), LC=new Map(), ln=(c,f)=>{ const x=c.id+'|'+f.id; if(!LC.has(x)) LC.set(x,tbLane(c,f)); return LC.get(x); };
   const C=ids.map(i=>MYBY.get(i)); if(C.some(c=>!c)) return null; let best=null;
   for(const a of tbRows(C[0])) for(const b of tbRows(C[1])) for(const d of tbRows(C[2])){ const q=[a,b,d]; if(!tbOk(q,[1,1,1])) continue;   
-    const R=tbSim(q,t,ln,FC), k=tbKey.bal(R); if(!best||hsMatchCmpSpecial(k,best.k)<0) best={s:q,R,k}; }
+    const x=tbEval(q,t,ln,FC).bal; if(!best||hsMatchCmpSpecial(x.k,best.k)<0) best=x; }
   return best; }
 
 
@@ -4986,18 +5007,36 @@ function tbPlan(t,src,pins=[]){
   const pn=[0,1,2].map(i=>pins[i]&&MYBY.get(pins[i])||null);
   const mk=[t.id,src,tagClass,chance.sup,chance.pos,chance['Z기술'],dmaxLv,megaTier,src==='own'?owned.ids().join(','):'',pn.map(c=>c&&c.id)].join('§');
   if(tbMemo.has(mk)) return tbMemo.get(mk);
-  const T=t.start.map(i=>SUBBY.get(i)), R=SUBBY.get(t.rep), pool=classPool().filter(p=>src==='all'||owned.has(p.id));
+  const T=(t.activeRoutes?t.activeRoutes[0]:t.start).map(i=>SUBBY.get(i)), R=SUBBY.get(t.rep), pool=classPool().filter(p=>src==='all'||owned.has(p.id));
   const FC=new Map(), LC=new Map(), ln=(c,f)=>{ const x=c.id+'|'+f.id; if(!LC.has(x)) LC.set(x,tbLane(c,f)); return LC.get(x); };
   const tk=pool.map(c=>[c,[...T,R].reduce((a,f)=>a+hitAny(c,f),0)]).sort((x,y)=>x[1]-y[1]).slice(0,4).map(x=>x[0]);   
-  const cand=T.map((f,i)=>{ if(pn[i]) return tbRows(pn[i]); const o=pool.map(c=>({c,a:ln(c,f),b:ln(c,R)})).filter(x=>x.a);
-    const hs=x=>[+x.a.hs.lowWeak+ +(x.b&&x.b.hs.lowWeak), +x.a.hs.low+ +(x.b&&x.b.hs.low), Math.min(1,x.a.p)],
-      pw=x=>[Math.min(1,x.a.p), x.b?Math.min(1,x.b.p):0];
+  const cand=T.map((f,i)=>{ if(pn[i]) return tbRows(pn[i]);
+    const targets=t.activeRoutes&&i===2?t.activeRoutes.map(route=>SUBBY.get(route[2])):[f];
+    const o=pool.map(c=>({c,a:ln(c,f),alternates:targets.map(foe=>ln(c,foe)).filter(Boolean),b:ln(c,R)})).filter(x=>x.a);
+    const hs=x=>[x.alternates.reduce((v,l)=>v+ +l.hs.lowWeak,0)+ +(x.b&&x.b.hs.lowWeak),
+      x.alternates.reduce((v,l)=>v+ +l.hs.low,0)+ +(x.b&&x.b.hs.low),
+      Math.min(...x.alternates.map(l=>Math.min(1,l.p)))],
+      pw=x=>[Math.min(...x.alternates.map(l=>Math.min(1,l.p))), x.b?Math.min(1,x.b.p):0];
     const top=g=>[...o].sort((x,y)=>hsMatchCmpSpecial(g(x),g(y))).slice(0,TB_TOP).map(x=>x.c);
     return [...new Set([...top(hs),...top(pw),...tk])].flatMap(tbRows); });
-  const best={bal:null,exp:null};
+  const best={bal:null,exp:null}, expDistinct=[];
   for(const a of cand[0]) for(const b of cand[1]) for(const d of cand[2]){ const q=[a,b,d]; if(!tbOk(q,pn)) continue;
-    const Rs=tbSim(q,t,ln,FC);
-    for(const p of ['bal','exp']){ const k=tbKey[p](Rs); if(!best[p]||hsMatchCmpSpecial(k,best[p].k)<0) best[p]={s:q,R:Rs,k}; } }
+    const results=tbEval(q,t,ln,FC);
+    for(const p of ['bal','exp']){ const x=results[p]; if(!best[p]||hsMatchCmpSpecial(x.k,best[p].k)<0) best[p]=x; }
+    if(t.activeRoutes){
+      const id=q.map(r=>r.c.id).join('|'), old=expDistinct.findIndex(x=>x.id===id);
+      if(old>=0){ if(hsMatchCmpSpecial(results.exp.k,expDistinct[old].x.k)<0) expDistinct[old].x=results.exp; }
+      else expDistinct.push({id,x:results.exp});
+      expDistinct.sort((a,b)=>hsMatchCmpSpecial(a.x.k,b.x.k));
+      if(expDistinct.length>16) expDistinct.pop();
+    } }
+  if(t.activeRoutes&&best.bal&&best.exp){
+    const difference=x=>x.s.filter((r,i)=>r.c.id!==best.bal.s[i].c.id).length;
+    if(difference(best.exp)<2){
+      const alt=expDistinct.find(x=>difference(x.x)>=2)||expDistinct.find(x=>difference(x.x)>=1);
+      if(alt) best.exp=alt.x;
+    }
+  }
   if(tbMemo.size>20) tbMemo.clear();
   tbMemo.set(mk,best); return best; }
 
@@ -5962,7 +6001,7 @@ function renderTB(tpn){
   const hs=tagClass==='B', pk=hs?tbPick:'own';
   
   const pins=[0,1,2].map(i=>myPin['j'+i]||null), chg=pins.some(Boolean);
-  const t=tbTrainer(), T=t.start.map(i=>SUBBY.get(i)), R=SUBBY.get(t.rep), O=tbPlan(t,'own',pk==='own'?pins:[]), P=hs?tbPlan(t,'all',pk==='bal'||pk==='exp'?pins:[]):O,
+  const t=tbTrainer(), T=(t.activeRoutes?t.activeRoutes[0]:t.start).map(i=>SUBBY.get(i)), R=SUBBY.get(t.rep), O=tbPlan(t,'own',pk==='own'?pins:[]), P=hs?tbPlan(t,'all',pk==='bal'||pk==='exp'?pins:[]):O,
     UD=tbUdecks[t.id]||[], ui=pk[0]==='u'?+pk.slice(1):-1, uids=ui>=0&&(UD[ui]||[null,null,null]).map((id,i)=>pins[i]||id),
     vi=pk[0]==='v'?+pk.slice(1):-1, D=vi>=0?tbDeck(t,t.vd[vi].s.map((id,i)=>pins[i]||id))
       : ui>=0?(uids.every(Boolean)?tbDeck(t,uids):{s:uids.map(id=>id&&{c:MYBY.get(id),gk:null}),R:null})   
@@ -5987,12 +6026,12 @@ function renderTB(tpn){
   const fc=f=>`<div class="fl-cell foe set ${artCls(f)}">${art(f)}${foeInfo(f)}</div>`;
   const v=M&&tbCount(M), sk=ui>=0?ui:[0,1,2,3,4,5].find(j=>!UD[j])??0;
   const tusl=j=>'유저'+'ABCDEF'[j]+(UD[j]?' · 덮어쓰기':' · 비어 있음');
-  tpn.innerHTML=`<div class="fl-h">${t.n}<span>아래 낼 태그 ▲ 위 상대</span></div><div class="fl-grid">`
+  tpn.innerHTML=`<div class="fl-h">${t.n}<span>아래 낼 태그 ▲ 위 상대</span></div>${t.activeRoutes?'<p class="tab-note">대만 5회 관찰: 1턴 플라이곤 → (격파 시) 2턴 인텔리레온 → 3턴 피죤투/님피아. 두 마지막 경로와 선공/후공을 비교합니다. 지원 포켓몬 실제 피해는 미반영입니다.</p>':''}<div class="fl-grid">`
     +T.map(fc).join('')
     +T.map(()=>'<div class="fl-link">▲</div>').join('')
     +s.map((r,i)=>cell(r,T[i],i)).join('')+'</div>'+eS(s.map(r=>r&&r.c),T)
     +`<div class="fl-h">↓ 1장 기절 시 그 자리에 ${R.n} ${rlab(R.r)} 등장<span>에너지 ${R.e}</span></div><div class="fl-grid"><div></div>${fc(R)}<div></div></div>`
-    +(M?`<p class="tab-note"><b>${vi>=0?'실전 '+t.vd[vi].score.toLocaleString()+'점 · ':pk==='exp'?'점수 실험 · 승리 안정성 낮음 · ':''}모의전 ${M.win?'승':'패'}</b>`
+    +(M?`<p class="tab-note"><b>${vi>=0?'실전 '+t.vd[vi].score.toLocaleString()+'점 · ':pk==='exp'?'점수 실험 · 승리 안정성 낮음 · ':''}모의전 ${M.allWin===undefined?(M.win?'승':'패'):(M.allWin?'모든 경로 승':M.anyWin?'일부 경로 승':'검증 경로 미승(서포트 피해 미반영)')}</b>`
       +`${M.win?'':` (남은 상대 HP ${Math.round(M.rem*100)}%)`} · 저에너지 공격 ${v.low} · 약점 ${v.weak} · 변신 뒤 공격 ${v.post} · 에너지 차이 합 ${v.gap}`
       +`${M.rs>=0?` · ${R.n} ${M.rt}턴째 ${M.rs+1}번 자리`:''}</p>`
 :'')
