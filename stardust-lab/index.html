@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.123.3">
+<meta name="version" content="3.123.4">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -3742,8 +3742,8 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.123.3';
-const BUILT='2026-10-08';
+const VERSION='3.123.4';
+const BUILT='2026-10-09';
 
 
 
@@ -3754,7 +3754,7 @@ const BUILT='2026-10-08';
 
 
 
-const WHATSNEW='찬주전 하이스코어 D는 모의전에서 이길 수 있는 조합을 먼저 골라요.';
+const WHATSNEW='찬주전 D를 257,143점 실전 조합으로 바꾸고 성공 조건을 함께 표시해요.';
 
 
 
@@ -4941,8 +4941,9 @@ const tbSim=(s,trainer,ln,FC,opt={})=>{ s=s.slice(); const F=[...trainer.start.m
   
   const up=n=>{ for(let x=0;x<3;x++){ const j=at[x]; if(fh[j]<=0&&!ko[j]){ ko[j]=n; if(rs<0){ rs=x; rt=n; at[x]=3; fh[3]=1; } } } };
   for(let t=0;t<3;t++){
-    /* 실전 녹화 관찰을 재생할 때만 사용: 기절 슬롯에 새 태그를 입력한다.
-       추천 경로 계산은 opt.knownReplacements가 없어 임의 태그 보충을 가정하지 않는다. */
+    
+    
+
     if(opt.knownReplacements) opt.knownReplacements.filter(x=>x.turn===t+1).forEach(x=>{
       if(x.slot<0||x.slot>=s.length||mh[x.slot]>0)return;
       const c=MYBY.get(x.tagId); if(!c)return;
@@ -4971,7 +4972,7 @@ const tbSim=(s,trainer,ln,FC,opt={})=>{ s=s.slice(); const F=[...trainer.start.m
       mh[m]-=trnFH(FC,f,s[m].c,!fg[j]); s.forEach((q,i)=>{ if(q&&i!==m&&mh[i]>0) mh[i]-=.6*trnFH(FC,f,q.c,false); }); fg[j]=1;
       mh.forEach((h,i)=>{ if(s[i]&&before[i]>0&&h<=0) fainted.push({turn:t+1,tag:s[i].c.n,bench:i!==m,slot:i}); }); };
     if(first){ hit(); foeHit(); } else { foeHit(); hit(); }
-    /* 사용자에게서 확인한 영상 단절 구간의 기절 사실: 물리 피해량 역산에 사용하지 않는다. */
+    
     if(opt.reportedBenchFaints) opt.reportedBenchFaints.filter(x=>x.turn===t+1).forEach(x=>{
       if(x.slot<0||x.slot>=s.length||!s[x.slot])return;
       mh[x.slot]=0;
@@ -5037,6 +5038,7 @@ function tbPlan(t,src,pins=[]){
       pw=x=>[Math.min(...x.alternates.map(l=>Math.min(1,l.p))), x.b?Math.min(1,x.b.p):0];
     const top=g=>[...o].sort((x,y)=>hsMatchCmpSpecial(g(x),g(y))).slice(0,TB_TOP).map(x=>x.c);
     return [...new Set([...top(hs),...top(pw),...tk])].flatMap(tbRows); });
+  
   const best={bal:null,exp:null}, expDistinct=[];
   for(const a of cand[0]) for(const b of cand[1]) for(const d of cand[2]){ const q=[a,b,d]; if(!tbOk(q,pn)) continue;
     const results=tbEval(q,t,ln,FC);
@@ -5051,13 +5053,18 @@ function tbPlan(t,src,pins=[]){
   if(t.activeRoutes&&best.bal&&best.exp){
     const difference=x=>x.s.filter((r,i)=>r.c.id!==best.bal.s[i].c.id).length;
     if(difference(best.exp)<2){
-      /* 다른 두 장을 고르는 조건보다 승리 판정을 우선한다. 안전한 대안이 없으면 같은 조합도 유지. */
+      
       const viable=expDistinct.filter(x=>x.x.R.anyWin&&x.x.R.allWin===best.exp.R.allWin);
       const alt=viable.find(x=>difference(x.x)>=2)||viable.find(x=>difference(x.x)>=1);
       if(alt) best.exp=alt.x;
     }
   }
   if(tbMemo.size>20) tbMemo.clear();
+  
+  if(t.id==='star-chanju'&&src==='all'&&tagClass==='B'&&!pn.some(Boolean)){
+    const q=['2-2-알로라 모래두지','2-3-시마사리','2-5-엠페르트'].map((id,i)=>({c:MYBY.get(id),gk:i===2?'Z기술':null}));
+    best.exp={...tbEval(q,t,ln,FC).exp,observedScore:257143};
+  }
   tbMemo.set(mk,best); return best; }
 
 const el=h=>{const d=document.createElement('div');d.innerHTML=h.trim();return d.firstElementChild};
@@ -6032,11 +6039,11 @@ function renderTB(tpn){
     ds.innerHTML=`<button class="own" data-k="own" aria-pressed="${pk==='own'}">★ 내 태그로 추천 <small>보유 ${owned.size}장에서</small></button>`
       +t.vd.map((v,j)=>`<button data-k="v${j}" aria-pressed="${pk==='v'+j}">실전 검증 ${v.n} <small>${v.score.toLocaleString()}점</small></button>`).join('')
       +[['bal','C'],['exp','D']].map(   
-        ([k,n])=>`<button data-k="${k}" aria-pressed="${pk===k}">계산 추천 ${n} <small>${eSum(P[k])}</small></button>`).join('')
+        ([k,n])=>`<button data-k="${k}" aria-pressed="${pk===k}">${P[k]&&P[k].observedScore?'실전 추천':'계산 추천'} ${n} <small>${eSum(P[k])}</small></button>`).join('')
       +[0,1,2,3,4,5].map(j=>`<button class="u" data-k="u${j}" aria-pressed="${pk==='u'+j}">유저${'ABCDEF'[j]} <small>${UD[j]?'에너지 '+UD[j].reduce((a,id)=>a+(id?MYBY.get(id).e:0),0):'비어 있음'}</small></button>`).join('');
     ds.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ tbPick=b.dataset.k; for(let x=0;x<3;x++) delete myPin['j'+x]; renderAll(); })); } }   
   
-  trnLast={dk:!hs?null:(pk==='own'?'내 태그':ui>=0?'유저'+'ABCDEF'[ui]:vi>=0?'실전 검증 '+t.vd[vi].n:'계산 추천 '+(pk==='bal'?'C':'D'))+(chg?'*':''), my:s.map(r=>r&&{n:r.c.n,r:r.c.r})};
+  trnLast={dk:!hs?null:(pk==='own'?'내 태그':ui>=0?'유저'+'ABCDEF'[ui]:vi>=0?'실전 검증 '+t.vd[vi].n:(D&&D.observedScore?'실전 추천 ':'계산 추천 ')+(pk==='bal'?'C':'D'))+(chg?'*':''), my:s.map(r=>r&&{n:r.c.n,r:r.c.r})};
   
   const cell=(r,f,i)=>{ const q='j'+i; if(!r) return meEmpty(0,q);
     const l=(r.gk&&tbLane(r.c,f,r.gk))||tbLane(r.c,f), n=tbLane(r.c,R);
@@ -6051,7 +6058,8 @@ function renderTB(tpn){
     +T.map(()=>'<div class="fl-link">▲</div>').join('')
     +s.map((r,i)=>cell(r,T[i],i)).join('')+'</div>'+eS(s.map(r=>r&&r.c),T)
     +`<div class="fl-h">↓ 1장 기절 시 그 자리에 ${R.n} ${rlab(R.r)} 등장<span>에너지 ${R.e}</span></div><div class="fl-grid"><div></div>${fc(R)}<div></div></div>`
-    +(M?`<p class="tab-note"><b>${vi>=0?'실전 '+t.vd[vi].score.toLocaleString()+'점 · ':pk==='exp'?'점수 실험 · '+(M.allWin?'모의전 4경로 승리 · ':M.anyWin?'일부 경로만 승리 · ':'모의전 승리 미확인 · '):''}모의전 ${M.allWin===undefined?(M.win?'승':'패'):(M.allWin?'모든 경로 승':M.anyWin?'일부 경로 승':'검증 경로 미승(서포트 피해 미반영)')}</b>`
+    +(D&&D.observedScore?`<p class="tab-note"><b>대만 실전 ${D.observedScore.toLocaleString()}점 · 조건부 고득점</b><br>관측 조건: 1턴 선공 성공 · 1·2턴 라프라스 지원 공격 · 일반 룰렛 35/20 · 3턴 엠페르트 Z 72. 같은 점수와 승리를 보장하지 않습니다.${chance.sup?'':' 서포트 꺼짐: 영상과 조건이 다릅니다.'}</p>`:'')
+    +(M?`<p class="tab-note"><b>${vi>=0?'실전 '+t.vd[vi].score.toLocaleString()+'점 · ':D&&D.observedScore?'지원 공격 미반영 · ':pk==='exp'?'점수 실험 · '+(M.allWin?'모의전 4경로 승리 · ':M.anyWin?'일부 경로만 승리 · ':'모의전 승리 미확인 · '):''}모의전 ${M.allWin===undefined?(M.win?'승':'패'):(M.allWin?'모든 경로 승':M.anyWin?'일부 경로 승':'검증 경로 미승(서포트 피해 미반영)')}</b>`
       +`${M.win?'':` (남은 상대 HP ${Math.round(M.rem*100)}%)`} · 저에너지 공격 ${v.low} · 약점 ${v.weak} · 변신 뒤 공격 ${v.post} · 에너지 차이 합 ${v.gap}`
       +`${M.rs>=0?` · ${R.n} ${M.rt}턴째 ${M.rs+1}번 자리`:''}</p>`
 :'')
@@ -6059,7 +6067,7 @@ function renderTB(tpn){
       
       +(hs&&chg?`<div class="trnsave"><label class="mini tsl"><span>${tusl(sk)} ▾</span><select id="tbSaveTo" aria-label="유저 덱" onchange="this.previousSibling.textContent=this.selectedOptions[0].text+' ▾'">${[0,1,2,3,4,5].map(j=>`<option value="${j}"${j===sk?' selected':''}>${tusl(j)}</option>`).join('')}</select></label><button class="mini" id="tbSave">에 저장</button></div>`:'')
       +planDet(tpn, s.map((r,i)=>{ const f=T[i], l=r&&((r.gk&&tbLane(r.c,f,r.gk))||tbLane(r.c,f));
-        return mSlot(l&&{...l,spd:r.c.sp-f.sp,ch:r.c.sp<=f.sp,inc:hitAny(r.c,f)},f,(i+1)+'턴',0,l&&M?`<b class="fl-b ${M.mh[i]>0?'ok">남음 '+Math.round(M.mh[i]*100)+'%':'bad">기절'}</b>`:''); }).join(''));
+        return mSlot(l&&{...l,spd:r.c.sp-f.sp,ch:r.c.sp<=f.sp,inc:hitAny(r.c,f)},f,(i+1)+'턴',0,l&&M?`<b class="fl-b ${M.mh[i]>0?'ok">모의전 남음 '+Math.round(M.mh[i]*100)+'%':'bad">모의전 기절'}</b>`:''); }).join(''));
   bindMe(tpn);   
   
   const sv=document.getElementById('tbSave');
