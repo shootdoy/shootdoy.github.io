@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.123.4">
+<meta name="version" content="3.123.5">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -3742,8 +3742,8 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.123.4';
-const BUILT='2026-10-09';
+const VERSION='3.123.5';
+const BUILT='2026-10-10';
 
 
 
@@ -3754,7 +3754,7 @@ const BUILT='2026-10-09';
 
 
 
-const WHATSNEW='찬주전 D를 257,143점 실전 조합으로 바꾸고 성공 조건을 함께 표시해요.';
+const WHATSNEW='찬주 상대 2번 자리에 님피아를 복원했어요.';
 
 
 
@@ -6033,6 +6033,7 @@ function renderTB(tpn){
     vi=pk[0]==='v'?+pk.slice(1):-1, D=vi>=0?tbDeck(t,t.vd[vi].s.map((id,i)=>pins[i]||id))
       : ui>=0?(uids.every(Boolean)?tbDeck(t,uids):{s:uids.map(id=>id&&{c:MYBY.get(id),gk:null}),R:null})   
       : pk==='own'?O.bal:P[pk], s=D?D.s:[null,null,null], M=D&&D.R;
+  const F=t.id==='star-chanju'?[T[0],SUBBY.get(t.start[0]),T[2]]:T;
   const ds=document.getElementById('trnDeckSw');
   const eSum=d=>d?'에너지 '+d.s.reduce((a,r)=>a+r.c.e,0):'없음';
   if(ds){ ds.hidden=!hs; if(hs){
@@ -6053,11 +6054,11 @@ function renderTB(tpn){
   const fc=f=>`<div class="fl-cell foe set ${artCls(f)}">${art(f)}${foeInfo(f)}</div>`;
   const v=M&&tbCount(M), sk=ui>=0?ui:[0,1,2,3,4,5].find(j=>!UD[j])??0;
   const tusl=j=>'유저'+'ABCDEF'[j]+(UD[j]?' · 덮어쓰기':' · 비어 있음');
-  tpn.innerHTML=`<div class="fl-h">${t.n}<span>아래 낼 태그 ▲ 위 상대</span></div>${t.activeRoutes?'<p class="tab-note">대만 5회 관찰: 1턴 플라이곤 → (격파 시) 2턴 인텔리레온 → 3턴 피죤투/님피아. 두 마지막 경로와 선공/후공을 비교합니다. 지원 포켓몬 실제 피해는 미반영입니다.</p>':''}<div class="fl-grid">`
-    +T.map(fc).join('')
+  tpn.innerHTML=`<div class="fl-h">${t.n}<span>아래 낼 태그 ▲ 위 초기 상대</span></div>${t.activeRoutes?'<p class="tab-note">5회 관찰: 플라이곤 → 인텔리레온 → 피죤투/님피아. 선후공 비교 · 지원 피해 미반영.</p>':''}<div class="fl-grid">`
+    +F.map(fc).join('')
     +T.map(()=>'<div class="fl-link">▲</div>').join('')
-    +s.map((r,i)=>cell(r,T[i],i)).join('')+'</div>'+eS(s.map(r=>r&&r.c),T)
-    +`<div class="fl-h">↓ 1장 기절 시 그 자리에 ${R.n} ${rlab(R.r)} 등장<span>에너지 ${R.e}</span></div><div class="fl-grid"><div></div>${fc(R)}<div></div></div>`
+    +s.map((r,i)=>cell(r,T[i],i)).join('')+'</div>'+eS(s.map(r=>r&&r.c),F)
+    +`<div class="fl-h">↓ ${t.id==='star-chanju'?'2번 자리 님피아 ★5 기절 시':'1장 기절 시 그 자리에'} ${R.n} ${rlab(R.r)} 등장<span>에너지 ${R.e}</span></div><div class="fl-grid"><div></div>${fc(R)}<div></div></div>`
     +(D&&D.observedScore?`<p class="tab-note"><b>대만 실전 ${D.observedScore.toLocaleString()}점 · 조건부 고득점</b><br>관측 조건: 1턴 선공 성공 · 1·2턴 라프라스 지원 공격 · 일반 룰렛 35/20 · 3턴 엠페르트 Z 72. 같은 점수와 승리를 보장하지 않습니다.${chance.sup?'':' 서포트 꺼짐: 영상과 조건이 다릅니다.'}</p>`:'')
     +(M?`<p class="tab-note"><b>${vi>=0?'실전 '+t.vd[vi].score.toLocaleString()+'점 · ':D&&D.observedScore?'지원 공격 미반영 · ':pk==='exp'?'점수 실험 · '+(M.allWin?'모의전 4경로 승리 · ':M.anyWin?'일부 경로만 승리 · ':'모의전 승리 미확인 · '):''}모의전 ${M.allWin===undefined?(M.win?'승':'패'):(M.allWin?'모든 경로 승':M.anyWin?'일부 경로 승':'검증 경로 미승(서포트 피해 미반영)')}</b>`
       +`${M.win?'':` (남은 상대 HP ${Math.round(M.rem*100)}%)`} · 저에너지 공격 ${v.low} · 약점 ${v.weak} · 변신 뒤 공격 ${v.post} · 에너지 차이 합 ${v.gap}`
