@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.123.12">
+<meta name="version" content="3.123.13">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -807,21 +807,6 @@ section:first-child{margin-top:0}
 
 .fl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;align-items:stretch}
 .fl-plans{display:flex;flex-direction:column;gap:8px}
-.fl-plan{margin:0;border:1px solid var(--rim);border-radius:var(--r-md);
-  background:rgba(30,19,73,.34);overflow:hidden}
-.fl-plan-head,.fl-plan>summary{min-height:var(--tap);padding:10px 12px;font-size:12px;line-height:1.45;color:var(--ink-dim)}
-.fl-plan-head b,.fl-plan>summary b{color:var(--ink)}
-.fl-plan>summary span{min-width:0}
-.fl-plan>summary::after{content:'▾';margin-left:auto;font-size:13px;transition:transform .2s}
-.fl-plan[open]>summary::after{transform:rotate(180deg)}
-.fl-plan>.fl-grid,.fl-plan.stable>.fl-grid{padding:0 6px 8px}
-.fl-subplan{border:0;background:none;margin:0;overflow:visible}
-.fl-subplan+ .fl-subplan{margin-top:8px}
-.fl-subplan>summary{min-height:var(--tap);padding:8px 0;font-size:11px;color:var(--ink-dim)}
-.fl-subplan>summary b{color:var(--ink)}
-.fl-subplan>summary::after{content:'▾';margin-left:auto;font-size:12px;transition:transform .2s}
-.fl-subplan[open]>summary::after{transform:rotate(180deg)}
-.fl-subplan-body{display:flex;flex-direction:column;gap:8px}
 .fl-cell{position:relative;display:flex;flex-direction:column;gap:2px;min-width:0;
   padding:5px 5px 7px;border-radius:var(--r-sm);background:rgba(0,0,0,.22);
   border:1px solid rgba(255,255,255,.09);text-align:center;align-items:center;justify-content:flex-start}
@@ -3742,7 +3727,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.123.12';
+const VERSION='3.123.13';
 const BUILT='2026-10-11';
 
 
@@ -3754,7 +3739,7 @@ const BUILT='2026-10-11';
 
 
 
-const WHATSNEW='컬렉션 전투 태그에도 번호를 표시해요.';
+const WHATSNEW='일반모드 하이스코어 추천을 A·B 버튼으로 골라요.';
 
 
 
@@ -5604,6 +5589,10 @@ const meEmpty=(mid,k)=>`<div class="fl-cell empty${mid?' mid':''}"${meAttr(k)}>$
 
 
 
+
+let hsRec={지역:0,다맥:0,스페셜:0};
+const hsTabs=()=>`<div class="setsw" role="group" aria-label="하이스코어 추천 선택">${['A','B'].map((v,i)=>`<button data-hs="${i}" aria-pressed="${hsRec[mode]===i}">추천 ${v}</button>`).join('')}</div>`;
+const bindHsTabs=host=>host.querySelectorAll('[data-hs]').forEach(b=>b.addEventListener('click',()=>{hsRec[mode]=+b.dataset.hs;renderAll()}));
 let trnDeck=0;   
 
 
@@ -5762,10 +5751,11 @@ function renderFoes(){
   
   const pk=pickUsable(boss);
   if(myPinBoss!==bossId){ Object.keys(myPin).forEach(k=>{ if(k[0]==='r') delete myPin[k]; }); myPinBoss=bossId; }
-  const pins=cols.map(at=>myPin['r'+at]||null),
-    assigned=assignPlans(cols,foeOf,boss,pk?pk.id:null,pins),
-    scoreAssigned=tagClass==='B'?assignPlans(cols,foeOf,boss,pk?pk.id:null,pins,false,true,assigned):null,
+  const pins=cols.map(at=>myPin['r'+at]||null);
+  let assigned=assignPlans(cols,foeOf,boss,pk?pk.id:null,pins);
+  const scoreAssigned=tagClass==='B'?assignPlans(cols,foeOf,boss,pk?pk.id:null,pins,false,true,assigned):null,
     sameAssigned=!!scoreAssigned&&sameTagCombo(assigned,scoreAssigned);
+  if(scoreAssigned&&hsRec[mode])assigned=scoreAssigned;
   const info=document.getElementById('foePlans');if(info){
     info.dataset.mixed=assigned.mixed?'1':'';info.dataset.failed=assigned.failed?'1':'';
     info.dataset.scoreFailed=scoreAssigned&&scoreAssigned.failed?'1':'';
@@ -5814,11 +5804,9 @@ function renderFoes(){
     +'</div>';
   if(scoreAssigned){
     wrap.className='fl-plans';
-    const hsDesc=scoreAssigned.failed
-      ? '3턴 동시 격파·저에너지·약점·룰렛을 우선합니다 · 실제 HP 격파 미달'
-      : '3턴 동시 격파·저에너지·약점·룰렛을 우선합니다.';
-    wrap.innerHTML=`<section class="fl-plan stable"><div class="fl-plan-head"><b>① 안정형</b> · 격파 안정성과 15% 여유를 우선합니다.</div>${gridBody(assigned)}</section>`
-      +`<details class="fl-plan high"><summary><span><b>② 하이스코어형</b> · ${hsDesc}</span></summary>${gridBody(scoreAssigned)}</details>`;
+    const desc=hsRec[mode]?'3턴 동시 격파·저에너지·약점·룰렛 우선':'격파 안정성과 15% 여유 우선';
+    wrap.innerHTML=hsTabs()+`<p class="tab-note">${desc}${assigned.failed?' · 실제 HP 격파 미달':''}</p>`+gridBody(assigned);
+    bindHsTabs(wrap);
   }else{
     wrap.className='fl-grid';
     wrap.innerHTML=cols.map(foeCell).join('')+links()+cols.map(at=>meCell(at,assigned)).join('')
@@ -5826,12 +5814,7 @@ function renderFoes(){
   }
   
   const fp=document.getElementById('foePlans');
-  const details=scoreAssigned
-    ? `<details class="fl-subplan stable" open><summary><b>① 안정형</b> · 격파 안정성과 15% 여유 우선</summary><div class="fl-subplan-body">`
-      +cols.map(at=>planSlot(at,assigned,'안정형')).join('')+'</div></details>'
-      +`<details class="fl-subplan high"><summary><b>② 하이스코어형</b> · 3턴 동시 격파·저에너지·약점·룰렛 우선${scoreAssigned.failed?' · 실제 HP 격파 미달':''}${sameAssigned?' · 지정 조건상 같은 조합':''}</summary><div class="fl-subplan-body">`
-      +cols.map(at=>planSlot(at,scoreAssigned,'하이스코어형')).join('')+'</div></details>'
-    : cols.map(at=>planSlot(at,assigned)).join('');
+  const details=cols.map(at=>planSlot(at,assigned,scoreAssigned?'추천 '+(hsRec[mode]?'B':'A'):'')).join('');
   fp.innerHTML = planDet(fp,details);
   bindMe(wrap);
 
@@ -5970,7 +5953,7 @@ function renderFoes(){
       +`그 턴 피해가 0 이고 그 장은 배틀에서 빠집니다.`
     : '서브를 모르는 칸은 <b>보스에 화력을 모읍니다</b> — 위 서브 칸을 눌러 상대를 넣으면 그 칸만 대응 태그로 바뀝니다.')
     + svNote + spdNote
-    + (scoreAssigned&&scoreAssigned.failed?' <b style="color:var(--star)">하이스코어형은 점수 조건을 우선해 실제 HP 격파가 부족합니다.</b>':'')
+    + (hsRec[mode]&&scoreAssigned&&scoreAssigned.failed?' <b style="color:var(--star)">하이스코어형은 점수 조건을 우선해 실제 HP 격파가 부족합니다.</b>':'')
     + (sameAssigned?' <b style="color:var(--dim)">직접 지정 조건 때문에 두 추천이 같습니다.</b>':'');
 }
 
@@ -6392,9 +6375,11 @@ function renderHsBossPreset(boss,rot,note){
     plan.forEach((r,i)=>{const n=el(slotHTML(r,i,i===2&&plan[0].c.id===r.c.id,boss,false,true));n.dataset.plan=planLabel;rot.appendChild(n)});
     return plan;
   };
-  sets.forEach((set,i)=>{
+  rot.appendChild(el(hsTabs()));bindHsTabs(rot);
+  const i=hsRec[mode]||0;
+  [sets[i]].forEach(set=>{
     const no=i+1;
-    rot.appendChild(el('<p class="tab-note"><b>'+(no===1?'①':'②')+' 하이스코어 조합</b> · 전체 태그 기준 사전 계산</p>'));
+    rot.appendChild(el('<p class="tab-note"><b>추천 '+(i?'B':'A')+'</b> · 전체 태그 기준 사전 계산</p>'));
     if(mode==='다맥'){
       const plan=pack(set[0],'3장 조합',no+'세트');
       if(plan)rot.appendChild(el('<div class="total"><div class="tsum on"><span class="tl">'+(set[1]?set[1]+'턴 격파':'격파 미달')+'</span><b>'+Math.round(plan.reduce((a,r)=>a+(r.dmg||0),0))+'</b><span class="tl2">3턴 화력지수 합</span></div></div>'));
@@ -6429,14 +6414,15 @@ function renderRotation(){
   }
   
   const rotPick=pickUsable(boss);
-  const seq=buildSeq(boss, rotPick?rotPick.id:null, false, true),
-    scoreSeq=tagClass==='B'?buildSeq(boss, rotPick?rotPick.id:null, false, false, true, seq):null;
+  let seq=buildSeq(boss, rotPick?rotPick.id:null, false, true);
+  const scoreSeq=tagClass==='B'?buildSeq(boss, rotPick?rotPick.id:null, false, false, true, seq):null;
+  if(scoreSeq&&hsRec[mode])seq=scoreSeq;
   rot.dataset.mixed=seq.mixed?'1':'';rot.dataset.failed=seq.failed?'1':'';
   rot.dataset.tight=seq.tight?'1':'';
-  if(seq.failed){rot.innerHTML='<p class="empty">처치 가능한 추천 조합 없음</p>';note.textContent=(seq.mixed?'화력태그 + 하이스코어태그를 함께 계산했습니다. ':'')+'보유 태그로 3턴 처치 가능한 조합을 찾지 못했습니다.';return;}
+  if(seq.failed){rot.innerHTML=(tagClass==='B'?hsTabs():'')+'<p class="empty">처치 가능한 추천 조합 없음</p>';bindHsTabs(rot);note.textContent=(seq.mixed?'화력태그 + 하이스코어태그를 함께 계산했습니다. ':'')+'보유 태그로 3턴 처치 가능한 조합을 찾지 못했습니다.';return;}
 
   const gims=[...new Set(seq.map(r=>(r.move&&r.move.tagx)||(r.mega?'메가진화':null)).filter(Boolean))];
-  rot.innerHTML='';
+  rot.innerHTML=tagClass==='B'?hsTabs():'';bindHsTabs(rot);
 
   
   const real=l=>l.filter(r=>!r.rand), sum=l=>Math.round(l.reduce((a,r)=>a+(r.dmg||0),0));
@@ -6454,15 +6440,14 @@ function renderRotation(){
     const reuse=plan.length===3&&!plan[0].rand&&plan[0].c.id===plan[2].c.id,
       uniq=[...new Map(plan.filter(r=>!r.rand).map(r=>[r.c.id,r])).values()], sp=spareOf(boss,plan),
       spare=sp.rows, nRand=uniq.length?3-uniq.length-spare.length:0;
-    if(name)rot.appendChild(el(`<p class="tab-note"><b>${name==='안정형'?'①':'②'} ${name}</b> · ${desc}</p>`));
+    if(name)rot.appendChild(el(`<p class="tab-note"><b>${name}</b> · ${desc}</p>`));
     if(uniq.length&&mode!=='지역')rot.appendChild(el(`<div class="lane"><span class="lane-h">레인 배치 <i>기기 슬롯 3칸</i></span><div class="lane-g">${uniq.map(r=>cell(r,'use',plan)).join('')}${spare.map(r=>cell(r,'spare',plan)).join('')}${Array.from({length:nRand},()=>cell(null,'rand',plan)).join('')}</div>${(spare.length||nRand)?`<p class="sparen">쓰는 건 ${uniq.length}장이지만 슬롯이 3칸이라 예비까지 올려 둡니다. ${spare.length?(sp.slow?'<b style="color:var(--bad)">보스보다 빠른 태그가 없어 후공 예비입니다.</b>':'3턴까지 끌리면 에너지가 바닥이라 <b style="color:var(--ink)">선공</b>이 되는 것으로 골랐습니다.'):''} ${nRand?`<b style="color:var(--ink)">${nRand}칸</b>은 켠 태그가 모자라 기기가 랜덤으로 채웁니다.`:''}</p>`:''}</div>`));
     plan.forEach((r,i)=>{const n=el(slotHTML(r,i,i===2&&reuse,boss));if(name)n.dataset.plan=name;rot.appendChild(n)});
     const field=[...uniq.map(r=>r.c),...spare.map(r=>r.c)], minHit=field.length?Math.min(...field.map(holdOut)):0,
       need=plan.ko2?2:3, t2=Math.round((plan[0]?plan[0].dmg:0)+(plan[1]?plan[1].dmg:0)), holdTxt=minHit>=9?'끄떡없음':minHit+'대까지';
     rot.appendChild(el(`<div class="total"><div class="tsum on"><span class="tl">${plan.koMiss?'단독 격파 미달':plan.ko2?'2턴 격파':'3턴 격파'}</span><b>${plan.ko2?t2:sum(plan)}</b><span class="tl2">${plan.ko2?'1·2턴 피해 합':'3턴 피해 합'} · 최대 받는 ×${worst(plan)}${plan.tight&&!plan.scoreOnly?' · 15% 여유 없음':''}</span></div><div class="tsum"><span class="tl">필드 내구</span><b>${holdTxt}</b><span class="tl2">${plan.risky?'버티는 태그가 모자랍니다':`이번 계획에서 <b style="color:var(--ink)">${need}대</b>를 맞습니다`}</span></div></div>`));
   };
-  drawPlan(seq,tagClass==='B'?'안정형':null,'15% 여유 피해를 우선합니다.');
-  if(scoreSeq&&!scoreSeq.failed)drawPlan(scoreSeq,'하이스코어형',scoreSeq.koMiss?'낮은 에너지·약점·룰렛을 우선합니다. 이 3장만으로는 단독 격파가 부족합니다.':'낮은 에너지·약점·룰렛을 우선한 별도 조합입니다.');
+  drawPlan(seq,tagClass==='B'?'추천 '+(hsRec[mode]?'B':'A'):null,seq.scoreOnly?'낮은 에너지·약점·룰렛을 우선합니다.':'15% 여유 피해를 우선합니다.');
 
   const nr=seq.filter(r=>r.rand).length;
   const gtxt = (gims.length
