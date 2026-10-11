@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.123.11">
+<meta name="version" content="3.123.12">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -1586,7 +1586,6 @@ background:var(--c);opacity:.22}
 .dxp.full i{color:var(--ink)}
 .dexg{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:6px;padding:0 13px 15px}
 .myqr{display:block}
-.dx{position:relative}
 
 .tidc{position:relative;width:100%;max-width:296px;margin:0 auto;aspect-ratio:1005/626;
 background:var(--tidbg) center/100% 100% no-repeat;border-radius:var(--r-md);overflow:hidden;
@@ -1607,9 +1606,8 @@ transition:.12s;pointer-events:none}
 .dx > *{position:relative;z-index:1}
 .dx .hd{display:flex;align-items:center;gap:4px}
 
-.dx[aria-pressed="true"]{border-color:var(--c);color:var(--ink)}
+.dx[aria-pressed="true"]{border-color:var(--c);color:var(--ink);box-shadow:inset 3px 0 0 var(--c)}
 .dx[aria-pressed="true"]::before{opacity:.28}
-.dx[aria-pressed="true"]{box-shadow:inset 3px 0 0 var(--c)}
 .dx[aria-pressed="true"] .hd{padding-left:2px}
 .dx[aria-pressed="true"] .dn::after{content:'✓';margin-left:4px;color:var(--c);font-weight:900}
 
@@ -1636,6 +1634,7 @@ min-height:62px;padding:7px 9px;border:0;border-radius:var(--r-md);cursor:pointe
 background-size:cover;background-position:center;text-align:left;
 box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--c) 62%,transparent);
 transition:transform .13s ease,opacity .13s ease,filter .13s ease}
+.ctag .fl-no{position:static;align-self:flex-start;font-size:12px;line-height:14px;margin-bottom:2px}
 .ctag:hover{transform:translateY(-1px)}
 .ctag:focus-visible{outline:2.5px solid var(--cyan);outline-offset:2px}
 .b23n{margin:0 0 13px;padding:10px 12px;border-radius:var(--r-md);font-size:11.5px;line-height:1.6;
@@ -3743,8 +3742,8 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.123.11';
-const BUILT='2026-10-10';
+const VERSION='3.123.12';
+const BUILT='2026-10-11';
 
 
 
@@ -3755,7 +3754,7 @@ const BUILT='2026-10-10';
 
 
 
-const WHATSNEW='스페셜태그배틀은 2·3성 약점 공격으로 시작해요.';
+const WHATSNEW='컬렉션 전투 태그에도 번호를 표시해요.';
 
 
 
@@ -5111,13 +5110,14 @@ const gm=x=>GIMICON[x]
   : `<span class="badge b-gim">${x}</span>`;
 
 const chip=(c,o={})=>{
-  const art=tagArt(c);
+  const art=tagArt(c), no=o.no&&tagNo(c);
   const c1=COLOR[c.t[0]], c2=COLOR[c.t[1]||c.t[0]];
   const bg = art
     ? `linear-gradient(to right,rgba(8,5,22,.90) 0%,rgba(8,5,22,.58) 46%,rgba(8,5,22,.18) 100%),var(--art) center/cover`
     : `linear-gradient(120deg,${c1}AA,${c2}77)`;
   return `<button class="ctag ${artCls(c)}" style="--c:${RARITY[c.r].color};background:${bg}"
     ${o.pressed==null?'':`aria-pressed="${o.pressed}"`} data-id="${c.id}">
+    ${no?`<b class="fl-no s${c.s}">${no}</b>`:''}
     <span class="b23w">${
       (dexBest&&dexBest.has(c.id)?'<span class="b23 rec">추천</span>':'')
       +(tagClass==='A'&&bestSet().has(c.id)?`<span class="b23">A${bestSet().size}</span>`:'')
@@ -6938,7 +6938,7 @@ function renderRoster(){
       <div class="pool"></div></details>`);
     const pool=d.querySelector('.pool');
     list.forEach(c=>{
-      const n=el(chip(c,{pressed:owned.has(c.id),need2:tagClass==='B'&&hsNeed2().has(c.id)}));
+      const n=el(chip(c,{no:true,pressed:owned.has(c.id),need2:tagClass==='B'&&hsNeed2().has(c.id)}));
       n.addEventListener('click',()=>{ if(dexCalcBusy) return;
         owned.has(c.id)?owned.delete(c.id):owned.setCnt(c.id,1);
         save(); renderAll()});
