@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.124.12">
+<meta name="version" content="3.124.13">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -3155,7 +3155,7 @@ font-family:var(--mono);font-size:11.5px;color:var(--ink-dim)}
       <b id="hsNeedTitle">보스 추천 ×2</b>
       <button type="button" class="qrx" id="hsNeedClose" aria-label="닫기">✕</button>
     </div>
-    <p class="tab-note">아래 보스의 A/B 조합에서 한 플레이어가 같은 태그 2장을 사용합니다. B45 가방 필요 장수와는 별개입니다.</p>
+    <p class="tab-note">아래 보스의 A/B 조합에서 한 플레이어가 같은 태그 2장을 사용합니다. S45 가방 필요 장수와는 별개입니다.</p>
     <ul class="hs-need-list" id="hsNeedList"></ul>
   </div>
 </div>
@@ -3849,7 +3849,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.124.12';
+const VERSION='3.124.13';
 const BUILT='2026-11-28';
 
 
@@ -3861,7 +3861,7 @@ const BUILT='2026-11-28';
 
 
 
-const WHATSNEW='스페셜 루카리오 태그를 추가했어요.';
+const WHATSNEW='6성 없는 지역배틀 B45와 보스용 S45를 구분했어요.';
 
 
 
@@ -3938,7 +3938,9 @@ const BEST_TYPE_FLOOR=0.99;
 const BESTA25=new Bag([['1-5-거대코뿌리',1],['1-5-플라이곤',1],['1-5-피죤투',1],['1-6-마기라스',1],['1-6-메타그로스',1],['1-6-이상해꽃',1],['1-6-자시안',1],['2-5-알로라 나인테일',1],['2-5-엠페르트',1],['2-5-초염몽',1],['2-5-토대부기',1],['2-6-가이오가',1],['2-6-그란돈',1],['2-6-제크로무',1],['2-6-큐레무',1],['3-5-나무킹',1],['3-5-샹델라',1],['3-5-오롱털',1],['3-5-위대한엄니',1],['3-6-개굴닌자',1],['3-6-루나아라',1],['3-6-오롱털',1],['3-6-제라오라',1],['3-6-케르디오',1],['공통-S-따라큐',1]]);
 
 
-const BESTB45NORMAL=new Bag([['1-2-골비람',1],['1-3-골루그',1],['1-3-채키몽',1],['1-4-고릴타',1],['1-4-님피아',1],['1-4-만마드',1],['1-4-쥬피썬더',1],['1-5-가로막구리',1],['1-5-거대코뿌리',1],['1-5-글레이시아',1],['1-5-블래키',1],['1-5-샤미드',1],['1-5-에이스번',1],['1-5-인텔리레온',1],['1-5-팬텀',1],['1-5-플라이곤',1],['1-5-피카츄',1],['1-6-이상해꽃',1],['2-2-모부기',1],['2-2-톱치',2],['2-3-동탁군',1],['2-3-비브라바',1],['2-3-킬리아',2],['2-3-토게데마루',1],['2-3-파이숭이',1],['2-3-흔들풍손',1],['2-4-부스터',1],['2-5-갈가부기',1],['2-5-마휘핑',1],['2-5-알로라 나인테일',1],['2-5-에브이',1],['2-5-엠페르트',1],['2-5-초염몽',1],['2-5-토대부기',1],['2-6-제크로무',1],['3-5-샹델라',1],['3-5-오롱털',1],['3-5-위대한엄니',1],['3-5-후딘',1],['공통-R-루카리오',1],['공통-S-따라큐',1],['공통-S-세레비',1],['공통-S-피카츄 (현장이벤트)',1]]);
+const BESTS45=new Bag([['1-2-골비람',1],['1-3-골루그',1],['1-3-채키몽',1],['1-4-고릴타',1],['1-4-님피아',1],['1-4-만마드',1],['1-4-쥬피썬더',1],['1-5-가로막구리',1],['1-5-거대코뿌리',1],['1-5-글레이시아',1],['1-5-블래키',1],['1-5-샤미드',1],['1-5-에이스번',1],['1-5-인텔리레온',1],['1-5-팬텀',1],['1-5-플라이곤',1],['1-5-피카츄',1],['1-6-이상해꽃',1],['2-2-모부기',1],['2-2-톱치',2],['2-3-동탁군',1],['2-3-비브라바',1],['2-3-킬리아',2],['2-3-토게데마루',1],['2-3-파이숭이',1],['2-3-흔들풍손',1],['2-4-부스터',1],['2-5-갈가부기',1],['2-5-마휘핑',1],['2-5-알로라 나인테일',1],['2-5-에브이',1],['2-5-엠페르트',1],['2-5-초염몽',1],['2-5-토대부기',1],['2-6-제크로무',1],['3-5-샹델라',1],['3-5-오롱털',1],['3-5-위대한엄니',1],['3-5-후딘',1],['공통-R-루카리오',1],['공통-S-따라큐',1],['공통-S-세레비',1],['공통-S-피카츄 (현장이벤트)',1]]);
+
+const BESTB45=new Bag(["1-2-가라르 지그재구리","1-2-데덴네","1-2-울머기","1-3-가라르 직구리","1-3-골루그","1-3-누겔레온","1-3-포푸니","1-3-피카츄","1-4-두트리오","1-4-모스노우","1-4-쥬피썬더","1-4-포푸니라","1-5-에이스번","1-5-윈디","1-5-플라이곤","1-5-피카츄","2-2-갈모매","2-2-구구","2-2-랄토스","2-2-불꽃숭이","2-2-빠모","2-2-캐이시","2-3-루주라","2-3-윤겔라","2-3-파이숭이","2-5-갈가부기","2-5-알로라 나인테일","2-5-쥬피썬더","2-5-초염몽","2-5-토대부기","3-2-꼬링크","3-2-모래뱀","3-3-마그마","3-3-메탕구","3-5-나무킹","3-5-니드퀸","3-5-샹델라","3-5-액스라이즈","3-5-피죤투","3-5-피카츄","3-5-후딘","공통-R-루카리오","공통-S-따라큐","공통-S-루카리오","공통-S-피카츄 (현장이벤트)"]);
 
 
 
@@ -5244,7 +5246,8 @@ const chip=(c,o={})=>{
     <span class="b23w">${
       (dexBest&&dexBest.has(c.id)?'<span class="b23 rec">추천</span>':'')
       +(tagClass==='A'&&bestSet().has(c.id)?`<span class="b23">A${bestSet().size}</span>`:'')
-      +(tagClass==='B'&&BESTB45NORMAL.has(c.id)?`<span class="b23">B45${BESTB45NORMAL.cnt(c.id)>1?' ×2':''}</span>`:'')
+      +(tagClass==='B'&&BESTB45.has(c.id)?'<span class="b23">B45</span>':'')
+      +(tagClass==='B'&&BESTS45.has(c.id)?`<span class="b23">S45${BESTS45.cnt(c.id)>1?' ×2':''}</span>`:'')
       +(o.need2?'<span class="b23 need2" title="눌러서 2장이 필요한 보스의 A/B 추천 확인">보스 추천 ×2</span>':'')}</span>
     <span class="cn">${c.n}</span>
     <span class="cm"><span class="cr">★${c.r}</span>${c.t.map(x=>
@@ -5467,6 +5470,26 @@ function cmpCand(a,b,isBoss,scoreOnly=false){
 
 
 function assignPlans(cols, foeOf, boss, force, pins,mixed=false,scoreOnly=false,avoid=null){
+  
+  if(tagClass==='B'&&mode==='지역'&&!mixed&&!scoreOnly&&!force&&!pins?.some(Boolean)&&cols.length===3&&cols.every(foeOf)){
+    const F=cols.map(foeOf),G=new Set(GIMX),L=F.map((f,j)=>foeCands(f,boss,cols[j]==='B',F.filter((_,k)=>k!==j),G));
+    const fast=L.map((l,j)=>l.filter(r=>r.c.sp>F[j].sp)),slow=L.map((l,j)=>l.filter(r=>r.c.sp<=F[j].sp));
+    let best,key;
+    for(const masks of [[7],[3,5,6],[1,2,4],[0]]){
+      for(const m of masks){
+        const [A,B,C]=L.map((_,j)=>(m&(1<<j)?fast:slow)[j]);
+        for(const a of A)for(const b of B)for(const c of C){
+          const s=[a,b,c],ids=s.map(r=>r.c.id),g=s.map(r=>r.m.tagx).filter(Boolean);
+          if(new Set(g).size!==g.length||ids.some(id=>ids.filter(x=>x===id).length>owned.cnt(id)))continue;
+          const v=hsLocalSim(s,cols,foeOf,boss);
+          if(v[0]||v[2]!==-3)continue;
+          const k=[v[3],-s.filter((r,j)=>r.c.e<F[j].e).length,a.c.e+b.c.e+c.c.e];
+          if(!key||hsCompare(k,key)<0){best=s;key=k;}
+        }
+      }
+      if(best)return Object.assign(best,{forcedOK:null,failed:false,mixed:false,scoreOnly:false});
+    }
+  }
   const bi=cols.indexOf('B');
   
 
@@ -10227,9 +10250,9 @@ function renderAll(){
     bh.innerHTML=`<b>BEST-${tagClass}${need}</b> 핵심 태그 <b style="color:${have===need?'var(--ok)':'var(--star)'}">${have}/${need}</b>`
       +` · 53보스 전체 기준 · <b>${CLASSES[tagClass].label}(${CLASSES[tagClass].sub})</b> 용입니다`; }
   else if(bh){
-    const need=BESTB45NORMAL.size, have=[...BESTB45NORMAL.keys()].filter(id=>owned.has(id)).length;
-    bh.innerHTML=`<b>B45</b> 2·3탄 보스 추천 태그 <b style="color:${have===need?'var(--ok)':'var(--star)'}">${have}/${need}</b>종`
-      +` · 실물 ${BESTB45NORMAL.total}장 · 가방 2장 필요 태그 2종 · 다이맥스·스페셜태그배틀`;
+    const count=bag=>[...bag.keys()].reduce((n,id)=>n+Math.min(bag.cnt(id),owned.cnt(id)),0);
+    const summary=(label,bag,desc)=>`<b>${label}</b> ${desc} <b style="color:${count(bag)===bag.total?'var(--ok)':'var(--star)'}">${count(bag)}/${bag.total}</b>장`;
+    bh.innerHTML=summary('B45',BESTB45,'지역배틀·스피드')+'<br>'+summary('S45',BESTS45,'다이맥스·스페셜태그배틀')+' · 2장 필요 2종';
   }
 }
 
