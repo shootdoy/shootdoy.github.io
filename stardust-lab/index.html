@@ -8,7 +8,7 @@
 <meta name="description" content="포켓몬 태그스타 스타더스트 1탄·2탄 ★6·★5 보스 공략. 보유 태그로 3턴 로테이션과 서포트 티켓을 추천합니다.">
 <meta name="theme-color" content="#120B2E">
 <meta name="color-scheme" content="dark">
-<meta name="version" content="3.124.13">
+<meta name="version" content="3.124.14">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 
@@ -3155,7 +3155,7 @@ font-family:var(--mono);font-size:11.5px;color:var(--ink-dim)}
       <b id="hsNeedTitle">보스 추천 ×2</b>
       <button type="button" class="qrx" id="hsNeedClose" aria-label="닫기">✕</button>
     </div>
-    <p class="tab-note">아래 보스의 A/B 조합에서 한 플레이어가 같은 태그 2장을 사용합니다. S45 가방 필요 장수와는 별개입니다.</p>
+    <p class="tab-note">아래 조합은 한 플레이어가 같은 실물 태그를 2장 이상 사용해요. 1P와 2P 사이에는 태그를 옮겨 쓸 수 있어요. S45 가방과는 별개예요.</p>
     <ul class="hs-need-list" id="hsNeedList"></ul>
   </div>
 </div>
@@ -3849,7 +3849,7 @@ const TAGSET=new Set(TAGART);
 
 const tagArt=b=>TAGSET.has(b.s+'-'+b.r+'-'+b.n)?b.s+'-'+b.r+'-'+b.n:null;
 
-const VERSION='3.124.13';
+const VERSION='3.124.14';
 const BUILT='2026-11-28';
 
 
@@ -3861,7 +3861,7 @@ const BUILT='2026-11-28';
 
 
 
-const WHATSNEW='6성 없는 지역배틀 B45와 보스용 S45를 구분했어요.';
+const WHATSNEW='보스 추천에서 같은 태그가 필요한 장수와 플레이어를 보여 줘요.';
 
 
 
@@ -6537,7 +6537,8 @@ function renderHsBossPreset(boss,rot,note){
   };
   const pack=(p,label,planLabel)=>{
     const plan=p[1].map(x=>hsPresetRow(x,boss));if(plan.some(x=>!x))return null;
-    rot.appendChild(el('<div class="lane"><span class="lane-h">'+label+' <i>가져갈 태그 3장</i></span><div class="lane-g">'+p[0].map(ci=>laneCell(ci,plan)).join('')+'</div></div>'));
+    const need=hsPackNeed(p[0]).map(([ci,n])=>MYPOOL[ci].n+' ×'+n).join(' · ');
+    rot.appendChild(el('<div class="lane"><span class="lane-h">'+label+' <i>가져갈 태그 3장</i>'+(need?' · <b class="lane-need">'+need+' 필요</b>':'')+'</span><div class="lane-g">'+p[0].map(ci=>laneCell(ci,plan)).join('')+'</div></div>'));
     plan.forEach((r,i)=>{const n=el(slotHTML(r,i,i===2&&plan[0].c.id===r.c.id,boss,false,true));n.dataset.plan=planLabel;rot.appendChild(n)});
     return plan;
   };
@@ -7058,6 +7059,7 @@ function renderDexBestMsg(txt){
 
 
 
+const hsPackNeed=ids=>[...new Set(ids)].map(ci=>[ci,ids.filter(x=>x===ci).length]).filter(x=>x[1]>1);
 const _hsNeed2={};
 const hsNeed2=()=>{
   const key=JSON.stringify(foeSets);
@@ -7065,14 +7067,13 @@ const hsNeed2=()=>{
   const out=new Map();
   for(const b of BOSSES){
     if(!foeSets[b.s])continue;
-    HS_BOSS_PRESETS.special[b.id]?.forEach((set,i)=>set.slice(0,2).forEach(([ids])=>{
-      for(const ci of ids.filter((x,j)=>ids.indexOf(x)!==j)){
-        const id=MYPOOL[ci].id, name=b.s+'탄 '+b.n+' ★'+b.r+' 추천 '+(i?'B':'A');
-        const a=out.get(id)||[];
-        if(!a.includes(name))a.push(name);
-        out.set(id,a);
-      }
-    }));
+    for(const m of ['dmax','special'])
+      HS_BOSS_PRESETS[m][b.id]?.forEach((set,i)=>set.slice(0,m==='dmax'?1:2).forEach(([ids],p)=>{
+        for(const [ci,n] of hsPackNeed(ids)){
+          const c=MYPOOL[ci],name=b.s+'탄 '+b.n+' ★'+b.r+' · '+(m==='dmax'?'다이맥스':'스페셜태그배틀')+' · 추천 '+(i?'B':'A')+(m==='special'?' · '+(p+1)+'P':'')+' · '+c.n+' '+n+'장 필요';
+          const a=out.get(c.id)||[];a.push(name);out.set(c.id,a);
+        }
+      }));
   }
   return _hsNeed2[key]=out;
 };
